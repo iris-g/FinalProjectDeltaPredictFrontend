@@ -1,13 +1,5 @@
-
 import React, { useEffect,useState ,TouchableOpacity} from "react";
-import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    Button,    
-
-} from "react-native";
+import {StyleSheet, Text, View, TextInput, Button} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 
 export default function App({  })  {
@@ -43,6 +35,7 @@ export default function App({  })  {
     <View style={styles.columnContainer}>
     <Text style={styles.baseText}>Login </Text>
     <View style={styles.inputView}>
+    
         <TextInput
         style={styles.TextInput}
         placeholder="User name."
@@ -61,10 +54,10 @@ export default function App({  })  {
     </View>
     </View>
     </View>
-    <View style={styles.screenContainer}>
-        <Button title="start!" size="sm" backgroundColor="#007bff"
-            onPress={() => navigation.navigate('Dashboard')}
-        />
+    <View style={styles.btnStart}>
+        <Button title ="start!"
+        onPress={() => navigation.navigate('Dashboard')}
+      />
     </View>
     </View>
     
@@ -75,9 +68,8 @@ export default function App({  })  {
 const styles = StyleSheet.create({
     container: {
         flex: 2,
+        backgroundColor: "#131722",
         justifyContent: 'flex-start',
-        marginBottom: 30,
-    
     },
     columnContainer: {
         flex: 2,
@@ -88,7 +80,7 @@ const styles = StyleSheet.create({
     
     },
     inputView: {
-        backgroundColor: "#009688",
+        backgroundColor: "#1e222d",
         borderRadius: 10,
         width: "60%",
         height: 45,
@@ -96,7 +88,9 @@ const styles = StyleSheet.create({
         marginLeft:50,
         marginRight:50,
         alignItems: "left",
-        flex:2
+        flex:2,
+        bordercolor: "#50535e"
+        
     },
     screenContainer: {
         flex: 1,
@@ -111,7 +105,6 @@ const styles = StyleSheet.create({
         height: 50,
         flex: 1,
         padding: 10,
-        marginLeft: 20,
         flex:1
     },
     loginBtn: {
@@ -126,41 +119,49 @@ const styles = StyleSheet.create({
     myState: {
         marginTop: 1,
         textAlign: 'center',
-        color: 'black',
+        color: '#50535e',
         fontWeight: 'bold',
         fontSize: 40
     },
     descriptionText: {
-    marginTop: 19,
-    textAlign: 'left',
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 15,
-    flex:3
+        marginTop: 19,
+        textAlign: 'left',
+        color: '#C9D6DF',
+        fontWeight: 'bold',
+        fontSize: 15,
+        flex:3
     },
     featuredDetails: {
-    position: "relative",
-    flexDirection: "row",
-    marginLeft: 25,
-    marginVertical:40,
-    marginTop: 50,
-    marginBottom: 8,
+        position: "relative",
+        flexDirection: "row",
+        marginLeft: 25,
+        marginVertical:40,
+        marginTop: 50,
+        marginBottom: 8,
     },
-    appButtonContainer: {
-    elevation: 8,
-    backgroundColor: "#009688",
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: "right",
-    width: "30%",
-    paddingHorizontal: 50
+        appButtonContainer: {
+        elevation: 8,
+        backgroundColor: "#009688",
+        borderRadius: 10,
+        paddingVertical: 10,
+        alignItems: "right",
+        width: "30%",
+        paddingHorizontal: 50
     },
     appButtonText: {
-    fontSize: 18,
-    color: "#fff",
-    fontWeight: "bold",
-    alignSelf: "center",
-    textTransform: "uppercase"
+        fontSize: 18,
+        color: "#fff",
+        fontWeight: "bold",
+        alignSelf: "center",
+        textTransform: "uppercase"
+    },
+    btnStart:{
+        width: "10%",
+        height: 45,
+        marginTop: 100,
+        marginLeft: 1340,
+        marginRight:50,
+        alignItems: "left",
     }
 
     });
