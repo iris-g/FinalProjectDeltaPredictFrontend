@@ -49,7 +49,7 @@ export default function App({  })  {
             style={styles.TextInput}
             placeholder="Email."
             placeholderTextColor="#fff"
-            secureTextEntry={true}
+            
             onChangeText={(email) => setEmail(email)}
             />
         </View>
