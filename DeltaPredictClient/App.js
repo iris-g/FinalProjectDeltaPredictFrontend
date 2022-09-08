@@ -1,6 +1,6 @@
 
 import { StyleSheet, Text, View } from 'react-native';
-import SignInScreen from './Views/SignInScreen.js'
+import SignInScreen from './Views/Welcome.js'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DrawerNavigator from './Views/DrawerNavigator.js';
@@ -13,9 +13,9 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Home" >
+    <Stack.Navigator initialRouteName="Welcome" >
       <Stack.Screen name="Dashboard" component={DrawerNavigator}   options={{ headerShown: false }} />
-      <Stack.Screen name="Home" component={SignInScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="Welcome" component={SignInScreen} options={{ headerShown: false }}/>
     </Stack.Navigator>
   </NavigationContainer>
   );
