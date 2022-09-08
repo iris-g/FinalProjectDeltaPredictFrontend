@@ -3,6 +3,18 @@ import {StyleSheet, Text, View, TextInput, Button, Image} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { color } from "react-native-reanimated";
 
+
+//check if login details are correct in DB
+function _onPressButton (username,password,navigation) {
+    fetch('http://localhost:5000/authenticate', {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({  name: username,Password:password })
+    })
+    .then(res => res.json())
+    .then(data => { data.result === "true" ? navigation.navigate('Dashboard') : alert("wrong details") });
+    
+}
 export default function App({  })  {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -50,19 +62,18 @@ export default function App({  })  {
             onChangeText={(password) => setPassword(password)}
             />
         </View>
-           
         </View>
         
         </View>
         <View style={styles.btnSignUp}>
         <Button title ="Sign Up" color = "#1e222d"
         onPress={() => navigation.navigate('Dashboard')}
-      />
+        />
     </View>
     <View style={styles.btnStart}>
         <Button title ="start!" color = "#01a37b"
-        onPress={() => navigation.navigate('Dashboard')}
-      />
+        onPress={() => _onPressButton(email,password,navigation)}
+    />
     </View>
     </View>
     
