@@ -1,6 +1,7 @@
 import React, { useEffect,useState ,TouchableOpacity} from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image} from "react-native";
+import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground} from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import SignUp from "./SignUp";
 import { color } from "react-native-reanimated";
 
 
@@ -25,9 +26,13 @@ export default function App({  })  {
     
     return (
     <View style={styles.container}>
-        
-        <Image source = {require('../assets/sad_preview_rev_1.png')}/>
-        <Text style={styles.myState}> Welcome to delta predict <Text style={styles.innerText}> </Text></Text>
+        <View style={styles.backImage} >
+         <Image
+            source={require('../assets/icon.png')}
+            style={{ flex: 1 }}
+            resizeMode="contain"
+    />      </View>
+       
 
         <View style={styles.blackScreen}>
 
@@ -67,11 +72,11 @@ export default function App({  })  {
         </View>
         <View style={styles.btnSignUp}>
         <Button title ="Sign Up" color = "#1e222d"
-        onPress={() => navigation.navigate('Dashboard')}
+        onPress={() => navigation.navigate('SignUp')}
         />
     </View>
     <View style={styles.btnStart}>
-        <Button title ="start!" color = "#01a37b"
+        <Button title = "Start!" color = "#01a37b"
         onPress={() => _onPressButton(email,password,navigation)}
     />
     </View>
@@ -89,24 +94,20 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     blackScreen: {
+        marginTop: 75,
         flexDirection: "row",
         backgroundColor: "#1e222d",
         
     },
-
     columnContainer: {
         width: 350,
         height: 190,
         borderRadius: 10,
-        //flex: 2,
         justifyContent: 'flex-start',
         marginTop: 50,
         marginBottom: 5,
         marginLeft: 225,
         flexDirection: "column",
-        //borderWidth: 2,
-        //backgroundColor: "#1e222d",
-        //borderColor: "#2962ff",
     },
     baseText: {
         color: '#5B738B',
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 20,
         borderWidth: 2,
-        borderColor: '#50535e'
+        borderColor: '#50535e',
     },
     screenContainer: {
         flex: 1,
@@ -135,7 +136,6 @@ const styles = StyleSheet.create({
         height: 50,
         flex: 1,
         padding: 10,
-        flex: 1,
         borderColor: "grey",
         color: 'white',
     },
@@ -147,14 +147,6 @@ const styles = StyleSheet.create({
         justifyContent: "right",
         marginTop: 40,
         backgroundColor: "#FF1493",
-    },
-    myState: {
-        marginTop: 1,
-        textAlign: 'left',
-        marginHorizontal: 30,
-        color: '#50535e',
-        fontWeight: 'bold',
-        fontSize: 40
     },
     descriptionText: {
         marginTop: 50,
@@ -206,6 +198,11 @@ const styles = StyleSheet.create({
         marginLeft: 1330,
         marginRight: 50,  
         alignItems: "left",
-    }
+    },
+    backImage: {
+        width: 330,
+        height: 150,
+        marginLeft: 22,
+    },
 
-    });
+});
