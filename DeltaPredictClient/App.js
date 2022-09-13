@@ -4,6 +4,7 @@ import Welcome from './Views/Welcome.js'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DrawerNavigator from './Views/DrawerNavigator.js';
+import SignUp from './Views/SignUp.js';
 import 'react-native-gesture-handler';
 
 
@@ -14,8 +15,10 @@ export default function App() {
   return (
     <NavigationContainer>
     <Stack.Navigator initialRouteName="Welcome" >
-      <Stack.Screen name="Dashboard" component={DrawerNavigator}   options={{ headerShown: false }} />
+      <Stack.Screen name="Dashboard" component={DrawerNavigator}  options={{ headerShown: false }} />
       <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }}/>
+      <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
+      
     </Stack.Navigator>
   </NavigationContainer>
   );
