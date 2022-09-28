@@ -1,68 +1,101 @@
 import React from "react";
-import { StyleSheet, Text, View,Button ,Pressable,Ticker,ScrollView ,StatusBar,SafeAreaView,FlatList,Image   } from 'react-native';
-import {useEffect,useState} from 'react'
-// import TradingViewWidget, { Themes } from 'react-tradingview-widget';
-// import { StockMarket } from "react-ts-tradingview-widgets";
-// import { SymbolInfo } from "react-ts-tradingview-widgets";
-
-
+import { StyleSheet, Text, View ,StatusBar } from 'react-native';
+import {useEffect,useState,useCallback  } from 'react'
+import {fetch_clock,fetch_from_server,fetchData} from "../client/deltaPredicrClient";
+ import { useDebounce } from 'use-lodash-debounce'
+import { useNavigation } from '@react-navigation/native';
+import { Searchbar } from 'react-native-paper';
+import { useInterval } from "react-use";
 
 
 function Home(){
-    const [activeStocks, setActive] = useState("");
+    const [activeStocks, setActive] = React.useState("");
     const [loserStocks, setLosers] = useState(""); 
     const [gainerStocks, setGainers] = useState(""); 
     const [market, setMarket] = useState(""); 
-    const request = require('request');
-    useEffect(() => {
-        // Update the document title using the browser API
-        request({
-            method: 'get',
-            url: 'https://api.tradier.com/v1/markets/clock',
-            qs: {
-                'delayed': 'true'
-            },
-            headers: {
-                'Authorization': 'Bearer <TOKEN>',
-                'Accept': 'application/json'
-            }
-            }, (error, response, body) => {
-                setMarket(body)
-            });
-          ////
+    const [searchQuery, setSearchQuery] = React.useState('');
+
+  const onChangeSearch = query => setSearchQuery(query);
+
+//get app navigation
+const navigation = useNavigation();
+const lastValue = useDebounce(activeStocks, 500);
+async function getMarketData() {
+        try { 
+          
+          const promise = new Promise((resolve, reject) => {
+            resolve(fetch_clock() )
+          })
+          promise.then((response) => {
+            setMarket(response["clock"].date+" , "+  response["clock"].description+  " next change: "+ response["clock"].next_change )
             
-        },[]);
+          })
+        } catch (error) {
+      
+        
+        }
+      }
 
-    fetch('http://localhost:5000/activeStockData', {
-        method: 'GET', 
-        headers: { 'Content-Type': 'application/json' }, 
-    })
-    .then(res => res.json())
-    .then(data => {setActive(data ) });
-    fetch('http://localhost:5000/losersStockData', {
-        method: 'GET', 
-        headers: { 'Content-Type': 'application/json' }, 
-    })
-    .then(res => res.json())
-    .then(data => {setLosers(data ) });
+async function getActive() {
     
+    try { 
+      const promise = new Promise((resolve, reject) => {
+        resolve(fetch_from_server("GET",'activeStockData') )
+      })
+      promise.then((response) => {
+        setActive(response)
+        
+      })
+    } catch (error) {
+    } finally {
+    
+    
+    }
+  }
 
+  //get active stock data not more than once in 3000 ms
+  useInterval(() => {
+      getActive()
+    },
+    // Delay in milliseconds or null to stop it
+  3000
+  )
+  useInterval(() => {
+    getMarketData()
+  },  3000// Delay in milliseconds or null to stop it
+  
+  )
+
+    
     return (
-        <SafeAreaView style={styles.container}>
-        <ScrollView style={styles.scrollView}>
-        <Text style={{ color: 'white' , fontSize: 22,flex:1}}>  Market:{market} </Text>
-        <View style={styles.blackScreen}>
-        <Text style={{ color: 'white' , fontSize: 20,flex:3}}> Most Active:{activeStocks[1]} {'\n'}{activeStocks[2]} {'\n'}{activeStocks[3]} {"\n"} {activeStocks[4]}  {"\n"} {activeStocks[5]} {"\n"} {activeStocks[6]}</Text>
-        <Text style={{ color: 'white' , fontSize: 20,flex:2}}>  Top Losers:{loserStocks}  </Text>
-        <Text style={{ color: 'white' , fontSize: 20,flex:1}}>  Top Gainers:{gainerStocks} </Text>
-        {/* <h1  style={{ color: 'white' }}>{data[1]} {'\n'}{data[2]}  {'\n'}{data[3]} {"\n"} {data[4]} </h1> */}
+
+      
+        <View style={styles.container}>
+      
+      <Searchbar 
+        style={{height: 40}}
+        placeholder=""
+        type="text"
+        value={searchQuery}
+          onChangeText={onChangeSearch}
+          onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
+            otherParam: searchQuery,
+          }) : ""}
+      />
+      <View style={styles.blackScreen}>
+    
+          <h1 style={{ color: 'white', fontSize: 23}}>  {market}</h1>
+        </View><View style={styles.blackScreen}>
+          <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Most Active:{activeStocks[1]} {'\n'}{activeStocks[2]} {'\n'}{activeStocks[3]} {"\n"} {activeStocks[4]}  {"\n"} {activeStocks[5]} {"\n"} {activeStocks[6]}</Text>
+          <Text style={{ color: 'white', fontSize: 20, flex: 3 }}>  Top Losers:{loserStocks[1]}   {'\n'} {loserStocks[2]}  {'\n'} {loserStocks[3]}  {'\n'} {loserStocks[4]} {loserStocks[5]}  {'\n'}  {'\n'}  </Text>
+          <Text style={{ color: 'white', fontSize: 20, flex: 2 }}>  Top Gainers:{gainerStocks} </Text>
         </View>
-        </ScrollView>
-    </SafeAreaView>
+  </View>
     );
 
 
 }
+
 const styles = StyleSheet.create({
     container: {
       flex: 1,
