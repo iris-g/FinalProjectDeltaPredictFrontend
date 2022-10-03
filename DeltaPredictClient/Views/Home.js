@@ -1,8 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View ,StatusBar } from 'react-native';
-import {useEffect,useState,useCallback  } from 'react'
+import {useEffect,useState  } from 'react'
 import {fetch_clock,fetch_from_server,fetchData} from "../client/deltaPredicrClient";
- import { useDebounce } from 'use-lodash-debounce'
 import { useNavigation } from '@react-navigation/native';
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
@@ -19,7 +18,7 @@ function Home(){
 
 //get app navigation
 const navigation = useNavigation();
-const lastValue = useDebounce(activeStocks, 500);
+
 async function getMarketData() {
         try { 
           
@@ -37,13 +36,41 @@ async function getMarketData() {
       }
 
 async function getActive() {
-    
     try { 
       const promise = new Promise((resolve, reject) => {
         resolve(fetch_from_server("GET",'activeStockData') )
       })
       promise.then((response) => {
-        setActive(response)
+        var obj=null; 
+        const active =new Array();
+        for(let i=0;i<Object.keys(response).length;i++)
+        {
+          obj= JSON.parse(response[i])
+          active.push(obj)
+        }
+        setActive(active)
+        
+      })
+    } catch (error) {
+    } finally {
+    
+    
+    }
+  }
+  async function getLosers() {
+    try { 
+      const promise = new Promise((resolve, reject) => {
+        resolve(fetch_from_server("GET",'losersStockData') )
+      })
+      promise.then((response) => {
+        var obj=null; 
+        const losers =new Array();
+        for(let i=0;i<Object.keys(response).length;i++)
+        {
+          obj= JSON.parse(response[i])
+          losers.push(obj)
+        }
+        setLosers(losers)
         
       })
     } catch (error) {
@@ -63,15 +90,20 @@ async function getActive() {
   useInterval(() => {
     getMarketData()
   },  3000// Delay in milliseconds or null to stop it
-  
-  )
+)
+  useInterval(() => {
+    getLosers()
+  },
+  // Delay in milliseconds or null to stop it
+3000
+)
 
     
     return (
 
-      
-        <View style={styles.container}>
-      
+      <View style={styles.container}>
+      <View style={styles.blackScreen}>
+      <View style={styles.centered}>
       <Searchbar 
         style={{height: 40}}
         placeholder=""
@@ -81,16 +113,20 @@ async function getActive() {
           onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
             otherParam: searchQuery,
           }) : ""}
-      />
-      <View style={styles.blackScreen}>
-    
-          <h1 style={{ color: 'white', fontSize: 23}}>  {market}</h1>
-        </View><View style={styles.blackScreen}>
-          <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Most Active:{activeStocks[1]} {'\n'}{activeStocks[2]} {'\n'}{activeStocks[3]} {"\n"} {activeStocks[4]}  {"\n"} {activeStocks[5]} {"\n"} {activeStocks[6]}</Text>
-          <Text style={{ color: 'white', fontSize: 20, flex: 3 }}>  Top Losers:{loserStocks[1]}   {'\n'} {loserStocks[2]}  {'\n'} {loserStocks[3]}  {'\n'} {loserStocks[4]} {loserStocks[5]}  {'\n'}  {'\n'}  </Text>
+      /> 
+        </View>
+        </View>
+        <h1 style={{ color: 'white', fontSize: 23}}>  {market}</h1>
+        <View style={styles.blackScreen}>
+          <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Most Active:{  Object.values(activeStocks).map(({ close, symbol }) => (
+        <p key={close}> {symbol} : {close} </p>
+      ))} </Text>
+      <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Top Losers:{  Object.values(loserStocks).map(({ close, symbol }) => (
+        <p key={close}> {symbol} : {close} </p>
+      ))} </Text>
           <Text style={{ color: 'white', fontSize: 20, flex: 2 }}>  Top Gainers:{gainerStocks} </Text>
         </View>
-  </View>
+      </View>
     );
 
 
@@ -99,6 +135,7 @@ async function getActive() {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: "#1e222d",
       paddingTop: StatusBar.currentHeight,
     },
     scrollView: {
@@ -112,6 +149,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         backgroundColor: "#1e222d",
         
+    },
+    centered: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#1e222d",
+      marginTop: 50,
     },
   });
   
