@@ -1,20 +1,17 @@
 import React, { useEffect,useState ,TouchableOpacity} from "react";
 import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-
-import SignUp from "./SignUp";
-import { color } from "react-native-reanimated";
-
+import FavoriteStocks from "./FavoriteStocks";
 
 //check if login details are correct in DB
-function _onPressButton (username,password,navigation) {
-    fetch('http://192.168.1.22:5000/authenticate', {
+function _onPressButton (email,password,navigation) {
+    fetch('http://localhost:5000/authenticate', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({name: username, Password: password})
+        body: JSON.stringify({name: email, Password: password})
     })
     .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Dashboard') : alert("wrong details") });
+    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {otherParam: email,}) : alert("wrong details") });
     
 }
 export default function App({  })  {

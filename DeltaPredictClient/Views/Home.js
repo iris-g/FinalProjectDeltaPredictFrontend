@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View ,StatusBar } from 'react-native';
+import { StyleSheet, Text, View ,StatusBar, Platform } from 'react-native';
 import {useEffect,useState,useCallback  } from 'react'
 import {fetch_clock,fetch_from_server,fetchData} from "../client/deltaPredicrClient";
- import { useDebounce } from 'use-lodash-debounce'
+import { useDebounce } from 'use-lodash-debounce'
 import { useNavigation } from '@react-navigation/native';
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
@@ -21,6 +21,7 @@ function Home(){
 const navigation = useNavigation();
 const lastValue = useDebounce(activeStocks, 500);
 async function getMarketData() {
+      if(Platform.OS === "web"){
         try { 
           
           const promise = new Promise((resolve, reject) => {
@@ -35,6 +36,8 @@ async function getMarketData() {
         
         }
       }
+      
+    }
 
 async function getActive() {
     
@@ -77,10 +80,8 @@ async function getActive() {
         placeholder=""
         type="text"
         value={searchQuery}
-          onChangeText={onChangeSearch}
-          onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
-            otherParam: searchQuery,
-          }) : ""}
+        onChangeText={onChangeSearch}
+        onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
       />
       <View style={styles.blackScreen}>
     

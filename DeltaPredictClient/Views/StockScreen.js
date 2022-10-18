@@ -1,15 +1,17 @@
 
 
 import { Text, View } from 'react-native';
-import {fetchData} from "../client/deltaPredicrClient";
+import { fetchData } from "../client/deltaPredicrClient";
 import { useDebounce } from 'use-lodash-debounce'
-import {useEffect,useState,useReducer } from 'react'
-//console.log(  this.props.route.params);
+import { useEffect,useState,useReducer } from 'react'
+
+
 function StockScreen({ route, navigation }) {
 
   const [data, setData] = useState(""); 
   /* 2. Get the param */
   const {  otherParam } = route.params;
+ 
   async function fetch_Data(text) {
     try { 
       
