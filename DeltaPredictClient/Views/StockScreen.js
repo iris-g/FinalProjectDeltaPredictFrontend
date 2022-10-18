@@ -1,6 +1,6 @@
 
-
 import { Text, View } from 'react-native';
+
 import React from "react";
 import {fetchData} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
@@ -29,6 +29,7 @@ ChartJS.register(
 );
 import { Searchbar } from 'react-native-paper';
 
+
 function StockScreen({ route, navigation }) {
 
   const [data, setData] = useState(""); 
@@ -38,6 +39,7 @@ function StockScreen({ route, navigation }) {
   const onChangeSearch = query => setSearchQuery(query);
   /* 2. Get the param */
   const {  otherParam } = route.params;
+
 
   const prices = {
     labels: ["Jan", "Feb", "Mar"],
@@ -90,6 +92,7 @@ const options = {
     ]
   }
 }
+
   async function fetch_Data(text) {
     try { 
       

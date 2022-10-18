@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View ,StatusBar } from 'react-native';
-import {useEffect,useState  } from 'react'
+import { StyleSheet, Text, View ,StatusBar, Platform } from 'react-native';
+import {useEffect,useState,useCallback  } from 'react'
 import {fetch_clock,fetch_from_server,fetchData} from "../client/deltaPredicrClient";
+import { useDebounce } from 'use-lodash-debounce'
 import { useNavigation } from '@react-navigation/native';
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
@@ -20,6 +21,7 @@ function Home(){
 const navigation = useNavigation();
 
 async function getMarketData() {
+      if(Platform.OS === "web"){
         try { 
           
           const promise = new Promise((resolve, reject) => {
@@ -34,6 +36,8 @@ async function getMarketData() {
         
         }
       }
+      
+    }
 
 async function getActive() {
     try { 
@@ -109,6 +113,17 @@ async function getActive() {
         placeholder=""
         type="text"
         value={searchQuery}
+
+        onChangeText={onChangeSearch}
+        onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
+      />
+      <View style={styles.blackScreen}>
+    
+          <h1 style={{ color: 'white', fontSize: 23}}>  {market}</h1>
+        </View><View style={styles.blackScreen}>
+          <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Most Active:{activeStocks[1]} {'\n'}{activeStocks[2]} {'\n'}{activeStocks[3]} {"\n"} {activeStocks[4]}  {"\n"} {activeStocks[5]} {"\n"} {activeStocks[6]}</Text>
+          <Text style={{ color: 'white', fontSize: 20, flex: 3 }}>  Top Losers:{loserStocks[1]}   {'\n'} {loserStocks[2]}  {'\n'} {loserStocks[3]}  {'\n'} {loserStocks[4]} {loserStocks[5]}  {'\n'}  {'\n'}  </Text>
+
           onChangeText={onChangeSearch}
           onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
             otherParam: searchQuery,
@@ -124,6 +139,7 @@ async function getActive() {
       <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Top Losers:{  Object.values(loserStocks).map(({ close, symbol }) => (
         <p key={close}> {symbol} : {close} </p>
       ))} </Text>
+
           <Text style={{ color: 'white', fontSize: 20, flex: 2 }}>  Top Gainers:{gainerStocks} </Text>
         </View>
       </View>
