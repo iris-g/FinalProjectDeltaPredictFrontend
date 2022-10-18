@@ -34,17 +34,15 @@ export async function fetch_clock(){
 
 }
 export async function fetchData(symbol){
-    const [stocks, setStocks] = useState("");
-    try{    fetch('http://localhost:5000/spesificStock', {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({  Symbol:symbol  })
+    const response = await fetch('http://localhost:5000/fundamental', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Symbol:symbol  }) 
     })
-    .then(res => res.json())
-    .then(data => {  setStocks(data) });}
-    catch(err){
-    }
-    return stocks ;
+    const json = await response.json()
+
+    return json
+    
 
 
 }
