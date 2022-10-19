@@ -9,7 +9,8 @@ import { useInterval } from "react-use";
 import { Badge,Button,Card  ,Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
 import {
-  Chart as ChartJS,
+  Chart as ChartJS, 
+
   CategoryScale,
   LinearScale,
   PointElement,

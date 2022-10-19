@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Platform, FlatList } from "react-native";
 import { Searchbar } from 'react-native-paper';
-import Welcome from "./Welcome"
-import { NavigationContainer, DrawerActions } from '@react-navigation/native';
+import { useInterval } from "react-use";
+
+
 
 
 //console.log(this.props.route.params);
@@ -18,24 +19,18 @@ export default function FavoriteStocks({route, navigation})    {
     const otherParam = route.params;
     console.log(otherParam)
 
-    fetch('http://localhost:5000/getuser', {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(otherParam)
-    })
-    .then(res => res.json())
-    .then(data => { setData(data.result)})
-
+   
+    useInterval(() => {
+        fetch('http://localhost:5000/favoritesData', {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(otherParam)
+        })
+        .then(res => res.json())
+        .then(data => { console.log(data)})
+      },  4000// Delay in milliseconds or null to stop it
+    )
     
-   // return getDataFromServer;
-
-    // function getFavoriteStockListFromTheServer(getDataFromServer){
-    //     console.log (getDataFromServer);
-    //     DATA = getDataFromServer;
-    //     return getDataFromServer;
-    // }
-   
-   
 
     return (
          
