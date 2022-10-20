@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Platform, FlatList } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
-
+import {fetchFavoritesData} from "../client/deltaPredicrClient";
 
 
 
@@ -13,27 +13,36 @@ export default function FavoriteStocks({route, navigation})    {
     //const navigation = useNavigation();
     const [searchQuery, setSearchQuery] = React.useState('');
     const onChangeSearch = query => setSearchQuery(query);
-    const [data, setData] = useState('');
-   
-    console.log(route.params);  
-    const otherParam = route.params;
-    console.log(otherParam)
+    const [stocks, setData] = useState(''); 
+    const user = route.params;
 
-   
-    useInterval(() => {
-        fetch('http://localhost:5000/favoritesData', {
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify(otherParam)
+
+    async function fetch_Data(text) {
+        try { 
+        const promise = new Promise((resolve, reject) => {
+            resolve(fetchFavoritesData(text) )  })
+        promise.then((response) => {
+            // var obj=null; 
+            // const stocks =new Array();
+            // for(let i=0;i<Object.keys(response).length;i++)
+            // {
+            //   obj= JSON.parse(response[i])
+            //   stocks.push(obj)
+            // }
+            setData(Object.values(response))
+            console.log(Object.values(response))
+            
         })
-        .then(res => res.json())
-        .then(data => { console.log(data)})
-      },  4000// Delay in milliseconds or null to stop it
-    )
-    
+        } catch (error) {
+        } 
+        }
+        useInterval(() => {
+        fetch_Data(user)
+        },  8000// Delay in milliseconds or null to stop it
+        
+        )
 
     return (
-         
         <View style={styles.container}>
             
             <Searchbar 
@@ -45,20 +54,16 @@ export default function FavoriteStocks({route, navigation})    {
                 onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
                     otherParam: searchQuery,
                 }) : ""}
-            />
-            <Text>{data}</Text>
+            />  
             <FlatList 
-               data={data}
-               renderItem={(data) => {
-                return (
-                <View style={styles.listItem}>
-                <Text>{data.item}</Text>
-                </View>
-                );}}
-         
+            data={stocks}
+            renderItem={(data) => {
+            return (
+            <View style={styles.listItem}>
+            <Text>{data.item}</Text>
+            </View>
+            );}}    
             />
-
-
         </View>
 
     );
