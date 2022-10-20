@@ -42,8 +42,18 @@ export async function fetchData(symbol){
     const json = await response.json()
 
     return json
-    
+
+}
+export async function fetcSectorData(sector){
+    const response = await fetch('http://localhost:5000/getSectorStocks', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Sector:sector  }) 
+    })
+    const json = await response.json()
+
+    return json
 
 
 }
-export default{fetch_from_server,fetch_clock,fetchData} ;
+export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData} ;
