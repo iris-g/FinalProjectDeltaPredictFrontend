@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View,Button ,Pressable} from 'react-native';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Home from "./Home.js";
+import SectorStockScreen from "./SectorStockScreen.js"
 import FavoriteStocks from "./FavoriteStocks"
 import { color } from "react-native-reanimated";
 //var yahooFinance = require('yahoo-finance');
@@ -45,6 +46,50 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
+          <Drawer.Screen name="Healthcare" component={SectorStockScreen} initialParams={"Healthcare"} options={{
+          headerTitleStyle: {fontFamily: 'Gugi-Regular', color: 'white', fontSize: 18,},
+          headerStyle: { backgroundColor: '#131722'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+          <Drawer.Screen name="Technology" component={SectorStockScreen} initialParams={"Technology"} options={{
+          headerTitleStyle: {fontFamily: 'Gugi-Regular', color: 'white', fontSize: 18,},
+          headerStyle: { backgroundColor: '#131722'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+        <Drawer.Screen name="Energy" component={SectorStockScreen} initialParams={"Energy"} options={{
+          headerTitleStyle: {fontFamily: 'Gugi-Regular', color: 'white', fontSize: 18,},
+          headerStyle: { backgroundColor: '#131722'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+         <Drawer.Screen name="Basic Materials" component={SectorStockScreen} initialParams={"Basic Materials"} options={{
+          headerTitleStyle: {fontFamily: 'Gugi-Regular', color: 'white', fontSize: 18,},
+          headerStyle: { backgroundColor: '#131722'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+        <Drawer.Screen name="Real Estate" component={SectorStockScreen} initialParams={"Real Estate"} options={{
+          headerTitleStyle: {fontFamily: 'Gugi-Regular', color: 'white', fontSize: 18,},
+          headerStyle: { backgroundColor: '#131722'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+          <Drawer.Screen name="Utilities" component={SectorStockScreen} initialParams={"Utilities"} options={{
+          headerTitleStyle: {fontFamily: 'Gugi-Regular', color: 'white', fontSize: 18,},
+          headerStyle: { backgroundColor: '#131722'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+        
+        
         
         </Drawer.Navigator>
     
