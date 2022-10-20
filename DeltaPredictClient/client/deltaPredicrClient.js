@@ -56,4 +56,16 @@ export async function fetcSectorData(sector){
 
 
 }
-export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData} ;
+export async function fetchFavoritesData(userEmail){
+    const response = await fetch('http://localhost:5000/favoritesData', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  email:userEmail  }) 
+    })
+    const json = await response.json()
+
+    return json
+
+
+}
+export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData} ;
