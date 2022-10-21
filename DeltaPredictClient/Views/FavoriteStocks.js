@@ -22,15 +22,16 @@ export default function FavoriteStocks({route, navigation})    {
         const promise = new Promise((resolve, reject) => {
             resolve(fetchFavoritesData(text) )  })
         promise.then((response) => {
-            // var obj=null; 
-            // const stocks =new Array();
-            // for(let i=0;i<Object.keys(response).length;i++)
-            // {
-            //   obj= JSON.parse(response[i])
-            //   stocks.push(obj)
-            // }
-            setData(Object.values(response))
-            console.log(Object.values(response))
+            var obj=null; 
+            const stocksData =new Array();
+            console.log(response)
+            for(let i=0;i<Object.keys(response).length;i++)
+            {
+                obj= JSON.parse(response[i])
+                stocksData.push(obj)
+            }
+            console.log(stocksData)
+            setData(stocksData)
             
         })
         } catch (error) {
@@ -56,11 +57,13 @@ export default function FavoriteStocks({route, navigation})    {
                 }) : ""}
             />  
             <FlatList 
-            data={stocks}
-            renderItem={(data) => {
+            data={ Object.values(stocks).map(({ currentPrice, symbol,volume, dayLow,dayHigh }) => (
+        <p key={currentPrice}> {symbol} , price: {currentPrice}, volume: {volume}, day low: {dayLow}, day high: {dayHigh}</p>
+      ))}
+            renderItem={(stocks) => {
             return (
             <View style={styles.listItem}>
-            <Text>{data.item}</Text>
+            <Text>{stocks.item}</Text>
             </View>
             );}}    
             />
@@ -85,6 +88,8 @@ export default function FavoriteStocks({route, navigation})    {
         borderWidth: 1,
         borderColor: "#333",
         padding: 25,
+        flex:0.5,
+        alignItems: 'space-between'
       },
 
 });

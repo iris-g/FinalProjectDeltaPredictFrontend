@@ -20,7 +20,7 @@ const Drawer = createDrawerNavigator();
 //     );
 // }
 const DrawerNavigator = ({route,navigation}) => { //##
-    console.log(route.params); //##
+    //console.log(route.params); //##
     return (
          <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
            
