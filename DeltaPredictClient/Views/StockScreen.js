@@ -40,8 +40,6 @@ function StockScreen({ route, navigation }) {
   const onChangeSearch = query => setSearchQuery(query);
   /* 2. Get the param */
   const {  otherParam } = route.params;
-
-
   const prices = {
     labels: ["Jan", "Feb", "Mar"],
     datasets: [
@@ -93,7 +91,17 @@ const options = {
     ]
   }
 }
+const handleColors = (value) => {
+  let val =(parseFloat(value))
+  if (val > 0) return "green";
+  if (val < 0) return "red";
+  
+};
+const handleValue = (value) => {
+  let val =(parseFloat(value))
+  return ( val *100 ).toFixed(2).toString();
 
+ };
   async function fetch_Data(text) {
     try { 
       
@@ -136,16 +144,16 @@ const options = {
         </View>
     
     <Text style={styles.title}> {  
-        <><p> {data["Company"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["currentPrice"]}   {data["Change"]}   </p>
+        <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}    <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]}   </Text> 
+        <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}   </Text> </p>
+       
         </>
       } </Text> 
       <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
       <View style={styles.blackScreen}>
       <View style={styles.featuredDetails}>
       <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-            <><p>   {'\n'} volume : {data["volume"]} {'\n'} Average volume : {data["Avg Volume"]}  {'\n'} Market cap : {data["Market Cap"]} {'\n'} 
-              P/C Ratio : {data["P/C"]}   {'\n'} 52 weeks high : {data["52W High"]}  {'\n'}52 weeks low : {data["52W Low"]} {'\n'}Industry : {data["Industry"]} {'\n'} P/E : {data["P/E"]}  {'\n'} Prev Close {data["Prev Close"]} {'\n'} 
-</p>
+            <><p>   {'\n'} volume : {data["volume"]} {'\n'} Average volume : {data["averageVolume"]}  {'\n'} Market cap : {data["marketCap"]} {'\n'}  52 weeks high : {data["fiftyTwoWeekHigh"]}  {'\n'}52 weeks low : {data["fiftyTwoWeekLow"]} {'\n'}Industry : {data["industry"]}   {'\n'} Prev Close {data["previousClose"]} {'\n'} recommendation: {data["recommendation"]} {'\n'}  P/C Ratio : {data["P/C"]} {'\n'} P/E : {data["peRatio"]} </p>
             </>
           } </Text> 
           </View>
@@ -174,7 +182,7 @@ const styles = StyleSheet.create({
   stocksBlock: {
     flexDirection: "column",
     marginBottom: 10,
-    margainLeft: 10,
+    margainLeft: 30,
     backgroundColor: "#1e222d",
     flex: 8,
   },

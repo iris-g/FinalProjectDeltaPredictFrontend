@@ -68,10 +68,10 @@ const sector_name = useRoute();
         </View>
       <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-      <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> COMPANY               PRICE           VOLUME      CHANGE </Text>
+      <Text style={{ color: 'white', fontSize: 20, flex: 4 }}>TICKER                  COMPANY               PRICE           VOLUME      CHANGE </Text>
       <FlatList 
-              data={Object.values(stockData).map(({ Company, Price,Volume,Change }) => (
-        <p key={Company}> {Company},                 {Price},               {Volume},    {Change}</p>
+              data={Object.values(stockData).map(({ Ticker,Company, Price,Volume,Change }) => (
+        <p key={Company}> {Ticker},                  {Company},                 {Price},               {Volume},    {Change}</p>
       ))}
               renderItem={(data) => {
                 return (
