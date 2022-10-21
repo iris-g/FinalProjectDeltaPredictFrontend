@@ -79,6 +79,28 @@ async function getActive() {
     
     }
   }
+  async function getGainers() {
+    try { 
+      const promise = new Promise((resolve, reject) => {
+        resolve(fetch_from_server("GET",'gainersStockData') )
+      })
+      promise.then((response) => {
+        var obj=null; 
+        const losers =new Array();
+        for(let i=0;i<Object.keys(response).length;i++)
+        {
+          obj= JSON.parse(response[i])
+          losers.push(obj)
+        }
+        setGainers(losers)
+        
+      })
+    } catch (error) {
+    } finally {
+    
+    
+    }
+  }
 
   //get active stock data not more than once in 3000 ms
   useInterval(() => {
@@ -95,6 +117,12 @@ async function getActive() {
     getLosers()
   },
   // Delay in milliseconds or null to stop it
+3000
+)
+useInterval(() => {
+  getGainers()
+},
+// Delay in milliseconds or null to stop it
 3000
 )
 
@@ -124,7 +152,9 @@ async function getActive() {
       <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Top Losers:{  Object.values(loserStocks).map(({ close, symbol }) => (
         <p key={close}> {symbol} : {close} </p>
       ))} </Text>
-          <Text style={{ color: 'white', fontSize: 20, flex: 2 }}>  Top Gainers:{gainerStocks} </Text>
+          <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> Top Gainers: { Object.values(gainerStocks).map(({ close, symbol }) => (
+        <p key={close}> {symbol} : {close} </p>
+      ))} </Text>
         </View>
       </View>
     );
@@ -148,6 +178,7 @@ const styles = StyleSheet.create({
     blackScreen: {
         flexDirection: "row",
         backgroundColor: "#1e222d",
+        marginLeft:20
         
     },
     centered: {
