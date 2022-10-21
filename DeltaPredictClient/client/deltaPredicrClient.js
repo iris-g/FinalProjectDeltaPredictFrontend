@@ -34,18 +34,38 @@ export async function fetch_clock(){
 
 }
 export async function fetchData(symbol){
-    const [stocks, setStocks] = useState("");
-    try{    fetch('http://localhost:5000/spesificStock', {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({  Symbol:symbol  })
+    const response = await fetch('http://localhost:5000/fundamental', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Symbol:symbol  }) 
     })
-    .then(res => res.json())
-    .then(data => {  setStocks(data) });}
-    catch(err){
-    }
-    return stocks ;
+    const json = await response.json()
+
+    return json
+
+}
+export async function fetcSectorData(sector){
+    const response = await fetch('http://localhost:5000/getSectorStocks', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Sector:sector  }) 
+    })
+    const json = await response.json()
+
+    return json
 
 
 }
-export default{fetch_from_server,fetch_clock,fetchData} ;
+export async function fetchFavoritesData(userEmail){
+    const response = await fetch('http://localhost:5000/favoritesData', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  email:userEmail  }) 
+    })
+    const json = await response.json()
+
+    return json
+
+
+}
+export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData} ;

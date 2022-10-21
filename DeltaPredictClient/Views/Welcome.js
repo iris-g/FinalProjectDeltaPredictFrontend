@@ -2,19 +2,16 @@ import React, { useEffect,useState ,TouchableOpacity} from "react";
 import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 
-import SignUp from "./SignUp";
-import { color } from "react-native-reanimated";
-
 
 //check if login details are correct in DB
-function _onPressButton (username,password,navigation) {
-    fetch('http://192.168.1.22:5000/authenticate', {
+function _onPressButton (email,password,navigation) {
+    fetch('http://localhost:5000/authenticate', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({name: username, Password: password})
+        body: JSON.stringify({name: email, Password: password})
     })
     .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Dashboard') : alert("wrong details") });
+    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {otherParam: email,}) : alert("wrong details") });
     
 }
 export default function App({  })  {
@@ -35,45 +32,52 @@ export default function App({  })  {
             </View>
                 <View style={styles.blackScreen}>
                     <View style={styles.featuredDetails} > 
-                    {PickerOS()}
+                        <View style={styles.welcomeImage} >
+                            <Image
+                                source={require('../assets/Welcome.png')}
+                                style={{ flex: 1 }}
+                                resizeMode="contain" />
+                        </View>
                     </View>
 
 
 
                     <View style={styles.columnContainer}>
-                        <Text style={styles.baseText}> Login </Text>
-                            <View style={styles.inputView}>
-                            <TextInput
-                            style={styles.TextInput}
-                            placeholder="Email."
-                            placeholderTextColor="#fff"
-                            onChangeText={(email) => setEmail(email)}
-                            />
-                            </View>
+                            <Text style={styles.baseText}> Login </Text>
+                                <View style={styles.inputView}>
+                                <TextInput
+                                style={styles.TextInput}
+                                placeholder="Email."
+                                placeholderTextColor="#fff"
+                                onChangeText={(email) => setEmail(email)}
+                                />
+                                </View>
 
-                            <View style={styles.inputView}>
-                            <TextInput
-                            style={styles.TextInput}
-                            placeholder="Password."
-                            placeholderTextColor="#fff"
-                            secureTextEntry={true}
-                            onChangeText={(password) => setPassword(password)}
-                            />
-                            </View>
+                                <View style={styles.inputView}>
+                                <TextInput
+                                style={styles.TextInput}
+                                placeholder="Password."
+                                placeholderTextColor="#fff"
+                                secureTextEntry={true}
+                                onChangeText={(password) => setPassword(password)}
+                                />
+                                </View>
+                                <View style={styles.btnSignUp}>
+
+                                <Button title ="Sign Up" color = "#131822"
+                                onPress={() => navigation.navigate('SignUp')}
+                                />
+                                </View>
+                                <View style={styles.btnStart}>
+                                <Button title = "Start!" color = "#307D7E"
+                                onPress={() => _onPressButton(email,password,navigation)}
+                                />
+                                </View>
                     </View>
                     
                 
                 </View>
-                <View style={styles.btnSignUp}>
-                <Button title ="Sign Up" color = "#1e222d"
-                onPress={() => navigation.navigate('SignUp')}
-                />
-                </View>
-                <View style={styles.btnStart}>
-                <Button title = "Start!" color = "#01a37b"
-                onPress={() => _onPressButton(email,password,navigation)}
-                />
-                </View>
+                
                 
         </View>
                 
@@ -104,11 +108,10 @@ const PickerOS = () => {
 
 
 
-//secureTextEntry={true}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#131722",
+        backgroundColor: "#131822",
         justifyContent: 'flex-start',
         // ...Platform.select({
         //     android: {backgroundColor: '#FFFFFF',},
@@ -116,19 +119,15 @@ const styles = StyleSheet.create({
         // })
     },
     blackScreen: {
-        marginTop: 75,
         flexDirection: "row",
-        backgroundColor: "#1e222d",
+        backgroundColor: "#131822",
         
     },
     columnContainer: {
-        width: 350,
-        height: 190,
+        flex: 0.5,
+        
         borderRadius: 10,
         justifyContent: 'flex-start',
-        marginTop: 50,
-        marginBottom: 5,
-        marginLeft: 225,
         flexDirection: "column",
         ...Platform.select({
             android: {marginLeft: 40, width: 230, height: 300,},
@@ -137,12 +136,13 @@ const styles = StyleSheet.create({
        
     },
     baseText: {
-        color: '#40B5AD',
+        color: '#ffffff',
         textShadowColor: 'black', 
         textShadowOffset: { width: -1, height: 0 },
         textShadowRadius: 10,
         margin: 10,
-        marginLeft: 135,
+        marginLeft: 415,
+        marginTop: 230,
         fontSize: 22,
         fontWeight: 'bold',
         ...Platform.select({
@@ -154,8 +154,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         borderRadius: 10,
         marginTop: 20,
+        marginRight: 450,
+        marginLeft: 300,
         borderWidth: 2,
-        borderColor: '#50535e',
+        borderColor: '#72bcc4',
        
     },
     screenContainer: {
@@ -196,13 +198,7 @@ const styles = StyleSheet.create({
         flex: 3
     },
     featuredDetails: {
-        flexDirection: "row",
-        backgroundColor: "#1e222d",
-        flexDirection: "row",
-        marginLeft: 25,
-        marginVertical: 40,
-        marginTop: 50,
-        marginBottom: 200,
+        flex: 0.5,
          ...Platform.select({
             android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
 
@@ -225,11 +221,9 @@ const styles = StyleSheet.create({
         textTransform: "uppercase"
     },
     btnSignUp:{
-        width: "5%",
-        height: 45,
-        marginTop: -210,
-        marginLeft: 1500,
-        marginRight: 50, 
+        width: "10%",
+        marginLeft: 520,
+        marginTop: 10,
         color: "#1e222d",
         ...Platform.select({
             android: {width: 80, height: 80 , marginLeft: 235, marginTop: -130,},
@@ -237,26 +231,28 @@ const styles = StyleSheet.create({
         })
     },
     btnStart:{
-        width: "10%",
-        height: 45,
-        marginTop: 10,
-        marginLeft: 1330,
-        marginRight: 50,  
-        
+        width: "16%",
+        marginLeft: 373,
+        marginTop: 35,
         ...Platform.select({
             android: {width: 130, height: 80 , marginLeft: 135, marginTop: -30,},
 
         })
     },
     backImage: {
-        width: 330,
+        width: 350,
         height: 150,
-        marginLeft: 22,
+        marginLeft: 25,
 
         ...Platform.select({
             android: {width: 5, height: 60, marginLeft: 8, marginTop: 50,},
 
         })
+    },
+    welcomeImage:{
+        width: 1200,
+        height: 800,
+        
     },
 
 });
