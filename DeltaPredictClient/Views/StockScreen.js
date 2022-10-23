@@ -40,6 +40,7 @@ function StockScreen({ route, navigation }) {
   const onChangeSearch = query => setSearchQuery(query);
   /* 2. Get the param */
   const {  otherParam } = route.params;
+  console.log(otherParam)
   const prices = {
     labels: ["Jan", "Feb", "Mar"],
     datasets: [
