@@ -89,13 +89,10 @@ const DrawerNavigator = ({route,navigation}) => { //##
           
         }}/>
         
-        
-        
         </Drawer.Navigator>
     
     );
 }
-
 
 
 
