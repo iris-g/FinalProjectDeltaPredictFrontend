@@ -1,7 +1,6 @@
 import React, { useEffect,useState ,TouchableOpacity} from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image} from "react-native";
+import {StyleSheet, Text, View, TextInput, Button, Image, Pressable} from "react-native";
 import { useNavigation } from '@react-navigation/native';
-
 
 
 
@@ -10,10 +9,18 @@ export default function SignUp()    {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    const navigation = useNavigation();
     return (
+        
         <View style={styles.container}>
-            
+            <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
+                <Image
+                source={require('../assets/icon.png')}
+                style={{ flex: 1 }}
+                resizeMode="contain"
+                />
+            </Pressable>    
+        
                 
             <View style={styles.inputTextContainer}>
                 <View>
@@ -49,20 +56,13 @@ export default function SignUp()    {
                     <View style={styles.btnSignUp}>
                         <Button style={styles.btnSignUpText} uppercase = {true} title ="Sign Up" color = "#01a37b"
                         onPress={() => _onPressButton(email, password,navigation)}/>
-                    
                     </View>
             </View>
-
-
-
-
         </View>
 
     );
 
 }
-
-//192.168.1.22:5000
 
 function _onPressButton (email,password,navigation) {
     fetch('http://localhost:5000/signnup', {
@@ -74,9 +74,6 @@ function _onPressButton (email,password,navigation) {
     .then(data => { data.result === "true" ? navigation.navigate('Welcome') : alert("wrong details") });
     
 }
-
-
-
 
 const styles = StyleSheet.create({
 
@@ -130,6 +127,11 @@ const styles = StyleSheet.create({
         width: 330,
         height: 150,
 
+    },
+    backImage: {
+        width: 350,
+        height: 150,
+        marginLeft: 25,
     },
 
 })

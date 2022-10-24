@@ -1,5 +1,5 @@
 import React, { useEffect,useState ,TouchableOpacity} from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Platform } from "react-native";
+import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Pressable, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -23,13 +23,17 @@ export default function App({  })  {
     const navigation = useNavigation();
     
     return (
+        
         <View style={styles.container}>
-            <View style={styles.backImage} >
-            <Image
+
+            <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
+                <Image
                 source={require('../assets/icon.png')}
                 style={{ flex: 1 }}
-                resizeMode="contain" />
-            </View>
+                resizeMode="contain"
+                />
+            </Pressable>   
+            
                 <View style={styles.blackScreen}>
                     <View style={styles.featuredDetails} > 
                         <View style={styles.welcomeImage} >
@@ -39,7 +43,6 @@ export default function App({  })  {
                                 resizeMode="contain" />
                         </View>
                     </View>
-
 
 
                     <View style={styles.columnContainer}>
@@ -74,11 +77,9 @@ export default function App({  })  {
                                 />
                                 </View>
                     </View>
-                    
                 
                 </View>
-                
-                
+             
         </View>
                 
     
@@ -106,8 +107,6 @@ const PickerOS = () => {
 
 
 
-
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -131,7 +130,6 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         ...Platform.select({
             android: {marginLeft: 40, width: 230, height: 300,},
-
         })
        
     },
@@ -254,5 +252,4 @@ const styles = StyleSheet.create({
         height: 800,
         
     },
-
 });

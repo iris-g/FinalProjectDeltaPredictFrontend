@@ -1,5 +1,13 @@
 import { useState } from 'react';
 
+
+
+/** 
+ name: fetch_from_server
+ Page: Home
+ Description: This function POST to server list of stock sector and receive the data abut the stocks.
+**/
+
 export  async  function fetch_from_server(type,url){
       const response = await fetch('http://localhost:5000/' + url, {
         method: type, 
@@ -10,8 +18,11 @@ export  async  function fetch_from_server(type,url){
      return json
     }
   
-    
-
+/** 
+ name: fetch_clock
+ Page: Home
+ Description: This function POST to server list of stock sector and receive the data abut the stocks.
+**/
 
 export async function fetch_clock(){
     const request = require('request');
@@ -31,8 +42,14 @@ export async function fetch_clock(){
         const json = await response.json()
 
         return json
-
 }
+
+/** 
+ name: fetchData
+ Page: SectorStockScreen
+ Description: This function POST to server list of stock sector and receive the data abut the stocks.
+**/
+
 export async function fetchData(symbol){
     const response = await fetch('http://localhost:5000/fundamental', {
         method:  'POST', 
@@ -42,8 +59,14 @@ export async function fetchData(symbol){
     const json = await response.json()
 
     return json
-
 }
+
+/** 
+ name: fetcSectorData
+ Page: SectorStockScreen
+ Description: This function POST to server list of stock sector and receive the data abut the stocks.
+**/
+
 export async function fetcSectorData(sector){
     const response = await fetch('http://localhost:5000/getSectorStocks', {
         method:  'POST', 
@@ -53,9 +76,14 @@ export async function fetcSectorData(sector){
     const json = await response.json()
 
     return json
-
-
 }
+
+/** 
+ name: fetchFavoritesData
+ Page: FavoriteStocks
+ Description: This function POST to server the email of the user and receive the user favorite list.
+**/
+
 export async function fetchFavoritesData(userEmail){
     const response = await fetch('http://localhost:5000/favoritesData', {
         method:  'POST', 
@@ -65,7 +93,7 @@ export async function fetchFavoritesData(userEmail){
     const json = await response.json()
 
     return json
-
-
 }
+
+
 export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData} ;
