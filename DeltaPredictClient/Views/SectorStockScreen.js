@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import React from "react";
 import {fetcSectorData} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
-import { StyleSheet,ActivityIndicator,Platform ,StatusBar,ScrollView,SafeAreaView,FlatList} from 'react-native';
+import { StyleSheet,ActivityIndicator,Platform ,StatusBar,ScrollView,SafeAreaView,Pressable,FlatList} from 'react-native';
 import { useInterval } from "react-use";
 import { Badge,Button,Card  ,Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
@@ -44,145 +44,82 @@ const sector_name = useRoute();
     useInterval(() => {
 
       fetch_Data(sector_name)
-    },  9000// Delay in milliseconds or null to stop it
+    },  7000// Delay in milliseconds or null to stop it
     
     )
 
+    function _onPressButton (symbol) { // On press button its transition to stock page.
+      console.log(symbol)
+      navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
+  }
+
   return (
-    <View style={styles.container}> 
-    <View style={styles.blackScreen}>
-    <View style={styles.centered}>
-    <Searchbar 
-        style={{height: 40}}
-        placeholder="enter symbol"
-        type="text"
-        justifyContent= "center"
-        alignItems= "center"
-        value={searchQuery}
-          onChangeText={onChangeSearch}
-          onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
-            otherParam: searchQuery,
-          }) : ""}
-      />
+    <View style={styles.container}>
+      
+      <View style={styles.centeredSearch}>
+          <Searchbar 
+              style={{height: 40}}
+              placeholder="enter symbol"
+              type="text"
+              justifyContent= "center"
+              alignItems= "center"
+              value={searchQuery}
+              onChangeText={onChangeSearch}
+              onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
+          /> 
       </View>
-        </View>
-      <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-      <Text style={{ color: 'white', fontSize: 20, flex: 4 }}>TICKER                  COMPANY               PRICE           VOLUME      CHANGE </Text>
-      <FlatList 
-              data={Object.values(stockData).map(({ Ticker,Company, Price,Volume,Change }) => (
-        <p key={Company}> {Ticker},                  {Company},                 {Price},               {Volume},    {Change}</p>
-      ))}
-              renderItem={(data) => {
+      
+      
+      
+        <FlatList style={styles.flat}
+          data={Object.values(stockData).map(({ Ticker,Company, Price,Volume,Change }) => (
+          <p key={Ticker}> {Ticker},                  {Company},                 {Price},               {Volume},    {Change}</p>
+          ))}
+                renderItem={(stockData) => {
                 return (
                 <View style={styles.listItem}>
-                <Text>{data.item}</Text>
+                <Pressable onPress={(item) => _onPressButton(stockData.item)}><Text style={styles.textList}>{stockData.item}</Text></Pressable>
                 </View>
                 );}}    
-            />
-
-
-      {/* <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> COMPANY               PRICE           VOLUME      CHANGE </Text>
-        <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> {  Object.values(stockData).map(({ Company, Price,Volume,Change }) => (
-        <p key={Company}> {Company},         {Price},         {Volume},    {Change}</p>
-      ))} </Text> */}
-      <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
-      </ScrollView>
-      </SafeAreaView>
+        
+              />
+      
+      
+      
     </View>
   );
 }
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1e222d",
-    justifyContent: "space-between",
-  },
-  stocksBlock: {
-    flexDirection: "column",
-    marginBottom: 10,
-    margainLeft: 10,
-    backgroundColor: "#1e222d",
-    flex: 8,
-  },
-  listItem: {
-    backgroundColor: "grey",
-    borderWidth: 1,
-    borderColor: "#333",
-    padding: 25,
-  },
-  row: {
-    flexDirection: "row",
-    marginBottom: 10,
-    justifyContent: "space-between",
-    margainLeft: 10,
-    backgroundColor: "#1e222d",
-    flex: 2,
-  },
-  featuredDetails: {
-    flexDirection: "row",
-    backgroundColor: "#1e222d",
-    flexDirection: "row",
-    marginLeft: 25,
-    marginVertical: 40,
-    marginTop: 50,
-    marginBottom: 200,
-     ...Platform.select({
-        android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
-
-    })
-},
-scrollView: {
-  backgroundColor: '#1e222d"',
-  marginHorizontal: 20,
-},
-  title: {
-    paddingTop: 5,
-    color: "white",
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  detailedBlock: {
-    flex: 5,
-    backgroundColor: "#1e222d",
-    justifyContent: "space-between",
-  },
-  paragraph: {
-    fontSize: 16,
-    fontWeight: 'italic',
-    color: "white",
-    textAlign: 'left',
-    padding: 20
-  },
-
-  featuredDetails: {
-    flexDirection: "row",
-    backgroundColor: "#1e222d",
-    color: "white",
-    flexDirection: "row",
-    marginRight: 100,
-    marginVertical: 40,
-    marginTop: 50,
-    marginBottom: 200,
-
-},
-  centered: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#1e222d",
-  marginTop: 20,
-},
-  blackScreen: {
-      flexDirection: "row",
-      alignItems: 'left',
-      backgroundColor: "#1e222d",
-      
-  },
+    container: {
+      flex: 1,
+      backgroundColor: "#131722",
+      justifyContent: 'flex-start',
+    },
+    flat:{
+      backgroundColor: "#131722",
+      marginTop: 22,
+      marginLeft: 50,
+      marginRight:50,
+      marginBottom:50,
+    },
+    listItem: {
+      borderWidth: 1,
+      marginTop: 20,
+      backgroundColor: "#362b1d",
+    },
+    textList:{
+      color: '#dc7518',
+      fontSize: 25,
+    },
+    centeredSearch: {
+      flex: 1,
+      alignItems: "center",
+      backgroundColor: "#131722",
+      marginTop: 50,
+      margin: 35,
+    },
 });
 
 
