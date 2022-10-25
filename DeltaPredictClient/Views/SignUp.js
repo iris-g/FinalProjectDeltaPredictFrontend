@@ -24,7 +24,7 @@ export default function SignUp()    {
                 
             <View style={styles.inputTextContainer}>
                 <View>
-                    <Text style={styles.HaedLineText}> Sign Up to ΔPredict</Text>
+                    <Text style={styles.HeadLineText}> Sign Up to ΔPredict</Text>
                 </View>
                 <View style={styles.inputView}>
                     <TextInput style={styles.TextInput}
@@ -83,13 +83,15 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
 
-    HaedLineText: {
+    HeadLineText: {
         marginBottom: 45,
         margin: 'auto',
-        fontSize: 30,
+        fontSize: 35,
         fontWeight: "bold",
         color: 'white',
         justifyContent: 'flex-start',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputTextContainer: {
         flex: 1, 
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#50535e',
         width: "18%",
-        height: "4.5%",
+        height: "8%",
     },
     TextInput: {
         height: 50,

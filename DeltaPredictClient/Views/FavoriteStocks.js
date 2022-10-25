@@ -35,7 +35,7 @@ export default function FavoriteStocks({route, navigation})    {
         }
         useInterval(() => {
             fetch_Data(user)
-        },  8000 // Delay in milliseconds or null to stop it
+        },  7000 // Delay in milliseconds or null to stop it
         )
 
         function _onPressButton (symbol) { // On press button its transition to stock page.
@@ -69,9 +69,9 @@ export default function FavoriteStocks({route, navigation})    {
         </View>
 
     );
+}
 
-
-}const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#131722",
@@ -85,8 +85,10 @@ export default function FavoriteStocks({route, navigation})    {
       },
       centeredSearch: {
         flex: 1,
-        justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#131722",
+        marginTop: 50,
+        margin: 35,
         
       },
 });

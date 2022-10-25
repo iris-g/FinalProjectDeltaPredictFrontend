@@ -134,7 +134,7 @@ useInterval(() => {
       <View style={styles.centered}>
       <Searchbar 
         style={{height: 40}}
-        placeholder=""
+        placeholder="enter symbol"
         type="text"
         value={searchQuery}
           onChangeText={onChangeSearch}
