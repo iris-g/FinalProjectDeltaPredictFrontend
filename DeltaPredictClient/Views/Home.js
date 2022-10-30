@@ -127,37 +127,55 @@ useInterval(() => {
 )
 
     
-    return (
+  return (
 
-      <View style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.blackScreen}>
-      <View style={styles.centered}>
-      <Searchbar 
-        style={{height: 40}}
-        placeholder="enter symbol"
-        type="text"
-        value={searchQuery}
-          onChangeText={onChangeSearch}
-          onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
-            otherParam: searchQuery,
-          }) : ""}
-      /> 
-        </View>
-        </View>
-        <h1 style={{ color: 'white', fontSize: 23}}>  {market}</h1>
-        <View style={styles.blackScreen}>
-          <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Most Active:{  Object.values(activeStocks).map(({ close, symbol }) => (
-        <p key={close}> {symbol} : {close} </p>
-      ))} </Text>
-      <Text style={{ color: 'white', fontSize: 20, flex: 4 }}> Top Losers:{  Object.values(loserStocks).map(({ close, symbol }) => (
-        <p key={close}> {symbol} : {close} </p>
-      ))} </Text>
-          <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> Top Gainers: { Object.values(gainerStocks).map(({ close, symbol }) => (
-        <p key={close}> {symbol} : {close} </p>
-      ))} </Text>
+        <View style={styles.centered}>
+          <Searchbar 
+            style={{height: 40}}
+            placeholder="enter symbol"
+            type="text"
+            value={searchQuery}
+            onChangeText={onChangeSearch}
+            onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
+                otherParam: searchQuery,
+              }) : ""}
+          /> 
         </View>
       </View>
-    );
+
+      <h1 style={{color: '#b2b5be', fontSize: 23, marginTop: 30, marginLeft: 30}}>  {market}</h1>
+
+        <View style={styles.blackScreen}>
+            <View style={{margin: 10, flex: 0.33}}>
+              <Text style={styles.subTitle}>  Most Active  </Text>
+              <Text style={{color: 'white', fontSize: 20, alignSelf: "center" }}> { Object.values(activeStocks).map(({ close, symbol }) => (
+                <p key={close}> {symbol} : {close} </p>
+                ))} 
+              </Text>
+            </View>
+            
+            <View style={{margin: 10, flex: 0.333}}>
+              <Text style={styles.subTitle}>  Top Losers  </Text>
+              <Text style={{ color: 'white', fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
+                <p key={close}> {symbol} : {close} </p>
+                ))} 
+              </Text>
+            </View>
+
+            <View style={{margin: 10, flex: 0.333}}>
+              <Text style={styles.subTitle}>  Top Gainers  </Text>
+              <Text style={{ color: 'white', fontSize: 20, alignSelf: "center" }}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
+                <p key={close}> {symbol} : {close} </p>
+                ))}
+              </Text>
+            </View>
+
+        </View>
+
+      </View>
+  );
 
 
 }
@@ -165,27 +183,27 @@ useInterval(() => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#1e222d",
+      backgroundColor: "#131722",
       paddingTop: StatusBar.currentHeight,
     },
-    scrollView: {
-      backgroundColor: "#131722",
-      marginHorizontal: 20,
-    },
-    text: {
-      fontSize: 42,
-    },
     blackScreen: {
-        flexDirection: "row",
-        backgroundColor: "#1e222d",
-        marginLeft:20
-        
+      flexDirection: "row",
+      marginLeft:20
+    },
+    subTitle: {
+      backgroundColor: "#307d7e",
+      color: '#131822',
+      borderRadius: 10,
+      borderWidth: 3,
+      borderColor: '#1e222d',
+      fontSize: 25,
+      fontWeight: 'bold',
+      alignSelf: "center",
     },
     centered: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "#1e222d",
       marginTop: 50,
     },
   });

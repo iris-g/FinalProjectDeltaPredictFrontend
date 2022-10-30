@@ -1,7 +1,7 @@
 import React, { useEffect,useState ,TouchableOpacity} from "react";
 import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Pressable, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from "react-native-vector-icons/Ionicons";
 
 //check if login details are correct in DB
 function _onPressButton (email,password,navigation) {
@@ -48,6 +48,7 @@ export default function App({  })  {
                     <View style={styles.columnContainer}>
                             <Text style={styles.baseText}> Login </Text>
                                 <View style={styles.inputView}>
+                                <Icon style={{color: 'white', padding: 15, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
                                 <TextInput
                                 style={styles.TextInput}
                                 placeholder="Email."
@@ -57,6 +58,7 @@ export default function App({  })  {
                                 </View>
 
                                 <View style={styles.inputView}>
+                                <Icon style={{color: 'white' ,padding: 15, position: 'absolute',}} name="lock-closed-outline" size={20} color="#000"/>
                                 <TextInput
                                 style={styles.TextInput}
                                 placeholder="Password."
@@ -124,7 +126,6 @@ const styles = StyleSheet.create({
     },
     columnContainer: {
         flex: 0.5,
-        
         borderRadius: 10,
         justifyContent: 'flex-start',
         flexDirection: "column",
@@ -150,6 +151,7 @@ const styles = StyleSheet.create({
     },
     inputView: {
         backgroundColor: "#131722",
+        flexDirection: "row",
         borderRadius: 10,
         marginTop: 20,
         marginRight: 450,
@@ -171,6 +173,7 @@ const styles = StyleSheet.create({
         height: 50,
         flex: 1,
         padding: 10,
+        paddingLeft: 50,
         borderColor: "grey",
         color: 'white', 
         ...Platform.select({

@@ -1,41 +1,59 @@
 
 import React from "react";
-import { StyleSheet, Text, View,Button ,Pressable} from 'react-native';
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { StyleSheet, Text, View,Button ,Pressable, Image} from 'react-native';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import Home from "./Home.js";
 import SectorStockScreen from "./SectorStockScreen.js"
 import FavoriteStocks from "./FavoriteStocks"
 import { color } from "react-native-reanimated";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from "react-native-vector-icons/Ionicons";
 
 
-//var yahooFinance = require('yahoo-finance');
+
 
 
 const Drawer = createDrawerNavigator();
 
 
-// function FavoritesScreen() {
-//     return (
-//         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//             <Text>favorites Screen</Text>
-//         </View>
-//     );
-// }
+const DrawerContent = (props) => {
+    return (
+        <View>
+            <View style={{ flexDirection: 'row' }}>
+                    <Image style={{ flex: 0.8, width: 100, height: 80, margin: 20, }} resizeMode="contain" source={require('../assets/ImageForDrawer_rev.png')} />
+            </View>
+
+            <View>
+                <DrawerContentScrollView>
+                    <DrawerItemList {...props} />
+                </DrawerContentScrollView>
+            </View>
+            <View style={{ flexDirection: "row", marginTop: 400, marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
+                <Icon name={"exit-outline"} size={20} style= {{padding: 5, paddingRight: 75, position:'absolute', right: 0, color: 'white'}}/>
+                <Button title = "logout " uppercase={false} color = "#1e222d" style={{paddingRight: 100 }} onPress={() => {navigation.navigate('Welcome')} }/>
+            </View> 
+        </View>
+            
+  )};
+
+
+
+ 
 const DrawerNavigator = ({route,navigation}) => { //##
     //console.log(route.params); //##
     
+
     return (
-         <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
+        <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
            
-             drawerStyle: {backgroundColor: '#1e222d',},         //Change color  backgrund  drawer
-             headerTintColor: "white",        // Change color hamburger icon to white
-            
-            
-             }} >
-
+            drawerStyle: {backgroundColor: '#1e222d'},         //Change color  background  drawer
+            headerTintColor: "white",        // Change color hamburger icon to white
+            }}
+            drawerContent = {(props)=> <DrawerContent {...props}/>}
+        >   
         
-
+        
+        
         <Drawer.Screen name="Home" component={Home} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
@@ -45,7 +63,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},          
+          headerStyle: { backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -60,7 +78,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},
+          headerStyle: { backgroundColor: '#1e222d'},
           drawerItemStyle: {color: 'white'},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -75,7 +93,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},          
+          headerStyle: { backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -89,7 +107,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},          
+          headerStyle: { backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -103,7 +121,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},          
+          headerStyle: { backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -117,7 +135,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},          
+          headerStyle: { backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -131,7 +149,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: { backgroundColor: '#131722'},          
+          headerStyle: { backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -145,7 +163,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
                     />
                 ),
           headerTitleStyle: {color: 'white', fontSize: 18,},
-          headerStyle: {backgroundColor: '#131722'},          
+          headerStyle: {backgroundColor: '#1e222d'},          
           drawerItemStyle: {color: 'white', fontSize: 18,},
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
@@ -155,21 +173,6 @@ const DrawerNavigator = ({route,navigation}) => { //##
     );
 }
 
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#131722",
-        justifyContent: 'flex-start',
-        // ...Platform.select({
-        //     android: {backgroundColor: '#FFFFFF',},
-
-        // })
-    },
- 
-
-});
 
 
 export default DrawerNavigator;
