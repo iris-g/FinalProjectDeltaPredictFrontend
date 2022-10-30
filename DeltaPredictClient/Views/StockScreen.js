@@ -4,30 +4,12 @@ import { Text, View } from 'react-native';
 import React from "react";
 import {fetchData} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
-import { StyleSheet,ActivityIndicator,Platform ,StatusBar} from 'react-native';
+import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
 import { useInterval } from "react-use";
 import { Badge,Button,Card  ,Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS, 
-
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
+ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
 
 
@@ -128,47 +110,58 @@ const handleValue = (value) => {
 
   return (
     <View style={styles.container}> 
-    <View style={styles.stocksBlock}>
-    <View style={styles.centered}>
-    <Searchbar 
-        style={{height: 40}}
-        placeholder="enter symbol"
-        type="text"
-        justifyContent= "center"
-        alignItems= "center"
-        value={searchQuery}
-          onChangeText={onChangeSearch}
-          onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
-            otherParam: searchQuery,
-          }) : ""}
-      /> 
-        </View>
-    
-    <Text style={styles.title}> {  
-        <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}    <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]}   </Text> 
-        <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}   </Text> </p>
-       
-        </>
-      } </Text> 
-      <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
-      <View style={styles.blackScreen}>
-      <View style={styles.featuredDetails}>
-      <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-            <><p>   {'\n'} volume : {data["volume"]} {'\n'} Average volume : {data["averageVolume"]}  {'\n'} Market cap : {data["marketCap"]} {'\n'}  52 weeks high : {data["fiftyTwoWeekHigh"]}  {'\n'}52 weeks low : {data["fiftyTwoWeekLow"]} {'\n'}Industry : {data["industry"]}   {'\n'} Prev Close {data["previousClose"]} {'\n'} recommendation: {data["recommendation"]} {'\n'}  P/C Ratio : {data["P/C"]} {'\n'} P/E : {data["peRatio"]} </p>
-            </>
-          } </Text> 
-          </View>
-          <View style={styles.graphContainer}>
-          <Line  data={prices}  width={100}  height={300} options={{
-            maintainAspectRatio: false, }}
+        <Pressable onPress={() => {navigation.navigate('Home')}} style={styles.backImage}>
+              <Image
+              source={require('../assets/icon.png')}
+              style={{ flex: 1 }}
+              resizeMode="contain"
+              />
+          </Pressable>   
 
-  />
-    </View>
-    </View>
-      <View style={styles.detailedBlock}>
-      <Paragraph style={styles.featuredDetails}>{data["info"]}</Paragraph>
-          </View>
-          </View>
+          <View style={styles.centered}>
+            <Searchbar 
+                style={{height: 40}}
+                placeholder="enter symbol"
+                type="text"
+                justifyContent= "center"
+                alignItems= "center"
+                value={searchQuery}
+                onChangeText={onChangeSearch}
+                onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
+                    otherParam: searchQuery,
+                  }) : ""}
+              /> 
+            </View>
+            <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
+            <Text style={styles.title}> {  
+                <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
+                    <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
+                    <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}</Text> </p>
+                </>}
+            </Text> 
+      <View style={{backgroundColor: '#131722'}}>
+
+      
+        <View style={styles.blackScreen}>
+                <View style={styles.featuredDetails}>
+                  <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
+                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} {'\n'} recommendation:    {data["recommendation"]} {'\n'} P/C Ratio:    {data["P/C"]} {'\n'} P/E:   {data["peRatio"]} </p>
+                    </>
+                  } </Text> 
+                </View>
+
+                <View style={styles.graphContainer}>
+                    <Line  data={prices}  width={100}  height={300} options={{
+                      maintainAspectRatio: false, }}
+                />
+                </View>
+            
+              
+        </View>
+        <View style={styles.detailedBlock}>
+              <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
+        </View>
+      </View>
     </View>
   );
 }
@@ -176,40 +169,28 @@ const handleValue = (value) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1e222d",
+    backgroundColor: "#131722",
     justifyContent: "space-between",
     paddingTop: StatusBar.currentHeight,
   },
   stocksBlock: {
     flexDirection: "column",
     marginBottom: 10,
-    margainLeft: 30,
-    backgroundColor: "#1e222d",
-    flex: 8,
-  },
-  row: {
-    flexDirection: "row",
-    marginBottom: 10,
-    justifyContent: "space-between",
-    margainLeft: 10,
-    backgroundColor: "#1e222d",
-    flex: 2,
+    marginLeft: 30,
   },
   featuredDetails: {
-    flexDirection: "row",
-    backgroundColor: "#1e222d",
-    flexDirection: "row",
-    marginLeft: 25,
+    flex: 0.4,
+    alignItems: "Left",
+    marginLeft: 50,
     marginVertical: 40,
     marginTop: 50,
-    marginBottom: 200,
      ...Platform.select({
         android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
 
     })
-},
+  },
   title: {
-    paddingTop: 5,
+    paddingTop: 2,
     color: "white",
     fontSize: 30,
     fontWeight: "bold",
@@ -218,9 +199,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   detailedBlock: {
-    flex: 5,
-    backgroundColor: "#1e222d",
-    justifyContent: "space-between",
+    backgroundColor: "#131722",
+    margin: 50,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#1e222d',
+    
   },
   paragraph: {
     fontSize: 16,
@@ -230,38 +214,27 @@ const styles = StyleSheet.create({
     padding: 20
   },
   graphContainer: {
-    width: 850,
-    height: 590,
-    justifyContent: 'flex-start',
-    marginTop: 10,
-    marginBottom: 5,
-    marginLeft: 250,
-    flexDirection: "column",
-    
+    flex: 0.6,
+    width: 300,
+    height: 600,
+    alignItems: "center",
+    margin: 20,
+    marginRight: 150,
   },
-  featuredDetails: {
-    flexDirection: "row",
-    backgroundColor: "#1e222d",
-    color: "white",
-    flexDirection: "row",
-    marginRight: 100,
-    marginVertical: 40,
-    marginTop: 50,
-    marginBottom: 200,
-
-},
   centered: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#1e222d",
-  marginTop: 50,
-},
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
   blackScreen: {
-      flexDirection: "row",
-      alignItems: 'left',
-      backgroundColor: "#1e222d",
-      
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  backImage: {
+    width: 350,
+    height: 150,
+    marginLeft: 25,
   },
 });
 

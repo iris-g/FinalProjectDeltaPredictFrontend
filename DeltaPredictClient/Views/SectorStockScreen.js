@@ -21,8 +21,7 @@ function SectorStockScreen({ route, navigation }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
 
-
-const sector_name = useRoute();
+  const sector_name = useRoute();
 
 
   async function fetch_Data(text) {
@@ -41,6 +40,7 @@ const sector_name = useRoute();
     } catch (error) {
     } 
     }
+    
     useInterval(() => {
 
       fetch_Data(sector_name)
@@ -51,7 +51,7 @@ const sector_name = useRoute();
     function _onPressButton (symbol) { // On press button its transition to stock page.
       console.log(symbol)
       navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
-  }
+    }
 
   return (
     <View style={styles.container}>
@@ -103,11 +103,13 @@ const styles = StyleSheet.create({
       marginLeft: 50,
       marginRight:50,
       marginBottom:50,
+      
     },
     listItem: {
       borderWidth: 1,
       marginTop: 20,
       backgroundColor: "#362b1d",
+      borderColor: "#373a45",
     },
     textList:{
       color: '#dc7518',
