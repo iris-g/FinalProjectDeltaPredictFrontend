@@ -1,7 +1,7 @@
 import React, { useEffect,useState ,TouchableOpacity} from "react";
 import {StyleSheet, Text, View, TextInput, Button, Image, Pressable} from "react-native";
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from "react-native-vector-icons/Ionicons";
 
 
 
@@ -24,9 +24,10 @@ export default function SignUp()    {
                 
             <View style={styles.inputTextContainer}>
                 <View>
-                    <Text style={styles.HaedLineText}> Sign Up to ΔPredict</Text>
+                    <Text style={styles.HeadLineText}> Sign Up to ΔPredict</Text>
                 </View>
                 <View style={styles.inputView}>
+                    <Icon style={{color: 'white', padding: 15, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
                     <TextInput style={styles.TextInput}
                         placeholder="Email."
                         placeholderTextColor="#fff"
@@ -35,6 +36,7 @@ export default function SignUp()    {
                 </View>
 
                 <View style={styles.inputView}>
+                    <Icon style={{color: 'white' ,padding: 15, position: 'absolute',}} name="lock-closed-outline" size={20} color="#000"/>
                     <TextInput style={styles.TextInput}
                         placeholder="Password."
                         placeholderTextColor="#fff"
@@ -44,6 +46,7 @@ export default function SignUp()    {
                 </View>
                 
                 <View style={styles.inputView}>
+                    <Icon style={{color: 'white' ,padding: 15, position: 'absolute',}} name="lock-closed-outline" size={20} color="#000"/>
                     <TextInput style={styles.TextInput}
                         placeholder="Confirm Password."
                         placeholderTextColor="#fff"
@@ -83,13 +86,15 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
 
-    HaedLineText: {
+    HeadLineText: {
         marginBottom: 45,
         margin: 'auto',
-        fontSize: 30,
+        fontSize: 35,
         fontWeight: "bold",
         color: 'white',
         justifyContent: 'flex-start',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     inputTextContainer: {
         flex: 1, 
@@ -105,12 +110,13 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#50535e',
         width: "18%",
-        height: "4.5%",
+        height: "8%",
     },
     TextInput: {
         height: 50,
         flex: 1,
         padding: 10,
+        paddingLeft: 50,
         borderColor: "grey",
         color: 'white',
     },
