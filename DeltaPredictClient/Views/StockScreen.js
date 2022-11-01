@@ -1,8 +1,9 @@
 
+
 import { Text, View } from 'react-native';
 
 import React from "react";
-import {fetchData} from "../client/deltaPredicrClient";
+import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
 import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
 import { useInterval } from "react-use";
@@ -17,18 +18,19 @@ function StockScreen({ route, navigation }) {
 
   const [data, setData] = useState(""); 
   const [loading, setLoad] = useState(true); 
+  const [predictedPrices,setPredicted]=useState(""); 
   const [searchQuery, setSearchQuery] = React.useState('');
-
+  const timestamps = [];
   const onChangeSearch = query => setSearchQuery(query);
   /* 2. Get the param */
   const {  otherParam } = route.params;
-  console.log(otherParam)
+  console.log(getCurrentDate)
   const prices = {
-    labels: ["Jan", "Feb", "Mar"],
+    labels: ["0", "1", "2","3","4","5","6","7","8","9"],
     datasets: [
       {
-        label: "Predicted prise",
-        data: [33, 53, 85],
+        label: "Predicted price",
+        data: predictedPrices,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
         fill: false
@@ -74,17 +76,60 @@ const options = {
     ]
   }
 }
+const getCurrentDate=()=>{
+ let list =[];
+ for(let i=0;i<10;i++)
+    var date = new Date().getDate()+i;
+    var month = new Date().getMonth() ;
+    var year = new Date().getFullYear();
+    list.push(date + '-' + month + '-' + year)
+  //Alert.alert(date + '-' + month + '-' + year);
+  // You can turn it in to your desired format
+  //return date + '-' + month + '-' + year;//format: d-m-y;
+  return list
+}
+async function fetch_Arima_Data() {
+  try { 
+    
+    const promise = new Promise((resolve, reject) => {
+      resolve(fetchArima(otherParam) )
+      
+    })
+  
+    promise.then((response) => {
+      console.log(response["mean"])
+      var obj=null; 
+      const arimaData =new Array();
+      //console.log(response)
+      for(let i=0;i<Object.keys(response["mean"]).length;i++)
+      {
+          obj= JSON.parse(response["mean"][i])
+          arimaData.push(obj)
+      }
+      console.log(arimaData)
+      setPredicted(arimaData)
+      
+    })
+  } catch (error) {
+  } 
+  }
+
+  //call function to get arima prediction only when new stock was searched
+  useEffect(() => {
+    setPredicted("")
+    setData("")
+    fetch_Arima_Data()
+
+  },  [otherParam]// Delay in milliseconds or null to stop it
+  
+  )
 const handleColors = (value) => {
   let val =(parseFloat(value))
   if (val > 0) return "green";
   if (val < 0) return "red";
   
 };
-const handleValue = (value) => {
-  let val =(parseFloat(value))
-  return ( val *100 ).toFixed(2).toString();
 
- };
   async function fetch_Data(text) {
     try { 
       
@@ -95,7 +140,6 @@ const handleValue = (value) => {
       promise.then((response) => {
         setData(response)
         setLoad(false)
-        console.log(response)
         
       })
     } catch (error) {
@@ -127,9 +171,9 @@ const handleValue = (value) => {
                 alignItems= "center"
                 value={searchQuery}
                 onChangeText={onChangeSearch}
-                onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
+                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{
                     otherParam: searchQuery,
-                  }) : ""}
+                  }) : ""}}
               /> 
             </View>
             <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 

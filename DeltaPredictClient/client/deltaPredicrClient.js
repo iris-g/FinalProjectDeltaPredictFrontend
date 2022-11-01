@@ -94,6 +94,17 @@ export async function fetchFavoritesData(userEmail){
 
     return json
 }
+export async function fetchArima(symbol){
+    const response = await fetch('http://localhost:5000/arimaResults', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Symbol:symbol  }) 
+    })
+    const json = await response.json()
+
+    return json
+}
 
 
-export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData} ;
+
+export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,fetchArima} ;
