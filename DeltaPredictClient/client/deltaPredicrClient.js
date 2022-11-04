@@ -50,11 +50,12 @@ export async function fetch_clock(){
  Description: This function POST to server list of stock sector and receive the data abut the stocks.
 **/
 
-export async function fetchData(symbol){
+export async function fetchData(symbol,Signal){
     const response = await fetch('http://localhost:5000/fundamental', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({  Symbol:symbol  }) 
+        body: JSON.stringify({  Symbol:symbol  }) ,
+        signal:Signal,
     })
     const json = await response.json()
 
@@ -94,6 +95,17 @@ export async function fetchFavoritesData(userEmail){
 
     return json
 }
+export async function fetchArima(symbol){
+    const response = await fetch('http://localhost:5000/arimaResults', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Symbol:symbol  }) 
+    })
+    const json = await response.json()
+
+    return json
+}
 
 
-export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData} ;
+
+export default{fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,fetchArima} ;

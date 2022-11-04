@@ -1,8 +1,8 @@
 
-import { Text, View } from 'react-native';
 
+import { Text, View } from 'react-native';
 import React from "react";
-import {fetchData} from "../client/deltaPredicrClient";
+import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
 import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
 import { useInterval } from "react-use";
@@ -14,21 +14,46 @@ import { Searchbar } from 'react-native-paper';
 
 
 function StockScreen({ route, navigation }) {
-
+  const {  otherParam } = route.params;
+ // console.log("other =" + otherParam)
   const [data, setData] = useState(""); 
   const [loading, setLoad] = useState(true); 
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [predictedPrices,setPredicted]=useState(""); 
+  const [searchQuery, setSearchQuery] = React.useState(otherParam);
+  const [timestamps, setStamps] = React.useState(otherParam);
+  let controller;
+  //console.log(getCurrentDate);
+  const onChangeSearch = query => {
+    setSearchQuery(query);
+    setPredicted("");
+    
+    try{
+    if (controller) {
 
-  const onChangeSearch = query => setSearchQuery(query);
+          controller.abort();
+          console.log("Download aborted");
+        }
+
+    }catch( error) {
+      if (error.name === "AbortError") {
+        console.log("Operation timed out");
+      } else {
+        console.error(err);
+      }
+      
+  //console.log("*"+searchQuery);
+ 
+}};
   /* 2. Get the param */
-  const {  otherParam } = route.params;
-  console.log(otherParam)
+ // const {  otherParam } = route.params;
+ 
+  console.log("serach query =" + searchQuery)
   const prices = {
-    labels: ["Jan", "Feb", "Mar"],
+    labels: timestamps,
     datasets: [
       {
-        label: "Predicted prise",
-        data: [33, 53, 85],
+        label: "Predicted price",
+        data: predictedPrices,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
         fill: false
@@ -74,6 +99,82 @@ const options = {
     ]
   }
 }
+let newDate = new Date()
+newDate.setHours(0, 0, 0, 0);
+// ✅ Format a date to YYYY-MM-DD (or any other format)
+function padTo2Digits(num) {
+  return num.toString().padStart(2, '0');
+}
+
+function formatDate(date) {
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join('-');
+}
+
+// 👇️ 2022-01-18 (yyyy-mm-dd)
+console.log(formatDate(new Date()));
+let today = new Date();
+today.setHours(0, 0, 0, 0);
+let tomorrow =  new Date()
+tomorrow.setHours(0, 0, 0, 0);
+tomorrow.setDate(today.getDate() + 1)
+var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+ console.log(formatDate(nextweek));
+// date array
+var getDateArray = function(start, end) {
+
+  var
+    arr = new Array(),
+    dt = new Date(start);
+
+  while (dt <= end) {
+    arr.push(formatDate(new Date(dt)));
+    dt.setDate(dt.getDate() + 1);
+  }
+
+  return arr;
+
+}
+
+
+//GET DATA FOR ARIMA PREDICTION
+async function fetch_Arima_Data() {
+  try { 
+
+    const promise = new Promise((resolve, reject) => {
+      resolve(fetchArima(otherParam) )
+      
+    })
+  
+    promise.then((response) => {
+      
+      var obj=null; 
+      const arimaData =new Array();
+      //console.log(response)
+      for(let i=0;i<Object.keys(response["mean"]).length;i++)
+      {
+          obj= JSON.parse(response["mean"][i])
+          arimaData.push(obj)
+      }
+    
+      setPredicted(arimaData)
+      
+    })
+  } catch (error) {
+  } 
+  }
+
+  //call function to get arima prediction only when new stock was searched
+  useEffect(() => {
+    setStamps(getDateArray(tomorrow,nextweek));
+    fetch_Arima_Data()
+
+  },  []// Delay in milliseconds or null to stop it
+  
+  )
 const handleColors = (value) => {
   let befor = value
   let val =(parseFloat(value))
@@ -81,22 +182,21 @@ const handleColors = (value) => {
   if (val < 0) return "red";
   
 };
-const handleValue = (value) => {
-  let val =(parseFloat(value))
-  return ( val *100 ).toFixed(2).toString();
 
- };
   async function fetch_Data(text) {
+   controller = new AbortController();
+    const signal = controller.signal;
     try { 
-      
+      //console.log(text)
       const promise = new Promise((resolve, reject) => {
-        resolve(fetchData(text) )
+        resolve(fetchData(text,signal) )
       })
     
       promise.then((response) => {
-        setData(response)
+        //console.log(response)
+        if(response["symbol"] == searchQuery)
+          setData(response)
         setLoad(false)
-        console.log(response)
         
       })
     } catch (error) {
@@ -104,7 +204,7 @@ const handleValue = (value) => {
     }
     useInterval(() => {
 
-      fetch_Data(otherParam)
+      fetch_Data(searchQuery)
     },  3000// Delay in milliseconds or null to stop it
     
     )
@@ -128,9 +228,9 @@ const handleValue = (value) => {
                 alignItems= "center"
                 value={searchQuery}
                 onChangeText={onChangeSearch}
-                onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
+                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{
                     otherParam: searchQuery,
-                  }) : ""}
+                  }) : "";setLoad(true);}}
               /> 
             </View>
             <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
@@ -146,7 +246,7 @@ const handleValue = (value) => {
         <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} {'\n'} recommendation:    {data["recommendation"]} {'\n'} P/C Ratio:    {data["P/C"]} {'\n'} P/E:   {data["peRatio"]} </p>
+                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} {'\n'} P/C Ratio:    {data["P/C"]} {'\n'} P/E:   {data["peRatio"]} </p>
                     </>
                   } </Text> 
                 </View>
