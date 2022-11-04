@@ -50,11 +50,12 @@ export async function fetch_clock(){
  Description: This function POST to server list of stock sector and receive the data abut the stocks.
 **/
 
-export async function fetchData(symbol){
+export async function fetchData(symbol,Signal){
     const response = await fetch('http://localhost:5000/fundamental', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({  Symbol:symbol  }) 
+        body: JSON.stringify({  Symbol:symbol  }) ,
+        signal:Signal,
     })
     const json = await response.json()
 
