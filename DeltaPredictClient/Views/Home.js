@@ -13,8 +13,9 @@ function Home(){
     const [gainerStocks, setGainers] = useState(""); 
     const [market, setMarket] = useState(""); 
     const [searchQuery, setSearchQuery] = React.useState('');
-
-  const onChangeSearch = query => setSearchQuery(query);
+    const save = new Map([["PARA", 0], ["EXR", 0], ["EL", 0], ["DVN", 0], ["TRMB", 0], ["TEL", 0]])
+    const [currentPrice, setAPrice] = useState([]);
+    const onChangeSearch = query => setSearchQuery(query);
 
 //get app navigation
 const navigation = useNavigation();
@@ -126,6 +127,63 @@ useInterval(() => {
 3000
 )
 
+const handleColors = (newPrice, stockSymbol) => {
+  
+  const myNextList = [...currentPrice];
+  if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){
+    console.log(stockSymbol)
+   
+    currentPrice.push({ symbol: stockSymbol, price: newPrice })
+      // Items after the insertion point:
+      
+   
+  }else{
+    console.log(currentPrice.length)
+ 
+    const artwork = myNextList.find(a=>a.symbol === stockSymbol)
+    if(artwork.symbol == stockSymbol) {
+      if(artwork.price <= newPrice ){
+        console.log(newPrice)
+        artwork.price = newPrice
+        console.log(artwork.price)
+        return "green"
+      }else{
+        currentPrice.price = newPrice
+        return "red";
+      }
+    }
+  }
+
+ 
+  
+
+
+    // if(save.get(symbol) == 1){
+    //   save.set(symbol, val)
+    //   return "red";
+    // }
+    // if(save.get(symbol) == 0)
+    //   return "green";
+    // console.log("----------------------------")
+    // console.log(save.get(symbol))
+    // console.log("----------------------------")
+    //   if(!(save.has(symbol,price)))
+    //    save.set(symbol, price)
+    
+    //   if (price >= parseFloat(save.get(symbol))){
+    //     save.set(symbol, val)
+    //     console.log(save.size)
+    //     console.log(symbol)
+    //     console.log(save.get(symbol))
+    //     return "green";
+    //   }
+    //   if(price < parseFloat(save.get(symbol))){
+    //     save.set(symbol, val)
+    //     return "red";
+    //   } 
+
+};
+
     
   return (
 
@@ -158,8 +216,9 @@ useInterval(() => {
             
             <View style={{margin: 10, flex: 0.333}}>
               <Text style={styles.subTitle}>  Top Losers  </Text>
-              <Text style={{ color: 'white', fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
-                <p key={close}> {symbol} : {close} </p>
+              <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
+                <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
+                
                 ))} 
               </Text>
             </View>
