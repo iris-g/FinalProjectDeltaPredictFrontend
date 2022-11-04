@@ -176,6 +176,7 @@ async function fetch_Arima_Data() {
   
   )
 const handleColors = (value) => {
+  let befor = value
   let val =(parseFloat(value))
   if (val > 0) return "green";
   if (val < 0) return "red";
