@@ -148,12 +148,10 @@ async function fetch_Arima_Data() {
       resolve(fetchArima(otherParam) )
       
     })
-  
     promise.then((response) => {
       
       var obj=null; 
       const arimaData =new Array();
-      //console.log(response)
       for(let i=0;i<Object.keys(response["mean"]).length;i++)
       {
           obj= JSON.parse(response["mean"][i])
