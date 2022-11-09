@@ -1,26 +1,32 @@
-import React, { useEffect,useState ,TouchableOpacity} from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Pressable, Platform } from "react-native";
+import React, { useState } from "react";
+import {StyleSheet, Text, View, TextInput, Button, Image, Pressable, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
+import { _onPressButtonLogin } from "../client/deltaPredicrClient"
 
-//check if login details are correct in DB
-function _onPressButton (email,password,navigation) {
-    fetch('http://localhost:5000/authenticate', {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({name: email, Password: password})
-    })
-    .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {otherParam: email,}) : alert("wrong details") });
-    
-}
+
+
 export default function App({  })  {
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    
-
+    const [password, setPassword] = useState(""); 
+    const [eyePress, setEyePress] = useState("eye-off-outline")
+    const [changePasswordVisibility, setViisibility] = useState(true)
     //get app navigation
     const navigation = useNavigation();
+
+    function _onPressButtonEye(){
+        console.log(eyePress)
+        if(eyePress == "eye-off-outline"){
+            setEyePress("eye-outline") 
+            setViisibility(false)
+        }
+        else{
+            setEyePress("eye-off-outline")
+            setViisibility(true)
+            console.log(changePasswordVisibility)
+       }
+    }
+
     
     return (
         
@@ -48,35 +54,35 @@ export default function App({  })  {
                     <View style={styles.columnContainer}>
                             <Text style={styles.baseText}> Login </Text>
                                 <View style={styles.inputView}>
-                                <Icon style={{color: 'white', padding: 15, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
-                                <TextInput
-                                style={styles.TextInput}
-                                placeholder="Email."
-                                placeholderTextColor="#fff"
-                                onChangeText={(email) => setEmail(email)}
-                                />
+                                    <Icon style={{color: 'white', padding: 13, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
+                                    <TextInput
+                                    style={styles.TextInput}
+                                    placeholder="Email"
+                                    placeholderTextColor="#fff"
+                                    onChangeText={(email) => setEmail(email)}
+                                    />
                                 </View>
-
                                 <View style={styles.inputView}>
-                                <Icon style={{color: 'white' ,padding: 15, position: 'absolute',}} name="lock-closed-outline" size={20} color="#000"/>
-                                <TextInput
-                                style={styles.TextInput}
-                                placeholder="Password."
-                                placeholderTextColor="#fff"
-                                secureTextEntry={true}
-                                onChangeText={(password) => setPassword(password)}
-                                />
+                                <Pressable style={{ position: 'absolute', right: 0}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 13,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
+                                    <Icon style={{color: 'white' ,padding: 13, position: 'absolute',}} name="lock-closed-outline" size={20} color="#000"/>
+                                    <TextInput
+                                    style={styles.TextInput}
+                                    placeholder="Password"
+                                    placeholderTextColor="#fff"
+                                    secureTextEntry={changePasswordVisibility}
+                                    onChangeText={(password) => setPassword(password)}
+                                    />
                                 </View>
                                 <View style={styles.btnSignUp}>
 
                                 <Button title ="Sign Up" color = "#131822"
-                                onPress={() => navigation.navigate('SignUp')}
-                                />
+                                    onPress={() => navigation.navigate('SignUp')}
+                                    />
                                 </View>
                                 <View style={styles.btnStart}>
-                                <Button title = "Start!" color = "#307D7E"
-                                onPress={() => _onPressButton(email,password,navigation)}
-                                />
+                                    <Button title = "Start!" color = "#307D7E"
+                                    onPress={() => _onPressButtonLogin(email,password,navigation)}
+                                    />
                                 </View>
                     </View>
                 
@@ -122,10 +128,10 @@ const styles = StyleSheet.create({
     blackScreen: {
         flexDirection: "row",
         backgroundColor: "#131822",
-        
     },
     columnContainer: {
         flex: 0.5,
+        alignItems: "center",
         borderRadius: 10,
         justifyContent: 'flex-start',
         flexDirection: "column",
@@ -140,8 +146,7 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: -1, height: 0 },
         textShadowRadius: 10,
         margin: 10,
-        marginLeft: 415,
-        marginTop: 230,
+        marginTop: 220,
         fontSize: 22,
         fontWeight: 'bold',
         ...Platform.select({
@@ -150,15 +155,12 @@ const styles = StyleSheet.create({
         })
     },
     inputView: {
-        backgroundColor: "#131722",
         flexDirection: "row",
         borderRadius: 10,
         marginTop: 20,
-        marginRight: 450,
-        marginLeft: 300,
+        width: "30%",
         borderWidth: 2,
         borderColor: '#72bcc4',
-       
     },
     screenContainer: {
         flex: 1,
@@ -200,6 +202,7 @@ const styles = StyleSheet.create({
     },
     featuredDetails: {
         flex: 0.5,
+        alignSelf: "center",
          ...Platform.select({
             android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
 
@@ -223,7 +226,7 @@ const styles = StyleSheet.create({
     },
     btnSignUp:{
         width: "10%",
-        marginLeft: 520,
+        marginLeft: '20%',
         marginTop: 10,
         color: "#1e222d",
         ...Platform.select({
@@ -233,7 +236,6 @@ const styles = StyleSheet.create({
     },
     btnStart:{
         width: "16%",
-        marginLeft: 373,
         marginTop: 35,
         ...Platform.select({
             android: {width: 130, height: 80 , marginLeft: 135, marginTop: -30,},
@@ -251,8 +253,9 @@ const styles = StyleSheet.create({
         })
     },
     welcomeImage:{
-        width: 1200,
-        height: 800,
+        
+        width: '100%',
+        height: 700,
         
     },
 });
