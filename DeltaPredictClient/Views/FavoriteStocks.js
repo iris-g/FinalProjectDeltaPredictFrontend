@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image, ImageBackground, Platform, FlatList } from "react-native";
+import React, { useState } from "react";
+import {StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
 import {fetchFavoritesData} from "../client/deltaPredicrClient";
+import ScrollViewIndicator from 'react-native-scroll-indicator';
+import { Table, Row} from 'react-native-table-component';
 
 
-export default function FavoriteStocks({route, navigation})    {
+export default function FavoriteStocks({route, navigation}) {
     
     const [searchQuery, setSearchQuery] = React.useState('');
     const onChangeSearch = query => setSearchQuery(query);
     const [stocks, setData] = useState(''); 
-    const [selectedId, setSelectedId] = useState(null);
+    const header = ['Price', 'Symbol', 'Volume', 'dayLow', 'dayHigh']
     const user = route.params;
 
 
@@ -21,26 +23,24 @@ export default function FavoriteStocks({route, navigation})    {
                 promise.then((response) => {
                 var obj=null; 
                 const stocksData =new Array();
-                console.log(response)
                 for(let i=0;i<Object.keys(response).length;i++)
                 {
                     obj= JSON.parse(response[i])
                     stocksData.push(obj)
                 }
-                console.log(stocksData)
                 setData(stocksData)
              })
-        } catch (error) {
-        } 
-        }
-        useInterval(() => {
-            fetch_Data(user)
+        } catch (error) {} 
+    
+    }
+     useInterval(() => {
+        fetch_Data(user)
         },  7000 // Delay in milliseconds or null to stop it
-        )
+    )
 
-        function _onPressButton (symbol) { // On press button its transition to stock page.
-            navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
-        }
+    function _onPressButton (symbol) { // On press button its transition to stock page.
+        navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
+    }
 
     return (
         <View style={styles.container}>
@@ -55,21 +55,39 @@ export default function FavoriteStocks({route, navigation})    {
                 onChangeText={onChangeSearch}
                 onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
                 /> 
-        </View>
+            </View>
+
+            <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 50, height: 32}}>
+                <Row textStyle={{color: 'white', textAlign: 'center' , fontSize: 20, fontWeight: 'bold'}} flexArr={[0.5, 2, 1, 1, 1]} style={{height: 30}} data={header} />
+                
+            </Table>
+              
+        <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
             <FlatList 
-                data={ Object.values(stocks).map(({ currentPrice, symbol,volume, dayLow,dayHigh }) => (
-                <p key={symbol}> {symbol} , price: {currentPrice}, volume: {volume}, day low: {dayLow}, day high: {dayHigh}</p>))}
+                data={ Object.values(stocks).map(({ currentPrice, symbol, volume, dayLow, dayHigh }) => (
+                <p key={symbol}> 
+                    <View style={{width:150}}><Text>{currentPrice}</Text></View> 
+                    <View style={{ flexDirection: "row", position: "absolute", marginLeft: 150, alignSelf: "center", flex: 0.2, }}><Text style={{ textAlign: 'center'}}>{symbol}</Text></View> 
+                    <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft: 500}}><Text style={{ textAlign: 'center'}}>{volume}</Text></View> 
+                    <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center",marginLeft:150 }}><Text style={{textAlign: 'center'}}>{dayLow}</Text></View>
+                    <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft:150 }}><Text style={{ textAlign: 'center'}}>{dayHigh}</Text></View>  
+                </p>))}
                 renderItem={(stocks) => {
                     return (
                         <View style={styles.listItem}>
-                            <Button title={stocks.item} onPress={(item) => _onPressButton(stocks.item)}></Button>
+                            <Pressable onPress={(item) => _onPressButton(stocks.item)}><Text style={styles.textList}>{stocks.item}</Text></Pressable>
                         </View>
                 );}}
              />
-        </View>
+         </ScrollViewIndicator>  
+        
+    </View>
 
     );
 }
+
+
+
 
 const styles = StyleSheet.create({
     container: {
@@ -77,12 +95,27 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         justifyContent: 'flex-start',
     },
+    flat: {
+        backgroundColor: "#131722",
+        marginTop: 20,
+        marginLeft: 20,
+        marginRight: 20,
+        marginBottom: 50,
+        alignSelf: "center",
+      },
     listItem: {
         borderWidth: 1,
-        padding: 25,
-        flex:0.5,
-        alignItems: 'space-between'
+        marginTop: 10,
+        backgroundColor: "#1e222d",
+        paddingLeft: 20,
       },
+    textList:{
+        color: '#faf9fb',
+        fontSize: 20,
+        flex: 0.2,
+        alignItems: "center",
+        justifyContent: 'center'
+    },
       centeredSearch: {
         flex: 1,
         alignItems: "center",

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { StyleSheet, Text, View,Button ,Pressable, Image} from 'react-native';
+import { StyleSeet, Text, View,Button ,Pressable,Dimensions, Image} from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import Home from "./Home.js";
 import SectorStockScreen from "./SectorStockScreen.js"
@@ -11,9 +11,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 
 
-
-
 const Drawer = createDrawerNavigator();
+
 
 
 const DrawerContent = (props) => {
@@ -28,10 +27,10 @@ const DrawerContent = (props) => {
                     <DrawerItemList {...props} />
                 </DrawerContentScrollView>
             </View>
-            <View style={{ flexDirection: "row", marginTop: 400, marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ flexDirection: "row", marginTop: '90%', marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
                 <Icon name={"exit-outline"} size={20} style= {{padding: 5, paddingRight: 75, position:'absolute', right: 0, color: 'white'}}/>
                 <Button title = "logout " uppercase={false} color = "#1e222d" style={{paddingRight: 100 }} onPress={() => {navigation.navigate('Welcome')} }/>
-            </View> 
+            </View>  
         </View>
             
   )};
@@ -41,8 +40,7 @@ const DrawerContent = (props) => {
  
 const DrawerNavigator = ({route,navigation}) => { //##
     //console.log(route.params); //##
-    
-
+ 
     return (
         <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
            

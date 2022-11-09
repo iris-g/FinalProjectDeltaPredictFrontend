@@ -2,7 +2,7 @@ import React, { useEffect,useState ,TouchableOpacity} from "react";
 import {StyleSheet, Text, View, TextInput, Button, Image, Pressable} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
-
+import {_onPressButtonsignUp} from '../client/deltaPredicrClient'
 
 
 export default function SignUp()    {
@@ -58,7 +58,7 @@ export default function SignUp()    {
                 </View>
                     <View style={styles.btnSignUp}>
                         <Button style={styles.btnSignUpText} uppercase = {true} title ="Sign Up" color = "#01a37b"
-                        onPress={() => _onPressButton(email, password,navigation)}/>
+                        onPress={() => _onPressButtonsignUp(email, password,navigation)}/>
                     </View>
             </View>
         </View>
@@ -67,16 +67,7 @@ export default function SignUp()    {
 
 }
 
-function _onPressButton (email,password,navigation) {
-    fetch('http://localhost:5000/signnup', {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({Email: email, Password: password})
-    })
-    .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Welcome') : alert("wrong details") });
-    
-}
+
 
 const styles = StyleSheet.create({
 
