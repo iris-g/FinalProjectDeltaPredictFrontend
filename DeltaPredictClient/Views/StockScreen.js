@@ -1,4 +1,5 @@
 
+
 import { Text, View } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
