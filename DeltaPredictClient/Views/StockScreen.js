@@ -1,17 +1,16 @@
 
 
-import { Text, View } from 'react-native';
+import { Text, View ,Button, Dimensions  } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
 import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
 import { useInterval } from "react-use";
-import { Badge,Button,Card  ,Paragraph } from 'react-native-paper';
+import { Badge,Card  ,Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
-
 
 function StockScreen({ route, navigation }) {
   const {  otherParam } = route.params;
@@ -19,10 +18,37 @@ function StockScreen({ route, navigation }) {
   const [data, setData] = useState(""); 
   const [loading, setLoad] = useState(true); 
   const [predictedPrices,setPredicted]=useState(""); 
+  const [graphPredictedPrices,setgraphPredicted]=useState(""); 
+  const [weeklyPredictedPrices,setWeeklyPredicted]=useState(""); 
   const [searchQuery, setSearchQuery] = React.useState(otherParam);
-  const [timestamps, setStamps] = React.useState(otherParam);
+  const [dailyTimestamps, setStamps] = React.useState(otherParam);
+  const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
   let controller;
-  //console.log(getCurrentDate);
+  let marketStatus;
+  const { exchange } = require('trading-calendar');
+  const usa = exchange('new-york');
+
+//check if stock exchange is open and update text
+if(usa.isTradingNow()){
+  marketStatus="NasdaqGS Real Time Price in USD"
+  // market is open right now
+} else {
+  // market is closed right now
+  marketStatus="Price as of last close";
+}
+
+const onWeekButtonPress = query => {
+  console.log(graphPredictedPrices)
+  setStamps(weeklyTimestamps)
+  setgraphPredicted(weeklyPredictedPrices);
+
+};
+const onDailyButtonPress = query => {
+  setStamps(dailyTimestamps)
+  setgraphPredicted(predictedPrices);
+
+};
+
   const onChangeSearch = query => {
     setSearchQuery(query);
     setPredicted("");
@@ -40,20 +66,18 @@ function StockScreen({ route, navigation }) {
       } else {
         console.error(err);
       }
-      
-  //console.log("*"+searchQuery);
+
  
 }};
-  /* 2. Get the param */
- // const {  otherParam } = route.params;
+
+
  
-  console.log("serach query =" + searchQuery)
   const prices = {
-    labels: timestamps,
+    labels: dailyTimestamps,
     datasets: [
       {
         label: "Predicted price",
-        data: predictedPrices,
+        data: graphPredictedPrices,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
         fill: false
@@ -114,31 +138,26 @@ function formatDate(date) {
   ].join('-');
 }
 
-// 👇️ 2022-01-18 (yyyy-mm-dd)
-console.log(formatDate(new Date()));
-let today = new Date();
-today.setHours(0, 0, 0, 0);
-let tomorrow =  new Date()
-tomorrow.setHours(0, 0, 0, 0);
-tomorrow.setDate(today.getDate() + 1)
-var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
- console.log(formatDate(nextweek));
-// date array
-var getDateArray = function(start, end) {
+  // 👇️ 2022-01-18 (yyyy-mm-dd)
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let tomorrow =  new Date()
+  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setDate(today.getDate() + 1)
+  var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+ // console.log(formatDate(nextweek));
+  // date array
+  var getDateArray = function(start, end) {
+  var arr = new Array();
+  var  dt = new Date(start);
+    while (dt <= end) {
+      arr.push(formatDate(new Date(dt)));
+      dt.setDate(dt.getDate() + 1);
+    }
 
-  var
-    arr = new Array(),
-    dt = new Date(start);
-
-  while (dt <= end) {
-    arr.push(formatDate(new Date(dt)));
-    dt.setDate(dt.getDate() + 1);
-  }
-
-  return arr;
+    return arr;
 
 }
-
 
 //GET DATA FOR ARIMA PREDICTION
 async function fetch_Arima_Data() {
@@ -148,29 +167,35 @@ async function fetch_Arima_Data() {
       resolve(fetchArima(otherParam) )
       
     })
+  
     promise.then((response) => {
-      
+      //console.log(response)
       var obj=null; 
-      const arimaData =new Array();
-      for(let i=0;i<Object.keys(response["mean"]).length;i++)
+      const dailyArimaData =new Array();
+      const weeklyArimaData =new Array();
+      //console.log(response)
+      for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
       {
-          obj= JSON.parse(response["mean"][i])
-          arimaData.push(obj)
+          obj= JSON.parse(response["daily"]["mean"][i])
+          dailyArimaData.push(obj)
       }
-    
-      setPredicted(arimaData)
+      setgraphPredicted(dailyArimaData);
+      console.log(response["weekly"])
+      setPredicted(dailyArimaData);
+      setWeeklyPredicted(response["weekly"]["mean"]);
+      setweeklyStamps((response["weekly"]["dates"]));
       
     })
   } catch (error) {
   } 
   }
 
-  //call function to get arima prediction only when new stock was searched
+  //call function to get arima prediction  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
     fetch_Arima_Data()
 
-  },  []// Delay in milliseconds or null to stop it
+  },  []
   
   )
 const handleColors = (value) => {
@@ -191,10 +216,10 @@ const handleColors = (value) => {
       })
     
       promise.then((response) => {
-        //console.log(response)
+        console.log(searchQuery)
         if(response["symbol"] == searchQuery)
           setData(response)
-        setLoad(false)
+          setLoad(false)
         
       })
     } catch (error) {
@@ -216,7 +241,6 @@ const handleColors = (value) => {
               resizeMode="contain"
               />
           </Pressable>   
-
           <View style={styles.centered}>
             <Searchbar 
                 style={{height: 40}}
@@ -239,21 +263,27 @@ const handleColors = (value) => {
                 </>}
             </Text> 
       <View style={{backgroundColor: '#131722'}}>
-
-      
         <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} {'\n'} P/C Ratio:    {data["P/C"]} {'\n'} P/E:   {data["peRatio"]} </p>
+                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
                     </>
                   } </Text> 
                 </View>
-
+               
+                <View style={{ flexDirection:"column" ,alignItems:"top"}}>
+                      <Button   uppercase = {true}  color="#131722" title ="daily" 
+                        onPress={() => onDailyButtonPress()}/>
+                      <Button   uppercase = {true}  color="#131722"  title ="weekly"
+                        onPress={() => onWeekButtonPress()}/>
+                </View> 
                 <View style={styles.graphContainer}>
                     <Line  data={prices}  width={100}  height={300} options={{
                       maintainAspectRatio: false, }}
                 />
                 </View>
+            
+             
             
               
         </View>
@@ -266,6 +296,14 @@ const handleColors = (value) => {
 }
 
 const styles = StyleSheet.create({
+  firstContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: "#131722",
@@ -288,6 +326,14 @@ const styles = StyleSheet.create({
 
     })
   },
+  btnSignUpText:{
+    textTransform:'capitalize',
+    width: 330,
+    height: 150,
+    color:"white",
+
+
+},
   title: {
     paddingTop: 2,
     color: "white",
@@ -297,6 +343,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  btnSignUp:{
+    width: "100%",
+    height: 50,
+    marginTop: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textTransform: 'lowercase',
+},
   detailedBlock: {
     backgroundColor: "#131722",
     margin: 50,
