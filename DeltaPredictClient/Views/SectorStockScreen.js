@@ -24,7 +24,7 @@ function SectorStockScreen({ route, navigation }) {
   const sector_name = useRoute();
   const header = ['Symbol', 'Company', 'Volume', 'Price', 'Change']
 
-
+ 
   async function fetch_Data(text) {
     try { 
       
@@ -72,9 +72,8 @@ function SectorStockScreen({ route, navigation }) {
           /> 
       </View> 
       
-      <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 50, height: 32}}>
-                <Row textStyle={{color: 'white', textAlign: 'center' , fontSize: 20, fontWeight: 'bold'}} flexArr={[0.5, 2, 1, 1, 1]} style={{height: 30}} data={header} />
-                
+      <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32,width: 1550, alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
+            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 20, fontWeight: 'bold'}} flexArr={[0.5, 2, 1, 1, 1]} style={{ flexDirection: "row", width: 1550, alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
       </Table>
               
       <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
@@ -109,6 +108,8 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: "#131722",
+      justifyContent: 'flex-start',
+      alignItem: "center",
     },
     flat:{
       backgroundColor: "#131722",

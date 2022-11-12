@@ -27,16 +27,14 @@ export default function App({  })  {
        }
     }
 
-    
     return (
-        
+       
         <View style={styles.container}>
-
-            <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
+            <Pressable  onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
                 <Image
-                source={require('../assets/icon.png')}
-                style={{ flex: 1 }}
-                resizeMode="contain"
+                    source={require('../assets/icon.png')}
+                    style={{ flex: 1 ,backgroundColor: "#131722"}}
+                    resizeMode="contain"
                 />
             </Pressable>   
             
@@ -45,16 +43,15 @@ export default function App({  })  {
                         <View style={styles.welcomeImage} >
                             <Image
                                 source={require('../assets/Welcome.png')}
-                                style={{ flex: 1 }}
+                                style={{ flex: 1, backgroundColor: "#131722"}}
                                 resizeMode="contain" />
                         </View>
                     </View>
 
-
                     <View style={styles.columnContainer}>
                             <Text style={styles.baseText}> Login </Text>
-                                <View style={styles.inputView}>
-                                    <Icon style={{color: 'white', padding: 13, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
+                            <View style={styles.inputView}>
+                                    <Icon style={{color: 'white', padding: 8, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
                                     <TextInput
                                     style={styles.TextInput}
                                     placeholder="Email"
@@ -63,8 +60,8 @@ export default function App({  })  {
                                     />
                                 </View>
                                 <View style={styles.inputView}>
-                                <Pressable style={{ position: 'absolute', right: 0}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 13,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
-                                    <Icon style={{color: 'white' ,padding: 13, position: 'absolute',}} name="lock-closed-outline" size={20} color="#000"/>
+                                    <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
+                                    <Icon style={{color: 'white' ,padding: 8, position: 'absolute',flexDirection: "row"}} name="lock-closed-outline" size={20} color="#000"/>
                                     <TextInput
                                     style={styles.TextInput}
                                     placeholder="Password"
@@ -74,45 +71,37 @@ export default function App({  })  {
                                     />
                                 </View>
                                 <View style={styles.btnSignUp}>
-
-                                <Button title ="Sign Up" color = "#131822"
-                                    onPress={() => navigation.navigate('SignUp')}
-                                    />
+                                    <Button title ="Sign Up" color = "#131822" onPress={() => navigation.navigate('SignUp')}/>
                                 </View>
                                 <View style={styles.btnStart}>
-                                    <Button title = "Start!" color = "#307D7E"
-                                    onPress={() => _onPressButtonLogin(email,password,navigation)}
-                                    />
+                                    <Button title = "Start!" color = "#307D7E" onPress={() => _onPressButtonLogin(email,password,navigation)}/>
                                 </View>
                     </View>
-                
-                </View>
-             
+                </View>    
         </View>
-                
+        
     
     );
 
 }
 
-const PickerOS = () => {
-    return Platform.OS === "android" ? (
-        <Text >
+// const PickerOS = () => {
+//     return Platform.OS === "android" ? (
+//         <Text >
            
         
-        </Text>
-    ) : (
-        <Text style={styles.descriptionText}>Delta predict is a stock market prediction app. 
-        Stock forecasts can be a helpful tool for making investment decisions. They can help you:{'\n'}dentify undervalued and overvalued stocks: when a stock's price is not in line with its fundamentals, it may be undervalued {'\n'}
-        or overvalued. Why buy an overvalued stock when you can buy an undervalued stock for less? This is where stock price targets can be helpful.
-        {'\n'}Make more informed investment decisions: it all comes down to making more informed investment decisions.{'\n'}
-        Stock forecasts can help you do just that. A good stock forecast can help you separate the wheat from the chaff.{'\n'}
-        With so many stocks to choose from, it can be challenging to know which ones are worth investing in.{'\n'}
-        A stock forecast can help you narrow down your options and make more informed investment decisions.
-        </Text>
-    );
-  };
-
+//         </Text>
+//     ) : (
+//         <Text style={styles.descriptionText}>Delta predict is a stock market prediction app. 
+//         Stock forecasts can be a helpful tool for making investment decisions. They can help you:{'\n'}dentify undervalued and overvalued stocks: when a stock's price is not in line with its fundamentals, it may be undervalued {'\n'}
+//         or overvalued. Why buy an overvalued stock when you can buy an undervalued stock for less? This is where stock price targets can be helpful.
+//         {'\n'}Make more informed investment decisions: it all comes down to making more informed investment decisions.{'\n'}
+//         Stock forecasts can help you do just that. A good stock forecast can help you separate the wheat from the chaff.{'\n'}
+//         With so many stocks to choose from, it can be challenging to know which ones are worth investing in.{'\n'}
+//         A stock forecast can help you narrow down your options and make more informed investment decisions.
+//         </Text>
+//     );
+//   };
 
 
 const styles = StyleSheet.create({
@@ -120,14 +109,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#131822",
         justifyContent: 'flex-start',
+        alignItem: "center",
         // ...Platform.select({
         //     android: {backgroundColor: '#FFFFFF',},
-
         // })
     },
     blackScreen: {
+        backgroundColor: "#131722",
         flexDirection: "row",
         backgroundColor: "#131822",
+        alignItem: "center",
     },
     columnContainer: {
         flex: 0.5,
@@ -135,12 +126,12 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'flex-start',
         flexDirection: "column",
-        ...Platform.select({
-            android: {marginLeft: 40, width: 230, height: 300,},
-        })
-       
+        // ...Platform.select({
+        //     android: {marginLeft: 40, width: 230, height: 300,},
+        // })
     },
     baseText: {
+        backgroundColor: "#131722",
         color: '#ffffff',
         textShadowColor: 'black', 
         textShadowOffset: { width: -1, height: 0 },
@@ -149,41 +140,29 @@ const styles = StyleSheet.create({
         marginTop: 220,
         fontSize: 22,
         fontWeight: 'bold',
-        ...Platform.select({
-            android: {marginLeft: 75,},
-
-        })
+        // ...Platform.select({
+        //     android: {marginLeft: 75,},
+        // })
     },
     inputView: {
-        flexDirection: "row",
+        backgroundColor: "#131722",
         borderRadius: 10,
         marginTop: 20,
         width: "30%",
         borderWidth: 2,
         borderColor: '#72bcc4',
-    },
-    screenContainer: {
-        flex: 1,
-        justifyContent: "right",
-        padding: 10,
-        position: "right",
-        height: 50,
-        marginLeft: 1400,
-        marginBottom: 690,
+        alignSelf: "center",
     },
     TextInput: {
         height: 50,
         flex: 1,
         padding: 10,
         paddingLeft: 50,
+        borderRadius: 10,
         borderColor: "grey",
         color: 'white', 
-        ...Platform.select({
-            android: { color: 'white',flex: 0, height: 34, fontSize: 12,},
-
-        })
     },
-    loginBtn: {
+    loginBtn: {   
         width: "30%",
         borderRadius: 25,
         height: 50,
@@ -201,59 +180,35 @@ const styles = StyleSheet.create({
         flex: 3
     },
     featuredDetails: {
+        backgroundColor: "#131722",
         flex: 0.5,
-        alignSelf: "center",
-         ...Platform.select({
-            android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
-
-        })
-    },
-    appButtonContainer: {
-        elevation: 8,
-        backgroundColor: "#009688",
-        borderRadius: 10,
-        paddingVertical: 10,
-        alignItems: "right",
-        width: "30%",
-        paddingHorizontal: 50,
-    },
-    appButtonText: {
-        fontSize: 18,
-        color: "#fff",
-        fontWeight: "bold",
-        alignSelf: "center",
-        textTransform: "uppercase"
+        flexDirection: "row",
+        //  ...Platform.select({
+        //     android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
+        //  })
     },
     btnSignUp:{
+        backgroundColor: "#131722",
+        alignSelf: "center",
         width: "10%",
         marginLeft: '20%',
         marginTop: 10,
         color: "#1e222d",
-        ...Platform.select({
-            android: {width: 80, height: 80 , marginLeft: 235, marginTop: -130,},
-
-        })
     },
     btnStart:{
+        backgroundColor: "#131722",
+        alignSelf: "center",
         width: "16%",
         marginTop: 35,
-        ...Platform.select({
-            android: {width: 130, height: 80 , marginLeft: 135, marginTop: -30,},
-
-        })
     },
     backImage: {
+        backgroundColor: "#131722",
         width: 350,
         height: 150,
         marginLeft: 25,
-
-        ...Platform.select({
-            android: {width: 5, height: 60, marginLeft: 8, marginTop: 50,},
-
-        })
     },
     welcomeImage:{
-        
+        backgroundColor: "#131722",
         width: '100%',
         height: 700,
         

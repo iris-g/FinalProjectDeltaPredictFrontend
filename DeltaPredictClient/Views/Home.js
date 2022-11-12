@@ -145,7 +145,7 @@ const handleColors = (newPrice, stockSymbol) => {
 
     
   return (
-
+ 
     <View style={styles.container}>
       <View style={styles.blackScreen}>
         <View style={styles.centered}>
@@ -161,7 +161,7 @@ const handleColors = (newPrice, stockSymbol) => {
           /> 
         </View>
       </View>
-      <View style={{ flexDirection: 'row', margin: 35}}>
+      <View style={{backgroundColor: "#131722", flexDirection: 'row', margin: 35}}>
         <Icon name="time-outline" size={33} color="white"/>
         <Text style={{color: 'white', marginLeft: 15, fontSize: 25, fontWeight: 'bold',}}>
            {market}
@@ -169,7 +169,7 @@ const handleColors = (newPrice, stockSymbol) => {
       </View>
 
         <View style={styles.blackScreen}>
-            <View style={{margin: 10, flex: 0.33}}>
+            <View style={{backgroundColor: "#131722", margin: 10, flex: 0.33}}>
               <Text style={styles.subTitle}>  Most Active  </Text>
               <Text style={{color: 'white', fontSize: 20, alignSelf: "center" }}> { Object.values(activeStocks).map(({ close, symbol }) => (
                 <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
@@ -177,7 +177,7 @@ const handleColors = (newPrice, stockSymbol) => {
               </Text>
             </View>
             
-            <View style={{margin: 10, flex: 0.333}}>
+            <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
               <Text style={styles.subTitle}>  Top Losers  </Text>
               <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
                 <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
@@ -186,7 +186,7 @@ const handleColors = (newPrice, stockSymbol) => {
               </Text>
             </View>
 
-            <View style={{margin: 10, flex: 0.333}}>
+            <View style={{backgroundColor: "#131722", argin: 10, flex: 0.333}}>
               <Text style={styles.subTitle}>  Top Gainers  </Text>
               <Text style={{ color: 'white', fontSize: 20, alignSelf: "center" }}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
                 <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
@@ -206,9 +206,12 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: "#131722",
-      paddingTop: StatusBar.currentHeight,
+      justifyContent: 'flex-start',
+      alignItem: "center",
     },
     blackScreen: {
+      alignItem: "center",
+      backgroundColor: "#131722",
       flexDirection: "row",
       marginTop: 10,
       marginLeft: 20,
@@ -224,6 +227,7 @@ const styles = StyleSheet.create({
       alignSelf: "center",
     },
     centered: {
+      backgroundColor: "#131722",
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
