@@ -1,4 +1,8 @@
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fd7069c0451dd1a330545211814ad435226e3b70
 import { Text, View ,Button, Dimensions  } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
@@ -11,7 +15,6 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
-
 
 function StockScreen({ route, navigation }) {
   const {  otherParam } = route.params;
@@ -280,7 +283,11 @@ const handleColors = (value) => {
                     <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
                     </>
                   } </Text> 
+<<<<<<< HEAD
                   </View>
+=======
+                </View>
+>>>>>>> fd7069c0451dd1a330545211814ad435226e3b70
                
                 <View style={{ flexDirection:"column" ,alignItems:"top"}}>
                       <Button   uppercase = {true}  color="#131722" title ="daily" 
@@ -293,6 +300,13 @@ const handleColors = (value) => {
                       maintainAspectRatio: false, }}
                 />
                 </View>
+<<<<<<< HEAD
+=======
+            
+             
+            
+              
+>>>>>>> fd7069c0451dd1a330545211814ad435226e3b70
         </View>
         <View style={styles.detailedBlock}>
               <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
@@ -303,6 +317,14 @@ const handleColors = (value) => {
 }
  
 const styles = StyleSheet.create({
+  firstContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: "#131822",
@@ -321,6 +343,14 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     marginTop: 50,
   },
+  btnSignUpText:{
+    textTransform:'capitalize',
+    width: 330,
+    height: 150,
+    color:"white",
+
+
+},
   title: {
     flexDirection: "row", 
     paddingTop: 2,
@@ -331,6 +361,14 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignSelf: "center",
   },
+  btnSignUp:{
+    width: "100%",
+    height: 50,
+    marginTop: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textTransform: 'lowercase',
+},
   detailedBlock: {
     backgroundColor: "#131722",
     margin: 50,

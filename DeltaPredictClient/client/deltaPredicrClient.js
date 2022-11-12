@@ -83,6 +83,7 @@ Description: This function POST to server list of stock sector and receive the d
 **/
 
 export async function fetchData(symbol,Signal){
+
   const response = await fetch('http://localhost:5000/fundamental', {
       method:  'POST', 
       headers: { 'Content-Type': 'application/json' },
@@ -90,6 +91,7 @@ export async function fetchData(symbol,Signal){
       signal:Signal,
   })
   const json = await response.json()
+
 
   return json
 }
@@ -138,6 +140,18 @@ export async function fetchArima(symbol){
 
   return json
 }
+export async function fetchArima(symbol){
+    const response = await fetch('http://localhost:5000/arimaResults', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Symbol:symbol  }) 
+    })
+    const json = await response.json()
+
+    return json
+}
+
 
 
 export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,fetchArima} ;
+
