@@ -1,8 +1,4 @@
 
-<<<<<<< HEAD
-=======
-
->>>>>>> fd7069c0451dd1a330545211814ad435226e3b70
 import { Text, View ,Button, Dimensions  } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
