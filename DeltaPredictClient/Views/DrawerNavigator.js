@@ -21,7 +21,7 @@ const DrawerContent = (props) => {
             <View style={{ flexDirection: 'row' }}>
                     <Image style={{ flex: 0.8, width: 100, height: 80, margin: 20, }} resizeMode="contain" source={require('../assets/ImageForDrawer_rev.png')} />
             </View>
-
+ 
             <View>
                 <DrawerContentScrollView>
                     <DrawerItemList {...props} />

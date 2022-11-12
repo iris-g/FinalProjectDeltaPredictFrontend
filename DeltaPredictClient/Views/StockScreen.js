@@ -1,15 +1,16 @@
 
-import { Text, View } from 'react-native';
+import { Text, View ,Button, Dimensions  } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState,useReducer } from 'react'
 import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
 import { useInterval } from "react-use";
-import { Badge,Button,Card  ,Paragraph } from 'react-native-paper';
+import { Badge,Card  ,Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
+import Icon from "react-native-vector-icons/Ionicons";
 
 
 function StockScreen({ route, navigation }) {
@@ -18,10 +19,37 @@ function StockScreen({ route, navigation }) {
   const [data, setData] = useState(""); 
   const [loading, setLoad] = useState(true); 
   const [predictedPrices,setPredicted]=useState(""); 
+  const [graphPredictedPrices,setgraphPredicted]=useState(""); 
+  const [weeklyPredictedPrices,setWeeklyPredicted]=useState(""); 
   const [searchQuery, setSearchQuery] = React.useState(otherParam);
-  const [timestamps, setStamps] = React.useState(otherParam);
+  const [dailyTimestamps, setStamps] = React.useState(otherParam);
+  const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
   let controller;
-  //console.log(getCurrentDate);
+  let marketStatus;
+  const { exchange } = require('trading-calendar');
+  const usa = exchange('new-york');
+
+//check if stock exchange is open and update text
+if(usa.isTradingNow()){
+  marketStatus="NasdaqGS Real Time Price in USD"
+  // market is open right now
+} else {
+  // market is closed right now
+  marketStatus="Price as of last close";
+}
+
+const onWeekButtonPress = query => {
+  console.log(graphPredictedPrices)
+  setStamps(weeklyTimestamps)
+  setgraphPredicted(weeklyPredictedPrices);
+
+};
+const onDailyButtonPress = query => {
+  setStamps(dailyTimestamps)
+  setgraphPredicted(predictedPrices);
+
+};
+
   const onChangeSearch = query => {
     setSearchQuery(query);
     setPredicted("");
@@ -39,20 +67,18 @@ function StockScreen({ route, navigation }) {
       } else {
         console.error(err);
       }
-      
-  //console.log("*"+searchQuery);
+
  
 }};
-  /* 2. Get the param */
- // const {  otherParam } = route.params;
+
+
  
-  console.log("serach query =" + searchQuery)
   const prices = {
-    labels: timestamps,
+    labels: dailyTimestamps,
     datasets: [
       {
         label: "Predicted price",
-        data: predictedPrices,
+        data: graphPredictedPrices,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
         fill: false
@@ -113,31 +139,26 @@ function formatDate(date) {
   ].join('-');
 }
 
-// 👇️ 2022-01-18 (yyyy-mm-dd)
-console.log(formatDate(new Date()));
-let today = new Date();
-today.setHours(0, 0, 0, 0);
-let tomorrow =  new Date()
-tomorrow.setHours(0, 0, 0, 0);
-tomorrow.setDate(today.getDate() + 1)
-var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
- console.log(formatDate(nextweek));
-// date array
-var getDateArray = function(start, end) {
+  // 👇️ 2022-01-18 (yyyy-mm-dd)
+  let today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let tomorrow =  new Date()
+  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setDate(today.getDate() + 1)
+  var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
+ // console.log(formatDate(nextweek));
+  // date array
+  var getDateArray = function(start, end) {
+  var arr = new Array();
+  var  dt = new Date(start);
+    while (dt <= end) {
+      arr.push(formatDate(new Date(dt)));
+      dt.setDate(dt.getDate() + 1);
+    }
 
-  var
-    arr = new Array(),
-    dt = new Date(start);
-
-  while (dt <= end) {
-    arr.push(formatDate(new Date(dt)));
-    dt.setDate(dt.getDate() + 1);
-  }
-
-  return arr;
+    return arr;
 
 }
-
 
 //GET DATA FOR ARIMA PREDICTION
 async function fetch_Arima_Data() {
@@ -147,29 +168,35 @@ async function fetch_Arima_Data() {
       resolve(fetchArima(otherParam) )
       
     })
+  
     promise.then((response) => {
-      
+      //console.log(response)
       var obj=null; 
-      const arimaData =new Array();
-      for(let i=0;i<Object.keys(response["mean"]).length;i++)
+      const dailyArimaData =new Array();
+      const weeklyArimaData =new Array();
+      //console.log(response)
+      for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
       {
-          obj= JSON.parse(response["mean"][i])
-          arimaData.push(obj)
+          obj= JSON.parse(response["daily"]["mean"][i])
+          dailyArimaData.push(obj)
       }
-    
-      setPredicted(arimaData)
+      setgraphPredicted(dailyArimaData);
+      console.log(response["weekly"])
+      setPredicted(dailyArimaData);
+      setWeeklyPredicted(response["weekly"]["mean"]);
+      setweeklyStamps((response["weekly"]["dates"]));
       
     })
   } catch (error) {
   } 
   }
 
-  //call function to get arima prediction only when new stock was searched
+  //call function to get arima prediction  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
     fetch_Arima_Data()
 
-  },  []// Delay in milliseconds or null to stop it
+  },  []
   
   )
 const handleColors = (value) => {
@@ -190,10 +217,10 @@ const handleColors = (value) => {
       })
     
       promise.then((response) => {
-        //console.log(response)
+        console.log(searchQuery)
         if(response["symbol"] == searchQuery)
           setData(response)
-        setLoad(false)
+          setLoad(false)
         
       })
     } catch (error) {
@@ -215,7 +242,6 @@ const handleColors = (value) => {
               resizeMode="contain"
               />
           </Pressable>   
-
           <View style={styles.centered}>
             <Searchbar 
                 style={{height: 40}}
@@ -230,31 +256,43 @@ const handleColors = (value) => {
                   }) : "";setLoad(true);}}
               /> 
             </View>
-            <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
+            <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
+            <View style={{backgroundColor: "#131822",alignItems: "center"}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
                     <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
                     <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}</Text> </p>
                 </>}
             </Text> 
+            </View>
       <View style={{backgroundColor: '#131722'}}>
-
-      
         <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
+                  <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center" }}>
+                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => {navigation.navigate('Home')}}>
+                      <Icon style={{color: "#4bc0c0", fontWeight: 'bold', backgroundColor: "#1e3841"}} name="add-circle" size={20} color="#000"/>
+                      <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 20, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
+                    </Pressable>   
+                  </View>
+
+
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} {'\n'} P/C Ratio:    {data["P/C"]} {'\n'} P/E:   {data["peRatio"]} </p>
+                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
                     </>
                   } </Text> 
-                </View>
-
+                  </View>
+               
+                <View style={{ flexDirection:"column" ,alignItems:"top"}}>
+                      <Button   uppercase = {true}  color="#131722" title ="daily" 
+                        onPress={() => onDailyButtonPress()}/>
+                      <Button   uppercase = {true}  color="#131722"  title ="weekly"
+                        onPress={() => onWeekButtonPress()}/>
+                </View> 
                 <View style={styles.graphContainer}>
                     <Line  data={prices}  width={100}  height={300} options={{
                       maintainAspectRatio: false, }}
                 />
                 </View>
-            
-              
         </View>
         <View style={styles.detailedBlock}>
               <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
@@ -263,13 +301,13 @@ const handleColors = (value) => {
     </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#131722",
-    justifyContent: "space-between",
-    paddingTop: StatusBar.currentHeight,
+    backgroundColor: "#131822",
+    justifyContent: 'flex-start',
+    alignItem: "center",
   },
   stocksBlock: {
     flexDirection: "column",
@@ -282,19 +320,16 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginVertical: 40,
     marginTop: 50,
-     ...Platform.select({
-        android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
-
-    })
   },
   title: {
+    flexDirection: "row", 
     paddingTop: 2,
     color: "white",
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignSelf: "center",
   },
   detailedBlock: {
     backgroundColor: "#131722",
@@ -302,7 +337,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#1e222d',
-    
   },
   paragraph: {
     fontSize: 16,
@@ -315,13 +349,14 @@ const styles = StyleSheet.create({
     flex: 0.6,
     width: 300,
     height: 600,
+    alignSelf: "center",
     alignItems: "center",
     margin: 20,
     marginRight: 150,
   },
   centered: {
-    flex: 1,
-    justifyContent: "center",
+    backgroundColor: "#131822",
+    justifyContent: "flex-start",
     alignItems: "center",
     marginTop: 10,
   },
