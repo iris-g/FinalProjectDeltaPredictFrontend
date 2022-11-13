@@ -1,5 +1,7 @@
 
+
 import { Text, View ,Button } from 'react-native';
+
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
@@ -281,6 +283,7 @@ const handleColors = (value) => {
 
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
                     <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+
                     </>}
                   </Text> 
 
@@ -295,6 +298,7 @@ const handleColors = (value) => {
                         onPress={() => onWeekButtonPress()}/>
                   </View> 
                 </View>
+
 
             </View>
 
