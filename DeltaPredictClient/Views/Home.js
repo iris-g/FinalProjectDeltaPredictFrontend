@@ -8,7 +8,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useInterval } from "react-use";
 
 
-function Home(){
+function Home({route, navigation}){
     const [activeStocks, setActive] = React.useState("");
     const [loserStocks, setLosers] = useState(""); 
     const [gainerStocks, setGainers] = useState(""); 
@@ -17,10 +17,10 @@ function Home(){
     const [currentPrice, setAPrice] = useState([]);
     const [counter, setCounter] = useState(0)
     const onChangeSearch = query => setSearchQuery(query);
-    
-    
-    //get app navigation
-    const navigation = useNavigation();
+    const user = route.params;
+    console.log(user)
+    const [getUser, setUser] = useState(user);
+   
 
     async function getMarketData() {
         try { 
@@ -147,7 +147,7 @@ const handleColors = (newPrice, stockSymbol) => {
   return (
  
     <View style={styles.container}>
-      <View style={styles.blackScreen}>
+      
         <View style={styles.centered}>
           <Searchbar 
             style={{height: 40}}
@@ -155,46 +155,50 @@ const handleColors = (newPrice, stockSymbol) => {
             type="text"
             value={searchQuery}
             onChangeText={onChangeSearch}
-            onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{
-                otherParam: searchQuery,
-              }) : ""}
+            onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: getUser}) : ""}
           /> 
         </View>
-      </View>
-      <View style={{backgroundColor: "#131722", flexDirection: 'row', margin: 35}}>
-        <Icon name="time-outline" size={33} color="white"/>
-        <Text style={{color: 'white', marginLeft: 15, fontSize: 25, fontWeight: 'bold',}}>
-           {market}
-        </Text>
-      </View>
 
-        <View style={styles.blackScreen}>
-            <View style={{backgroundColor: "#131722", margin: 10, flex: 0.33}}>
-              <Text style={styles.subTitle}>  Most Active  </Text>
-              <Text style={{color: 'white', fontSize: 20, alignSelf: "center" }}> { Object.values(activeStocks).map(({ close, symbol }) => (
-                <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                ))} 
-              </Text>
-            </View>
-            
-            <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
-              <Text style={styles.subTitle}>  Top Losers  </Text>
-              <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
-                <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                
-                ))} 
-              </Text>
-            </View>
-
-            <View style={{backgroundColor: "#131722", argin: 10, flex: 0.333}}>
-              <Text style={styles.subTitle}>  Top Gainers  </Text>
-              <Text style={{ color: 'white', fontSize: 20, alignSelf: "center" }}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
-                <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                ))}
-              </Text>
-            </View>
-
+        <View style={{backgroundColor: "#131722"}}>
+          <View style={{backgroundColor: "#131722", flexDirection: 'row', margin: 35, alignItem: "center",}}>
+            <Icon name="time-outline" size={33} color="white"/>
+            <Text style={{color: 'white', marginLeft: 15, fontSize: 25, fontWeight: 'bold',}}>
+              {market}
+            </Text>
+          </View>
         </View>
+
+        <View style={{backgroundColor: "#131722"}}>
+          <View style={styles.blackScreen}>
+
+              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.33}}>
+                <Text style={styles.subTitle}>  Most Active  </Text>
+                <Text style={{color: 'white', fontSize: 20, alignSelf: "center" }}> { Object.values(activeStocks).map(({ close, symbol }) => (
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
+                  ))} 
+                </Text>
+              </View>
+              
+              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
+                <Text style={styles.subTitle}>  Top Losers  </Text>
+                <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
+                  
+                  ))} 
+                </Text>
+              </View>
+
+              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
+                <Text style={styles.subTitle}>  Top Gainers  </Text>
+                <Text style={{ color: 'white', fontSize: 20, alignSelf: "center" }}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
+                  ))}
+                </Text>
+              </View>
+
+          </View>
+        </View>
+        
 
       </View>
   );
@@ -213,8 +217,7 @@ const styles = StyleSheet.create({
       alignItem: "center",
       backgroundColor: "#131722",
       flexDirection: "row",
-      marginTop: 10,
-      marginLeft: 20,
+      margin:20
     },
     subTitle: {
       backgroundColor: "#307d7e",
@@ -227,11 +230,11 @@ const styles = StyleSheet.create({
       alignSelf: "center",
     },
     centered: {
+      alignSelf: "center",
+      justifyContent: 'flex-start',
       backgroundColor: "#131722",
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
       marginTop: 50,
+      
     },
   });
   

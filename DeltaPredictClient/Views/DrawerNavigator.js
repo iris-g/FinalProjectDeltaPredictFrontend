@@ -39,7 +39,7 @@ const DrawerContent = (props) => {
 
  
 const DrawerNavigator = ({route,navigation}) => { //##
-    //console.log(route.params); //##
+    
  
     return (
         <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
@@ -52,7 +52,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
         
         
         
-        <Drawer.Screen name="Home" component={Home} options={{
+        <Drawer.Screen name="Home" initialParams={route.params} component={Home} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="home"

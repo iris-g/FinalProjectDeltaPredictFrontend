@@ -22,8 +22,8 @@ function SectorStockScreen({ route, navigation }) {
   const [saveChange, setChange] = useState(""); 
   const onChangeSearch = query => setSearchQuery(query);
   const sector_name = useRoute();
-  const header = ['Symbol', 'Company', 'Volume', 'Price', 'Change']
-
+  const header = ['Symbol', 'Company', 'Price', 'Volume', 'Change']
+ 
  
   async function fetch_Data(text) {
     try { 
@@ -53,7 +53,13 @@ function SectorStockScreen({ route, navigation }) {
       navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
     }
 
-   
+    const handleColors = (value) => {
+      let befor = value
+      let val =(parseFloat(value))
+      if (val > 0) return "green";
+      if (val < 0) return "red";
+      
+    };
 
   return (
     
@@ -72,8 +78,8 @@ function SectorStockScreen({ route, navigation }) {
           /> 
       </View> 
       
-      <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32,width: 1550, alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
-            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 20, fontWeight: 'bold'}} flexArr={[0.5, 2, 1, 1, 1]} style={{ flexDirection: "row", width: 1550, alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
+      <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32,width: 1540, alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
+            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 20, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={{ flexDirection: "row", width: 1540, alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
       </Table>
               
       <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
@@ -83,7 +89,7 @@ function SectorStockScreen({ route, navigation }) {
             <View style={{ flexDirection: "row", position: "absolute", marginLeft: 150, alignSelf: "center", flex: 0.2, }}><Text style={{ textAlign: 'center'}}>{Company}</Text></View>
             <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft: 600}}><Text style={{ textAlign: 'center'}}>{Price}</Text></View> 
             <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center",marginLeft:150 }}><Text style={{textAlign: 'center'}}>{Volume}</Text></View>
-            <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft:150 }}><Text style={{ textAlign: 'center'}}>{Change}</Text></View>
+            <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft:150 }}><Text style={{ textAlign: 'center', color: handleColors(Change)}}>{Change}</Text></View>
           
           </p>
           ))}
@@ -120,9 +126,11 @@ const styles = StyleSheet.create({
       alignSelf: "center",
     },
     titles:{
+      backgroundColor: "#131722",
       color: '#307d7e',
     },
     listItem: {
+      backgroundColor: "#131722",
       borderWidth: 1,
       marginTop: 10,
       backgroundColor: "#1e222d",
@@ -136,8 +144,8 @@ const styles = StyleSheet.create({
       justifyContent: 'center'
     },
     centeredSearch: {
-      flex: 0.2,
-      alignItems: "center",
+      alignSelf: "center",
+      justifyContent: 'flex-start',
       backgroundColor: "#131722",
       marginTop: 50,
     },

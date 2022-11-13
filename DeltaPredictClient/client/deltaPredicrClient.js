@@ -6,14 +6,14 @@
  Description: This function check if login details are correct in DB.
 **/
 
-export  function _onPressButtonLogin (email,password,navigation) {
+export async function _onPressButtonLogin (email,password,navigation) {
     fetch('http://localhost:5000/authenticate', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({name: email, Password: password})
     })
     .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {otherParam: email,}) : alert("wrong details") });
+    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
 }
 
 /** 
@@ -22,7 +22,7 @@ export  function _onPressButtonLogin (email,password,navigation) {
  Description: This function add use to DB.
 **/
 
-export function _onPressButtonsignUp (email,password,navigation) {
+export async function _onPressButtonsignUp (email,password,navigation) {
     fetch('http://localhost:5000/signnup', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
@@ -140,18 +140,20 @@ export async function fetchArima(symbol){
 
   return json
 }
-export async function fetchArima(symbol){
-    const response = await fetch('http://localhost:5000/arimaResults', {
-        method:  'POST', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({  Symbol:symbol  }) 
-    })
-    const json = await response.json()
 
-    return json
+export async function addStockToFavoriteStockList(userEmail,symbol){
+    fetch('http://localhost:5000/addStocktoFavoriteList', {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({Email: userEmail, Symbol: symbol})
+    })
+    .then(res => res.json())
+    // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+
+
 }
 
 
 
-export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,fetchArima} ;
+export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,addStockToFavoriteStockList,fetchArima} ;
 
