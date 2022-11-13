@@ -1,18 +1,22 @@
-import { Text, View ,Button, Dimensions  } from 'react-native';
+
+import { Text, View ,Button } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
-import {useEffect,useState,useReducer } from 'react'
+import {useEffect,useState } from 'react'
 import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
 import { useInterval } from "react-use";
-import { Badge,Card  ,Paragraph } from 'react-native-paper';
+import { Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
+import { addStockToFavoriteStockList } from "../client/deltaPredicrClient"
+
 
 function StockScreen({ route, navigation }) {
-  const {  otherParam } = route.params;
+  const {  otherParam, userParam } = route.params;
+  console.log(userParam)
  // console.log("other =" + otherParam)
   const [data, setData] = useState(""); 
   const [loading, setLoad] = useState(true); 
@@ -232,8 +236,9 @@ const handleColors = (value) => {
     )
 
   return (
+
     <View style={styles.container}> 
-        <Pressable onPress={() => {navigation.navigate('Home')}} style={styles.backImage}>
+          <Pressable onPress={() => {navigation.navigate('Home')}} style={styles.backImage}>
               <Image
               source={require('../assets/icon.png')}
               style={{ flex: 1 }}
@@ -249,67 +254,71 @@ const handleColors = (value) => {
                 alignItems= "center"
                 value={searchQuery}
                 onChangeText={onChangeSearch}
-                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{
-                    otherParam: searchQuery,
-                  }) : "";setLoad(true);}}
+                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: userParam}) : "";setLoad(true);}}
               /> 
-            </View>
-            <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
-            <View style={{backgroundColor: "#131822",alignItems: "center"}}>
+          </View>
+
+          <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading} hidesWhenStopped={true} /> 
+
+          <View style={{backgroundColor: "#131822",alignItems: "center"}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
                     <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
                     <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}</Text> </p>
                 </>}
             </Text> 
-            </View>
-      <View style={{backgroundColor: '#131722'}}>
-        <View style={styles.blackScreen}>
+          </View>
+
+          <View style={{backgroundColor: '#131722'}}>
+            <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
                   <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center" }}>
-                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => {navigation.navigate('Home')}}>
+                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => addStockToFavoriteStockList(userParam, otherParam)}>
                       <Icon style={{color: "#4bc0c0", fontWeight: 'bold', backgroundColor: "#1e3841"}} name="add-circle" size={20} color="#000"/>
                       <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 20, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
                     </Pressable>   
                   </View>
 
-
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
                     <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
-                    </>
-                  } </Text> 
-                  </View>
+                    </>}
+                  </Text> 
 
                 </View>
 
-               
-                <View style={{ flexDirection:"column" ,alignItems:"top"}}>
-                      <Button   uppercase = {true}  color="#131722" title ="daily" 
-                        onPress={() => onDailyButtonPress()}/>
-                      <Button   uppercase = {true}  color="#131722"  title ="weekly"
-                        onPress={() => onWeekButtonPress()}/>
-                </View> 
                 <View style={styles.graphContainer}>
-                    <Line  data={prices}  width={100}  height={300} options={{
-                      maintainAspectRatio: false, }}
-                />
+                  <Line  data={prices}  width={100}  height={300} options={{maintainAspectRatio: false}}/>
+                  <View style={{ flexDirection:"row" ,alignItems:"top", margin: 15}}>
+                    <Button   uppercase = {true}  color="#131722" title ="daily" 
+                        onPress={() => onDailyButtonPress()}/>
+                    <Button   uppercase = {true}  color="#131722"  title ="weekly"
+                        onPress={() => onWeekButtonPress()}/>
+                  </View> 
                 </View>
-        </View>
-        <View style={styles.detailedBlock}>
+
+            </View>
+
+            <View style={styles.detailedBlock}>
               <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
-        </View>
-      </View>
-   
+            </View>
+
+              
+          </View>   
+    </View>
   );
 }
  
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: "#131822",
     justifyContent: 'flex-start',
     alignItem: "center",
+  },
+  stocksBlock: {
+    flexDirection: "column",
+    marginBottom: 10,
+    marginLeft: 30,
   },
   featuredDetails: {
     flex: 0.4,
@@ -318,6 +327,12 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     marginTop: 50,
   },
+  btnSignUpText:{
+    textTransform:'capitalize',
+    width: 330,
+    height: 150,
+    color:"white",
+},
   title: {
     flexDirection: "row", 
     paddingTop: 2,
@@ -360,9 +375,9 @@ const styles = StyleSheet.create({
     marginRight: 150,
   },
   centered: {
-    backgroundColor: "#131822",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: 'flex-start',
+    backgroundColor: "#131722",
     marginTop: 10,
   },
   blackScreen: {

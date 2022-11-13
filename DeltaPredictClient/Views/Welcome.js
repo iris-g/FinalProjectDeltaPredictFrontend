@@ -39,7 +39,7 @@ export default function App({  })  {
             </Pressable>   
             
                 <View style={styles.blackScreen}>
-                    <View style={styles.featuredDetails} > 
+                <View style={styles.featuredDetails} > 
                         <View style={styles.welcomeImage} >
                             <Image
                                 source={require('../assets/Welcome.png')}
@@ -107,7 +107,7 @@ export default function App({  })  {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#131822",
+        backgroundColor: "#131722",
         justifyContent: 'flex-start',
         alignItem: "center",
         // ...Platform.select({
@@ -117,10 +117,10 @@ const styles = StyleSheet.create({
     blackScreen: {
         backgroundColor: "#131722",
         flexDirection: "row",
-        backgroundColor: "#131822",
         alignItem: "center",
     },
     columnContainer: {
+        backgroundColor: "#131722",
         flex: 0.5,
         alignItems: "center",
         borderRadius: 10,
@@ -190,16 +190,16 @@ const styles = StyleSheet.create({
     btnSignUp:{
         backgroundColor: "#131722",
         alignSelf: "center",
-        width: "10%",
         marginLeft: '20%',
         marginTop: 10,
         color: "#1e222d",
+        flexDirection: "row",
     },
     btnStart:{
         backgroundColor: "#131722",
         alignSelf: "center",
-        width: "16%",
         marginTop: 35,
+        flexDirection: "row",
     },
     backImage: {
         backgroundColor: "#131722",
