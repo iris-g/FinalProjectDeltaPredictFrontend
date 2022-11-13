@@ -1,5 +1,4 @@
 
-
 import { Text, View ,Button, Dimensions  } from 'react-native';
 import React from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
@@ -11,6 +10,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
+import Icon from "react-native-vector-icons/Ionicons";
 
 function StockScreen({ route, navigation }) {
   const {  otherParam } = route.params;
@@ -255,21 +255,35 @@ const handleColors = (value) => {
                   }) : "";setLoad(true);}}
               /> 
             </View>
-            <ActivityIndicator size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
+            <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading}    hidesWhenStopped={true} /> 
+            <View style={{backgroundColor: "#131822",alignItems: "center"}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
                     <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
                     <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}</Text> </p>
                 </>}
             </Text> 
+            </View>
       <View style={{backgroundColor: '#131722'}}>
         <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
+                  <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center" }}>
+                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => {navigation.navigate('Home')}}>
+                      <Icon style={{color: "#4bc0c0", fontWeight: 'bold', backgroundColor: "#1e3841"}} name="add-circle" size={20} color="#000"/>
+                      <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 20, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
+                    </Pressable>   
+                  </View>
+
+
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
                     <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
                     </>
                   } </Text> 
+
+                  </View>
+
                 </View>
+
                
                 <View style={{ flexDirection:"column" ,alignItems:"top"}}>
                       <Button   uppercase = {true}  color="#131722" title ="daily" 
@@ -282,19 +296,15 @@ const handleColors = (value) => {
                       maintainAspectRatio: false, }}
                 />
                 </View>
-            
-             
-            
-              
+
         </View>
         <View style={styles.detailedBlock}>
               <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
         </View>
       </View>
-    </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   firstContainer: {
     flex: 1,
@@ -306,9 +316,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#131722",
-    justifyContent: "space-between",
-    paddingTop: StatusBar.currentHeight,
+    backgroundColor: "#131822",
+    justifyContent: 'flex-start',
+    alignItem: "center",
   },
   stocksBlock: {
     flexDirection: "column",
@@ -321,10 +331,6 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginVertical: 40,
     marginTop: 50,
-     ...Platform.select({
-        android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
-
-    })
   },
   btnSignUpText:{
     textTransform:'capitalize',
@@ -335,13 +341,14 @@ const styles = StyleSheet.create({
 
 },
   title: {
+    flexDirection: "row", 
     paddingTop: 2,
     color: "white",
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignSelf: "center",
   },
   btnSignUp:{
     width: "100%",
@@ -357,7 +364,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#1e222d',
-    
   },
   paragraph: {
     fontSize: 16,
@@ -370,13 +376,14 @@ const styles = StyleSheet.create({
     flex: 0.6,
     width: 300,
     height: 600,
+    alignSelf: "center",
     alignItems: "center",
     margin: 20,
     marginRight: 150,
   },
   centered: {
-    flex: 1,
-    justifyContent: "center",
+    backgroundColor: "#131822",
+    justifyContent: "flex-start",
     alignItems: "center",
     marginTop: 10,
   },
