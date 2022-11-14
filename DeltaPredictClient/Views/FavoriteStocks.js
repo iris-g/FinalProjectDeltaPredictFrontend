@@ -4,7 +4,7 @@ import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
 import {fetchFavoritesData} from "../client/deltaPredicrClient";
 import ScrollViewIndicator from 'react-native-scroll-indicator';
-import { Table, Row} from 'react-native-table-component';
+import { Table, Row } from 'react-native-table-component';
 
 
 export default function FavoriteStocks({route, navigation}) {
@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
       centeredSearch: {
-        flex: 0.2,
-        alignItems: "center",
+        alignSelf: "center",
+        justifyContent: 'flex-start',
         backgroundColor: "#131722",
         marginTop: 50,
         margin: 35,
