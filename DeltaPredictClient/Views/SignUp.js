@@ -135,9 +135,12 @@ const styles = StyleSheet.create({
     },
     backImage: {
         backgroundColor: "#131722",
+        justifyContent:"flex-start",
+        flexDirection: "row",
         width: 275,
-        height: 150,
-        marginLeft: 25,
+        height: 100 ,
+        marginLeft: 25, 
+        marginTop: 10
     },
 
 })

@@ -18,7 +18,6 @@ function Home({route, navigation}){
     const [counter, setCounter] = useState(0)
     const onChangeSearch = query => setSearchQuery(query);
     const user = route.params;
-    console.log(user)
     const [getUser, setUser] = useState(user);
    
 
@@ -118,23 +117,20 @@ function Home({route, navigation}){
 const handleColors = (newPrice, stockSymbol) => {
   
   const myNextList = [...currentPrice];
-  if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){
+  if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){  
     currentPrice.push({ symbol: stockSymbol, price: newPrice })
       // Items after the insertion point:
   }else{
     const artwork = myNextList.find(a=>a.symbol === stockSymbol)
     if(artwork.symbol == stockSymbol) {
       if(artwork.price < newPrice ){
-        console.log(newPrice)
         artwork.price = newPrice
-        console.log(artwork.price)
-        return "#1f8779"
+        return '#1f8779';
       }
       else if (artwork.price > newPrice ){
-        console.log(newPrice)
+        
         currentPrice.price = newPrice
-        console.log(artwork.price)
-        return "#af2d3a ";
+        return '#af2d3a';
       }
       else{
           return "white";
