@@ -77,7 +77,7 @@ function SectorStockScreen({ route, navigation }) {
               onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
           /> 
       </View> 
-      <View style={{backgroundColor: "#131722",marginLeft: 150, marginRight: 150, marginTop: 20, flex: 0.5,}}>
+      <View style={{backgroundColor: "#131722",marginLeft: 150, marginRight: 150, marginTop: 20, flex: 0.9}}>
         <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32, width: '100%', alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
             <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={{ flexDirection: "row", width: '100%', alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
         </Table>

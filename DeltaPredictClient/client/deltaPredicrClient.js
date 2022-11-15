@@ -149,11 +149,18 @@ export async function addStockToFavoriteStockList(userEmail,symbol){
     })
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+}
 
-
+export async function deletFromFavoriteStockList(userEmail,symbol){
+    fetch('http://localhost:5000/deletStocktoFavoriteList', {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({Email: userEmail, Symbol: symbol})
+    })
+    .then(res => res.json())
+    // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
 }
 
 
-
-export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,addStockToFavoriteStockList,fetchArima} ;
+export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,addStockToFavoriteStockList,deletFromFavoriteStockList,fetchArima} ;
 

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import {StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
-import {fetchFavoritesData} from "../client/deltaPredicrClient";
+import { fetchFavoritesData } from "../client/deltaPredicrClient";
+import { deletFromFavoriteStockList } from "../client/deltaPredicrClient";
 import ScrollViewIndicator from 'react-native-scroll-indicator';
 import { Table, Row } from 'react-native-table-component';
 import Icon from "react-native-vector-icons/Ionicons";
@@ -72,7 +73,7 @@ export default function FavoriteStocks({route, navigation}) {
                             <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "28.5%"}}><Text style={{ textAlign: 'center'}}>{volume}</Text></View> 
                             <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "46%"}}><Text style={{textAlign: 'center'}}>{dayLow}</Text></View>
                             <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "63%" }}><Text style={{ textAlign: 'center'}}>{dayHigh}</Text></View>
-                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "80%" }}><Pressable><Icon style={{color: '#CB4335', flexDirection: "row"}} name="trash" size={28}/></Pressable></View>  
+                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "80%" }}><Pressable onPress={() => deletFromFavoriteStockList(user,symbol)}><Icon style={{color: '#CB4335', flexDirection: "row"}} name="trash" size={26}/></Pressable></View>  
                         </p>))}
                         renderItem={(stocks) => {
                             return (
@@ -80,9 +81,7 @@ export default function FavoriteStocks({route, navigation}) {
                                     <Pressable onPress={(item) => _onPressButton(stocks.item)}><Text style={styles.textList}>{stocks.item}</Text></Pressable>
                                 </View>
                         );}}
-                    >
-
-                        
+                    >  
                     </FlatList>
                 </ScrollViewIndicator>  
             </View>
