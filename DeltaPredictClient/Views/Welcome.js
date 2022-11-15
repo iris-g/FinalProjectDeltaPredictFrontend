@@ -30,54 +30,59 @@ export default function App({  })  {
     return (
        
         <View style={styles.container}>
-            <Pressable  onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
-                <Image
-                    source={require('../assets/icon.png')}
-                    style={{ flex: 1 ,backgroundColor: "#131722"}}
-                    resizeMode="contain"
-                />
-            </Pressable>   
-            
-                <View style={styles.blackScreen}>
-                <View style={styles.featuredDetails} > 
-                        <View style={styles.welcomeImage} >
-                            <Image
-                                source={require('../assets/Welcome.png')}
-                                style={{ flex: 1, backgroundColor: "#131722"}}
-                                resizeMode="contain" />
-                        </View>
-                    </View>
+            <View style={{backgroundColor: "#131722"}}>
+                
+                    <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
+                        <Image
+                            source={require('../assets/icon.png')}
+                            style={{ flex: 1, backgroundColor: "#131722"}}
+                            resizeMode="contain"
+                        />
+                    </Pressable>   
+                    
+                    
+                        <View style={styles.blackScreen}>
+                            <View style={styles.featuredDetails} > 
+                                <View style={styles.welcomeImage} >
+                                    <Image
+                                        source={require('../assets/Welcome.png')}
+                                        style={{ flex: 1, backgroundColor: "#131722"}}
+                                        resizeMode="contain"
+                                         />
+                                </View>
+                            </View>
 
-                    <View style={styles.columnContainer}>
-                            <Text style={styles.baseText}> Login </Text>
-                            <View style={styles.inputView}>
-                                    <Icon style={{color: 'white', padding: 8, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
-                                    <TextInput
-                                    style={styles.TextInput}
-                                    placeholder="Email"
-                                    placeholderTextColor="#fff"
-                                    onChangeText={(email) => setEmail(email)}
-                                    />
-                                </View>
-                                <View style={styles.inputView}>
-                                    <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
-                                    <Icon style={{color: 'white' ,padding: 8, position: 'absolute',flexDirection: "row"}} name="lock-closed-outline" size={20} color="#000"/>
-                                    <TextInput
-                                    style={styles.TextInput}
-                                    placeholder="Password"
-                                    placeholderTextColor="#fff"
-                                    secureTextEntry={changePasswordVisibility}
-                                    onChangeText={(password) => setPassword(password)}
-                                    />
-                                </View>
-                                <View style={styles.btnSignUp}>
-                                    <Button title ="Sign Up" color = "#131822" onPress={() => navigation.navigate('SignUp')}/>
-                                </View>
-                                <View style={styles.btnStart}>
-                                    <Button title = "Start!" color = "#307D7E" onPress={() => _onPressButtonLogin(email,password,navigation)}/>
-                                </View>
-                    </View>
-                </View>    
+                            <View style={styles.columnContainer}>
+                                    <Text style={styles.baseText}> Login </Text>
+                                    <View style={styles.inputView}>
+                                            <Icon style={{color: 'white', padding: 8, position: 'absolute',}} name="person-outline" size={20} color="#000"/>
+                                            <TextInput
+                                            style={styles.TextInput}
+                                            placeholder="Email"
+                                            placeholderTextColor="#fff"
+                                            onChangeText={(email) => setEmail(email)}
+                                            />
+                                        </View>
+                                        <View style={styles.inputView}>
+                                            <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
+                                            <Icon style={{color: 'white' ,padding: 8, position: 'absolute',flexDirection: "row"}} name="lock-closed-outline" size={20} color="#000"/>
+                                            <TextInput
+                                            style={styles.TextInput}
+                                            placeholder="Password"
+                                            placeholderTextColor="#fff"
+                                            secureTextEntry={changePasswordVisibility}
+                                            onChangeText={(password) => setPassword(password)}
+                                            />
+                                        </View>
+                                        <View style={styles.btnSignUp}>
+                                            <Button title ="Sign Up" color = "#131822" onPress={() => navigation.navigate('SignUp')}/>
+                                        </View>
+                                        <View style={styles.btnStart}>
+                                            <Button title = "Start  ➤" color = "#307D7E" onPress={() => _onPressButtonLogin(email,password,navigation)}/>
+                                        </View>
+                            </View>
+                        </View> 
+            </View>   
         </View>
         
     
@@ -118,6 +123,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         flexDirection: "row",
         alignItem: "center",
+        marginBottom: 15,
     },
     columnContainer: {
         backgroundColor: "#131722",
@@ -148,7 +154,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         borderRadius: 10,
         marginTop: 20,
-        width: "30%",
+        width: "33%",
         borderWidth: 2,
         borderColor: '#72bcc4',
         alignSelf: "center",
@@ -203,9 +209,12 @@ const styles = StyleSheet.create({
     },
     backImage: {
         backgroundColor: "#131722",
-        width: 350,
-        height: 150,
-        marginLeft: 25,
+        justifyContent:"flex-start",
+        flexDirection: "row",
+        width: 275,
+        height: 100 ,
+        marginLeft: 25, 
+        marginTop: 10
     },
     welcomeImage:{
         backgroundColor: "#131722",
