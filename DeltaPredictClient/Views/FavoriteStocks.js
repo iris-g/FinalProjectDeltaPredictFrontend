@@ -2,17 +2,18 @@ import React, { useState } from "react";
 import {StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
-import {fetchFavoritesData} from "../client/deltaPredicrClient";
+import { fetchFavoritesData } from "../client/deltaPredicrClient";
+import { deletFromFavoriteStockList } from "../client/deltaPredicrClient";
 import ScrollViewIndicator from 'react-native-scroll-indicator';
 import { Table, Row } from 'react-native-table-component';
-
+import Icon from "react-native-vector-icons/Ionicons";
 
 export default function FavoriteStocks({route, navigation}) {
     
     const [searchQuery, setSearchQuery] = React.useState('');
     const onChangeSearch = query => setSearchQuery(query);
     const [stocks, setData] = useState(''); 
-    const header = ['Price', 'Symbol', 'Volume', 'dayLow', 'dayHigh']
+    const header = ['Price ↑↓', 'Symbol', 'Volume', 'Day Low', 'Day High', 'Remove']
     const user = route.params;
 
 
@@ -44,46 +45,47 @@ export default function FavoriteStocks({route, navigation}) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.centeredSearch}>
-                <Searchbar 
-                style={{height: 40}}
-                placeholder="enter symbol"
-                type="text"
-                justifyContent= "center"
-                alignItems= "center"
-                value={searchQuery}
-                onChangeText={onChangeSearch}
-                onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
-                /> 
-            </View>
-        
+            <View style={{backgroundColor: "#131722"}}>
+                <View style={styles.centeredSearch}>
+                    <Searchbar 
+                    style={{height: 40}}
+                    placeholder="enter symbol"
+                    type="text"
+                    justifyContent= "center"
+                    alignItems= "center"
+                    value={searchQuery}
+                    onChangeText={onChangeSearch}
+                    onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
+                    /> 
+                </View>
             
-            <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
-                <Row textStyle={{color: 'white', textAlign: 'center' , fontSize: 20, fontWeight: 'bold'}} flexArr={[0.5, 2, 1, 1, 1]} style={{height: 30}} data={header} />        
-            </Table>
+                <View style={{backgroundColor: "#131722",marginLeft: 150, marginRight: 150, marginTop: 20, flex: 0.9,}}>
+                <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
+                    <Row textStyle={{color: 'white', textAlign: 'center' , fontSize: 18, fontWeight: 'bold'}} flexArr={[1, 1, 1, 1, 1, 1]} style={{height: 30}} data={header} />        
+                </Table>
 
-            <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
-                <FlatList
-                    data={ Object.values(stocks).map(({ currentPrice, symbol, volume, dayLow, dayHigh }) => (
-                    <p key={symbol}> 
-                        <View style={{width:150}}><Text>{currentPrice}</Text></View> 
-                        <View style={{ flexDirection: "row", position: "absolute", marginLeft: 150, alignSelf: "center", flex: 0.2, }}><Text style={{ textAlign: 'center'}}>{symbol}</Text></View> 
-                        <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft: 600}}><Text style={{ textAlign: 'center'}}>{volume}</Text></View> 
-                        <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center",marginLeft:150 }}><Text style={{textAlign: 'center'}}>{dayLow}</Text></View>
-                        <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft:150 }}><Text style={{ textAlign: 'center'}}>{dayHigh}</Text></View>  
-                    </p>))}
-                    renderItem={(stocks) => {
-                        return (
-                            <View style={styles.listItem}>
-                                <Pressable onPress={(item) => _onPressButton(stocks.item)}><Text style={styles.textList}>{stocks.item}</Text></Pressable>
-                            </View>
-                    );}}
-                >
-
-                    
-                </FlatList>
-            </ScrollViewIndicator>  
-         
+                <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
+                    <FlatList
+                        data={ Object.values(stocks).map(({ currentPrice, symbol, volume, dayLow, dayHigh }) => (
+                        <p key={symbol}> 
+                            <View style={{marginLeft: "5%", width: "5%"}}><Text>{currentPrice}</Text></View> 
+                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "12.5%" }}><Text style={{ textAlign: 'center'}}>{symbol}</Text></View> 
+                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "28.5%"}}><Text style={{ textAlign: 'center'}}>{volume}</Text></View> 
+                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "46%"}}><Text style={{textAlign: 'center'}}>{dayLow}</Text></View>
+                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "63%" }}><Text style={{ textAlign: 'center'}}>{dayHigh}</Text></View>
+                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "80%" }}><Pressable onPress={() => deletFromFavoriteStockList(user,symbol)}><Icon style={{color: '#CB4335', flexDirection: "row"}} name="trash" size={26}/></Pressable></View>  
+                        </p>))}
+                        renderItem={(stocks) => {
+                            return (
+                                <View style={styles.listItem}>
+                                    <Pressable onPress={(item) => _onPressButton(stocks.item)}><Text style={styles.textList}>{stocks.item}</Text></Pressable>
+                                </View>
+                        );}}
+                    >  
+                    </FlatList>
+                </ScrollViewIndicator>  
+            </View>
+        </View>
     </View>
 
     );
@@ -101,10 +103,8 @@ const styles = StyleSheet.create({
     },
     flat: {
         backgroundColor: "#131722",
-        marginLeft: 20,
-        marginRight: 20,
-        marginBottom: 50,
-        alignSelf: "center",
+        marginTop: 20,
+        marginBottom: 10,
       },
     listItem: {
         borderWidth: 1,

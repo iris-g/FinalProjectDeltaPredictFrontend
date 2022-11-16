@@ -27,7 +27,7 @@ const DrawerContent = (props) => {
                     <DrawerItemList {...props} />
                 </DrawerContentScrollView>
             </View>
-            <View style={{ flexDirection: "row", marginTop: '90%', marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ flexDirection: "row", marginTop: '50%', marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
                 <Icon name={"exit-outline"} size={20} style= {{padding: 5, paddingRight: 75, position:'absolute', right: 0, color: 'white'}}/>
                 <Button title = "logout " uppercase={false} color = "#1e222d" style={{paddingRight: 100 }} onPress={() => {navigation.navigate('Welcome')} }/>
             </View>  

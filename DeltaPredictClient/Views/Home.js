@@ -18,7 +18,6 @@ function Home({route, navigation}){
     const [counter, setCounter] = useState(0)
     const onChangeSearch = query => setSearchQuery(query);
     const user = route.params;
-    console.log(user)
     const [getUser, setUser] = useState(user);
    
 
@@ -118,23 +117,20 @@ function Home({route, navigation}){
 const handleColors = (newPrice, stockSymbol) => {
   
   const myNextList = [...currentPrice];
-  if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){
+  if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){  
     currentPrice.push({ symbol: stockSymbol, price: newPrice })
       // Items after the insertion point:
   }else{
     const artwork = myNextList.find(a=>a.symbol === stockSymbol)
     if(artwork.symbol == stockSymbol) {
       if(artwork.price < newPrice ){
-        console.log(newPrice)
         artwork.price = newPrice
-        console.log(artwork.price)
-        return "green"
+        return '#1f8779';
       }
       else if (artwork.price > newPrice ){
-        console.log(newPrice)
+        
         currentPrice.price = newPrice
-        console.log(artwork.price)
-        return "red";
+        return '#af2d3a';
       }
       else{
           return "white";
@@ -147,7 +143,7 @@ const handleColors = (newPrice, stockSymbol) => {
   return (
  
     <View style={styles.container}>
-      
+      <View style={{backgroundColor: "#131722"}}>
         <View style={styles.centered}>
           <Searchbar 
             style={{height: 40}}
@@ -171,8 +167,8 @@ const handleColors = (newPrice, stockSymbol) => {
         <View style={{backgroundColor: "#131722"}}>
           <View style={styles.blackScreen}>
 
-              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.33}}>
-                <Text style={styles.subTitle}>  Most Active  </Text>
+              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.33}}> 
+                <Text style={styles.subTitle}>  Most Active ↑↓ </Text>
                 <Text style={{color: 'white', fontSize: 20, alignSelf: "center" }}> { Object.values(activeStocks).map(({ close, symbol }) => (
                   <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
                   ))} 
@@ -180,7 +176,7 @@ const handleColors = (newPrice, stockSymbol) => {
               </View>
               
               <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
-                <Text style={styles.subTitle}>  Top Losers  </Text>
+                <Text style={styles.subTitle}>  Top Losers ↑↓  </Text>
                 <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
                   <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
                   
@@ -189,7 +185,7 @@ const handleColors = (newPrice, stockSymbol) => {
               </View>
 
               <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
-                <Text style={styles.subTitle}>  Top Gainers  </Text>
+                <Text style={styles.subTitle}>  Top Gainers ↑↓  </Text>
                 <Text style={{ color: 'white', fontSize: 20, alignSelf: "center" }}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
                   <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
                   ))}
@@ -199,8 +195,8 @@ const handleColors = (newPrice, stockSymbol) => {
           </View>
         </View>
         
-
       </View>
+    </View>
   );
 
 

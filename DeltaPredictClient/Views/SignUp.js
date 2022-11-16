@@ -13,55 +13,58 @@ export default function SignUp()    {
     return (
         
         <View style={styles.container}>
-            <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
-                <Image
-                source={require('../assets/icon.png')}
-                style={{ flex: 1, backgroundColor: "#131722"}}
-                resizeMode="contain"
-                />
-            </Pressable>    
-        
-                
-            <View style={styles.inputTextContainer}>
-                <View>
-                    <Text style={styles.HeadLineText}> Sign Up to ΔPredict</Text>
-                </View>
-                
-                <View style={styles.inputView}>
-                    <Icon style={{color: 'white', padding: 15, position: 'absolute'}} name="person-outline" size={20} color="#000"/>
-                    <TextInput style={styles.TextInput}
-                        numberOfLines={1}
-                        placeholder="Email."
-                        placeholderTextColor="#fff"
-                        onChangeText={(email) => setEmail(email)}>
-                    </TextInput>
-                </View>
-
-                <View style={styles.inputView}>
-                    <Icon style={{color: 'white' ,padding: 15, position: 'absolute'}} name="lock-closed-outline" size={20} color="#000"/>
-                    <TextInput style={styles.TextInput}
-                        numberOfLines={1}
-                        placeholder="Password."
-                        placeholderTextColor="#fff"
-                        secureTextEntry={true}
-                        onChangeText={(password) => setPassword(password)}>
-                    </TextInput>
-                </View>
-                
-                <View style={styles.inputView}>
-                    <Icon style={{color: 'white' ,padding: 15, position: 'absolute'}} name="lock-closed-outline" size={20} color="#000"/>
-                    <TextInput style={styles.TextInput}
-                        placeholder="Confirm Password."
-                        placeholderTextColor="#fff"
-                        secureTextEntry={true}
-                        onChangeText={(password) => setPassword(password)}>
-                    </TextInput>
-                </View>
-                 
-                    <View style={styles.btnSignUp}>
-                        <Button style={styles.btnSignUpText} uppercase = {true} title ="Sign Up" color = "#01a37b"
-                        onPress={() => _onPressButtonsignUp(email, password,navigation)}/>
+            <View style={{backgroundColor: "#131722"}}>
+                <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.backImage}>
+                    <Image
+                    source={require('../assets/icon.png')}
+                    style={{ flex: 1, backgroundColor: "#131722"}}
+                    resizeMode="contain"
+                    />
+                </Pressable>    
+            
+                    
+                <View style={styles.inputTextContainer}>
+                    <View>
+                        <Text style={styles.HeadLineText}> Sign Up to ΔPredict</Text>
                     </View>
+                    
+                    <View style={styles.inputView}>
+                        <Icon style={{color: 'white', padding: 15, position: 'absolute'}} name="person-outline" size={20} color="#000"/>
+                        <TextInput style={styles.TextInput}
+                            numberOfLines={1}
+                            placeholder="Email."
+                            placeholderTextColor="#fff"
+                            onChangeText={(email) => setEmail(email)}>
+                        </TextInput>
+                    </View>
+
+                    <View style={styles.inputView}>
+                        <Icon style={{color: 'white' ,padding: 15, position: 'absolute'}} name="lock-closed-outline" size={20} color="#000"/>
+                        <TextInput style={styles.TextInput}
+                            numberOfLines={1}
+                            placeholder="Password."
+                            placeholderTextColor="#fff"
+                            secureTextEntry={true}
+                            onChangeText={(password) => setPassword(password)}>
+                        </TextInput>
+                    </View>
+                    
+                    <View style={styles.inputView}>
+                        <Icon style={{color: 'white' ,padding: 15, position: 'absolute'}} name="lock-closed-outline" size={20} color="#000"/>
+                        <TextInput style={styles.TextInput}
+                            placeholder="Confirm Password."
+                            placeholderTextColor="#fff"
+                            secureTextEntry={true}
+                            onChangeText={(password) => setPassword(password)}>
+                        </TextInput>
+                    </View>
+                    
+                        <View style={styles.btnSignUp}>
+                            <Button style={styles.btnSignUpText} uppercase = {true} title ="Sign Up" color = "#01a37b"
+                            onPress={() => _onPressButtonsignUp(email, password,navigation)}/>
+                        </View>
+                </View>
+                <Text style={{alignSelf: "center", color: 'white'}}>Already have an account?  Sign in</Text>
             </View>
         </View>
 
@@ -87,6 +90,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     inputTextContainer: {
+        marginTop: 60,
         flex: 1, 
         justifyContent: 'center',
         alignItems: 'center',
@@ -101,6 +105,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: "center",
         width: "18%",
+        height: "14%"
     },
     TextInput: {
         height: 50,
@@ -111,6 +116,7 @@ const styles = StyleSheet.create({
         borderColor: "grey",
         color: 'white',
         width: "18%",
+        height: "100    %"
     },
     btnSignUp:{
         backgroundColor: "#131722",
@@ -129,9 +135,12 @@ const styles = StyleSheet.create({
     },
     backImage: {
         backgroundColor: "#131722",
-        width: 350,
-        height: 150,
-        marginLeft: 25,
+        justifyContent:"flex-start",
+        flexDirection: "row",
+        width: 275,
+        height: 100 ,
+        marginLeft: 25, 
+        marginTop: 10
     },
 
 })

@@ -22,7 +22,7 @@ function SectorStockScreen({ route, navigation }) {
   const [saveChange, setChange] = useState(""); 
   const onChangeSearch = query => setSearchQuery(query);
   const sector_name = useRoute();
-  const header = ['Symbol', 'Company', 'Price', 'Volume', 'Change']
+  const header = ['Symbol', 'Company', 'Price ↑↓', 'Volume', 'Change ٪']
  
  
   async function fetch_Data(text) {
@@ -64,7 +64,7 @@ function SectorStockScreen({ route, navigation }) {
   return (
     
     <View style={styles.container}>
-      
+      <View style={{backgroundColor: "#131722"}}>
       <View style={styles.centeredSearch}>
           <Searchbar 
               style={{height: 40}}
@@ -77,33 +77,33 @@ function SectorStockScreen({ route, navigation }) {
               onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
           /> 
       </View> 
+      <View style={{backgroundColor: "#131722",marginLeft: 150, marginRight: 150, marginTop: 20, flex: 0.9}}>
+        <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32, width: '100%', alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
+            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={{ flexDirection: "row", width: '100%', alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
+        </Table>
+
+        <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
+          <FlatList 
+            data={Object.values(stockData).map(({ Ticker, Company, Price, Volume, Change }) => (
+            <p key={Ticker}> <View style={{width: "5%"}}><Text>{Ticker}</Text></View>
+              <View style={{flexDirection: "row", position: "absolute", marginLeft: "15%", alignSelf: "center", flex: 0.2,}}><Text style={{ textAlign: 'center'}}>{Company}</Text></View>
+              <View style={{flex: 0.2, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "45%"}}><Text style={{ textAlign: 'center'}}>{Price}</Text></View> 
+              <View style={{flex: 0.2, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center",marginLeft: "64%" }}><Text style={{textAlign: 'center'}}>{Volume}</Text></View>
+              <View style={{flex: 0.2, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "84%" }}><Text style={{ textAlign: 'center', color: handleColors(Change)}}>{Change}</Text></View>
+            
+            </p>
+            ))}
+                  renderItem={(stockData) => {
+                  return (
+                  <View style={styles.listItem}>
+                  <Pressable onPress={(item) => _onPressButton(stockData.item)}><Text style={styles.textList}>{stockData.item}</Text></Pressable>
+                  </View>
+                  );}}    
+                />
+        </ScrollViewIndicator>
+      </View>
       
-      <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32,width: 1540, alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
-            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 20, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={{ flexDirection: "row", width: 1540, alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
-      </Table>
-              
-      <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
-        <FlatList 
-          data={Object.values(stockData).map(({ Ticker, Company, Price, Volume, Change }) => (
-          <p key={Ticker}> <View style={{width:150}}><Text>{Ticker}</Text></View>
-            <View style={{ flexDirection: "row", position: "absolute", marginLeft: 150, alignSelf: "center", flex: 0.2, }}><Text style={{ textAlign: 'center'}}>{Company}</Text></View>
-            <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft: 600}}><Text style={{ textAlign: 'center'}}>{Price}</Text></View> 
-            <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center",marginLeft:150 }}><Text style={{textAlign: 'center'}}>{Volume}</Text></View>
-            <View style={{flex: 0.2, width: 150, flexDirection: "row", alignSelf: "center", marginLeft:150 }}><Text style={{ textAlign: 'center', color: handleColors(Change)}}>{Change}</Text></View>
-          
-          </p>
-          ))}
-                renderItem={(stockData) => {
-                return (
-                <View style={styles.listItem}>
-                <Pressable onPress={(item) => _onPressButton(stockData.item)}><Text style={styles.textList}>{stockData.item}</Text></Pressable>
-                </View>
-                );}}    
-              />
-      </ScrollViewIndicator>
-      
-      
-      
+      </View>
     </View>
     
   );
@@ -120,10 +120,7 @@ const styles = StyleSheet.create({
     flat:{
       backgroundColor: "#131722",
       marginTop: 20,
-      marginLeft: 20,
-      marginRight: 20,
-      marginBottom: 50,
-      alignSelf: "center",
+      marginBottom: 10,
     },
     titles:{
       backgroundColor: "#131722",
