@@ -6,14 +6,14 @@
  Description: This function check if login details are correct in DB.
 **/
 
-export async function _onPressButtonLogin (email,password,navigation) {
+export  function _onPressButtonLogin (email,password,navigation) {
     fetch('http://localhost:5000/authenticate', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({name: email, Password: password})
     })
     .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {otherParam: email,}) : alert("wrong details") });
 }
 
 /** 
@@ -22,7 +22,7 @@ export async function _onPressButtonLogin (email,password,navigation) {
  Description: This function add use to DB.
 **/
 
-export async function _onPressButtonsignUp (email,password,navigation) {
+export function _onPressButtonsignUp (email,password,navigation) {
     fetch('http://localhost:5000/signnup', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
@@ -82,13 +82,12 @@ Page: SectorStockScreen
 Description: This function POST to server list of stock sector and receive the data abut the stocks.
 **/
 
-export async function fetchData(symbol,Signal){
+export async function fetchData(symbol){
 
   const response = await fetch('http://localhost:5000/fundamental', {
       method:  'POST', 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({  Symbol:symbol  }) ,
-      signal:Signal,
   })
   const json = await response.json()
 
@@ -130,15 +129,27 @@ export async function fetchFavoritesData(userEmail){
   return json
 }
 
-export async function fetchArima(symbol){
-  const response = await fetch('http://localhost:5000/arimaResults', {
-      method:  'POST', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({  Symbol:symbol  }) 
-  })
-  const json = await response.json()
+export async function fetchSentimentData(Symbol){
+    const response = await fetch('http://localhost:5000/sentimentScore', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  symbol:Symbol  }) 
+    })
+    const json = await response.json()
+  
+    return json
+  }
 
-  return json
+export async function fetchArima(symbol,Signal){
+    const response = await fetch('http://localhost:5000/arimaResults', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Symbol:symbol ,signal: Signal, }) ,
+        signal: Signal,
+    })
+    const json = await response.json()
+
+    return json
 }
 
 export async function addStockToFavoriteStockList(userEmail,symbol){
@@ -154,6 +165,5 @@ export async function addStockToFavoriteStockList(userEmail,symbol){
 }
 
 
-
-export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchFavoritesData,addStockToFavoriteStockList,fetchArima} ;
+export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchSentimentData,fetchFavoritesData,fetchArima,addStockToFavoriteStockList} ;
 
