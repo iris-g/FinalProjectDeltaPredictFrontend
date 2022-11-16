@@ -2,7 +2,7 @@
 
 import { Text, View ,Button } from 'react-native';
 
-import React from "react";
+import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
 import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
@@ -13,14 +13,14 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
-import { addStockToFavoriteStockList } from "../client/deltaPredicrClient"
+import { addStockToFavoriteStockList,fetchSentimentData } from "../client/deltaPredicrClient"
 
 
 function StockScreen({ route, navigation }) {
   const {  otherParam, userParam } = route.params;
-  console.log(userParam)
  // console.log("other =" + otherParam)
   const [data, setData] = useState(""); 
+  const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
   const [predictedPrices,setPredicted]=useState(""); 
   const [graphPredictedPrices,setgraphPredicted]=useState(""); 
@@ -28,7 +28,6 @@ function StockScreen({ route, navigation }) {
   const [searchQuery, setSearchQuery] = React.useState(otherParam);
   const [dailyTimestamps, setStamps] = React.useState(otherParam);
   const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
-  let controller;
   let marketStatus;
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
@@ -42,6 +41,7 @@ if(usa.isTradingNow()){
   marketStatus="Price as of last close";
 }
 
+//handle graph button clicks- set the correct dataset
 const onWeekButtonPress = query => {
   console.log(graphPredictedPrices)
   setStamps(weeklyTimestamps)
@@ -76,7 +76,7 @@ const onDailyButtonPress = query => {
 }};
 
 
- 
+ //predicted prices dataset
   const prices = {
     labels: dailyTimestamps,
     datasets: [
@@ -128,9 +128,11 @@ const options = {
     ]
   }
 }
-let newDate = new Date()
-newDate.setHours(0, 0, 0, 0);
-// ✅ Format a date to YYYY-MM-DD (or any other format)
+
+
+
+// *** generate data lables for graph
+
 function padTo2Digits(num) {
   return num.toString().padStart(2, '0');
 }
@@ -143,15 +145,15 @@ function formatDate(date) {
   ].join('-');
 }
 
-  // 👇️ 2022-01-18 (yyyy-mm-dd)
+
   let today = new Date();
   today.setHours(0, 0, 0, 0);
   let tomorrow =  new Date()
   tomorrow.setHours(0, 0, 0, 0);
   tomorrow.setDate(today.getDate() + 1)
   var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
- // console.log(formatDate(nextweek));
-  // date array
+
+
   var getDateArray = function(start, end) {
   var arr = new Array();
   var  dt = new Date(start);
@@ -164,12 +166,19 @@ function formatDate(date) {
 
 }
 
+// ***
+ const  controller = useRef("");
+
 //GET DATA FOR ARIMA PREDICTION
 async function fetch_Arima_Data() {
+ 
   try { 
+    controller.current=new AbortController();
+    let signal = controller.current.signal;
+   // console.log(signal);
 
     const promise = new Promise((resolve, reject) => {
-      resolve(fetchArima(otherParam) )
+      resolve(fetchArima(otherParam,signal) )
       
     })
   
@@ -177,15 +186,15 @@ async function fetch_Arima_Data() {
       //console.log(response)
       var obj=null; 
       const dailyArimaData =new Array();
-      const weeklyArimaData =new Array();
-      //console.log(response)
+     
+     // console.log(response)
       for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
       {
           obj= JSON.parse(response["daily"]["mean"][i])
           dailyArimaData.push(obj)
       }
       setgraphPredicted(dailyArimaData);
-      console.log(response["weekly"])
+      //console.log(response["weekly"])
       setPredicted(dailyArimaData);
       setWeeklyPredicted(response["weekly"]["mean"]);
       setweeklyStamps((response["weekly"]["dates"]));
@@ -194,15 +203,23 @@ async function fetch_Arima_Data() {
   } catch (error) {
   } 
   }
+  
+  //cancel arima etch
+  const cancelRequest= () => controller.current && controller.current.abort();
+
+  
 
   //call function to get arima prediction  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    fetch_Arima_Data()
+    fetch_sentiment_Data(searchQuery);
+    //fetch_Arima_Data()
 
   },  []
   
   )
+
+  //handle price text color according to sign
 const handleColors = (value) => {
   let befor = value
   let val =(parseFloat(value))
@@ -211,17 +228,15 @@ const handleColors = (value) => {
   
 };
 
+//get stock live data from the server
   async function fetch_Data(text) {
-   controller = new AbortController();
-    const signal = controller.signal;
+ 
     try { 
-      //console.log(text)
       const promise = new Promise((resolve, reject) => {
-        resolve(fetchData(text,signal) )
+        resolve(fetchData(text) )
       })
     
       promise.then((response) => {
-        console.log(searchQuery)
         if(response["symbol"] == searchQuery)
           setData(response)
           setLoad(false)
@@ -233,14 +248,32 @@ const handleColors = (value) => {
     useInterval(() => {
 
       fetch_Data(searchQuery)
-    },  3000// Delay in milliseconds or null to stop it
+    },  8000// Delay in milliseconds or null to stop it
     
     )
+ 
+      async function fetch_sentiment_Data(text) {
+ 
+        try { 
+          //console.log(text)
+          const promise = new Promise((resolve, reject) => {
+            resolve(fetchSentimentData(text) )
+          })
+        
+          promise.then((response) => {
+           setSentiment(response)
+            
+          })
+        } catch (error) {
+        } 
+        }
+       
+  
 
   return (
 
     <View style={styles.container}> 
-          <Pressable onPress={() => {navigation.navigate('Home')}} style={styles.backImage}>
+          <Pressable onPress={() => {navigation.navigate('Home');cancelRequest();}} style={styles.backImage}>
               <Image
               source={require('../assets/icon.png')}
               style={{ flex: 1 }}
@@ -256,7 +289,7 @@ const handleColors = (value) => {
                 alignItems= "center"
                 value={searchQuery}
                 onChangeText={onChangeSearch}
-                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: userParam}) : "";setLoad(true);}}
+                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: userParam}) : "";setLoad(true);cancelRequest();}}
               /> 
           </View>
 
@@ -282,7 +315,7 @@ const handleColors = (value) => {
                   </View>
 
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+                    <><p>{'\n'}  monthly sentiment score:{sentiment} {'\n'} {data["volume"]}  volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
 
                     </>}
                   </Text> 
