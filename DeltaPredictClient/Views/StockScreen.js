@@ -1,6 +1,6 @@
 
 
-import { Text, View ,Button } from 'react-native';
+import { Text, View ,Button,TouchableOpacity } from 'react-native';
 
 import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
@@ -12,13 +12,17 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
+import Autocomplete from 'react-native-autocomplete-input';
 import Icon from "react-native-vector-icons/Ionicons";
 import { addStockToFavoriteStockList,fetchSentimentData } from "../client/deltaPredicrClient"
+import Papa from 'papaparse';
+import { ListItem } from 'react-native-elements'
 
+//get file with top 50 stocks
+var topStocks = require('../csvFiles/top50.csv');
 
 function StockScreen({ route, navigation }) {
   const {  otherParam, userParam } = route.params;
- // console.log("other =" + otherParam)
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
@@ -28,9 +32,39 @@ function StockScreen({ route, navigation }) {
   const [searchQuery, setSearchQuery] = React.useState(otherParam);
   const [dailyTimestamps, setStamps] = React.useState(otherParam);
   const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
+  // For Filtered search Data
+  const [filteredStocks, setFilteredStocks] = useState([]);
   let marketStatus;
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
+  const [parsedCsvData, setParsedCsvData] = useState([]);
+console.log(parsedCsvData.includes(""));
+
+  //reac csv file with top stocks into  an array
+  const parseFile = file => {
+    Papa.parse(file, {
+      header: false,
+      download: true,
+      complete: results => {
+        const arr =new Array();
+            for(let i=0;i<Object.keys(results.data).length;i++)
+            {
+              const  obj= (results.data[i ][0])
+              arr.push(obj)
+            }
+        setParsedCsvData(arr)
+      
+      },
+    });
+  };
+
+  //read top50 stock csv file
+  useEffect(() => {
+    parseFile(topStocks);
+
+  },  []
+  
+)
 
 //check if stock exchange is open and update text
 if(usa.isTradingNow()){
@@ -55,25 +89,28 @@ const onDailyButtonPress = query => {
 };
 
   const onChangeSearch = query => {
-    setSearchQuery(query);
+   setSearchQuery(query);
     setPredicted("");
+    //create a filtered stock list 
+    if (query) {
+      // Making a case insensitive regular expression
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      const temp = query
+      // Setting the filtered film array according the query
+      const tempList = parsedCsvData.filter(item => {
+        if (String(item).substring(0,temp.length).search(temp) >=0)
+          return item
+
+      })
+      setFilteredStocks(tempList)
     
-    try{
-    if (controller) {
+    } else {
+      // If the query is null then return blank
+      setFilteredStocks([]);
+    }
 
-          controller.abort();
-          console.log("Download aborted");
-        }
-
-    }catch( error) {
-      if (error.name === "AbortError") {
-        console.log("Operation timed out");
-      } else {
-        console.error(err);
-      }
-
- 
-}};
+    
+  };
 
 
  //predicted prices dataset
@@ -91,48 +128,9 @@ const onDailyButtonPress = query => {
     borderWidth: 1 ,
   };
 
-const options = {
-  responsive: true,
-  title: {
-    display: true,
-    text: 'Chart.js Line Chart'
-  },
-  tooltips: {
-    mode: 'label'
-  },
-  hover: {
-    mode: 'dataset'
-  },
-  scales: {
-    xAxes: [
-      {
-        display: true,
-        scaleLabel: {
-          show: true,
-          labelString: 'Month'
-        }
-      }
-    ],
-    yAxes: [
-      {
-        display: true,
-        scaleLabel: {
-          show: true,
-          labelString: 'Value'
-        },
-        ticks: {
-          suggestedMin: -10,
-          suggestedMax: 250
-        }
-      }
-    ]
-  }
-}
 
 
-
-// *** generate data lables for graph
-
+// *** generate data lables for graph**
 function padTo2Digits(num) {
   return num.toString().padStart(2, '0');
 }
@@ -204,7 +202,7 @@ async function fetch_Arima_Data() {
   } 
   }
   
-  //cancel arima etch
+  //cancel arima fetch
   const cancelRequest= () => controller.current && controller.current.abort();
 
   
@@ -212,16 +210,31 @@ async function fetch_Arima_Data() {
   //call function to get arima prediction  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    fetch_sentiment_Data(searchQuery);
+    if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
+    {
+       fetch_sentiment_Data(searchQuery);
     //fetch_Arima_Data()
+    }
+    
 
   },  []
   
   )
+  useEffect(() => {
+ //call function to get arima prediction  when a new search is being made
+  setStamps(getDateArray(tomorrow,nextweek));
+  if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
+  {
+    fetch_sentiment_Data(searchQuery);
+  //fetch_Arima_Data()
+  }
+   
 
+},  [searchQuery]
+
+)
   //handle price text color according to sign
 const handleColors = (value) => {
-  let befor = value
   let val =(parseFloat(value))
   if (val > 0) return "green";
   if (val < 0) return "red";
@@ -237,6 +250,7 @@ const handleColors = (value) => {
       })
     
       promise.then((response) => {
+        console.log(response["symbol"] )
         if(response["symbol"] == searchQuery)
           setData(response)
           setLoad(false)
@@ -246,12 +260,14 @@ const handleColors = (value) => {
     } 
     }
     useInterval(() => {
-
-      fetch_Data(searchQuery)
+      console.log(searchQuery+"SQ")
+      if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
+        fetch_Data(searchQuery)
     },  8000// Delay in milliseconds or null to stop it
     
     )
  
+      //get stocks monthly sentiment score
       async function fetch_sentiment_Data(text) {
  
         try { 
@@ -259,16 +275,12 @@ const handleColors = (value) => {
           const promise = new Promise((resolve, reject) => {
             resolve(fetchSentimentData(text) )
           })
-        
           promise.then((response) => {
-           setSentiment(response)
-            
+          setSentiment(response)   
           })
         } catch (error) {
         } 
         }
-       
-  
 
   return (
 
@@ -281,20 +293,32 @@ const handleColors = (value) => {
               />
           </Pressable>   
           <View style={styles.centered}>
-            <Searchbar 
-                style={{height: 40}}
-                placeholder="enter symbol"
-                type="text"
-                justifyContent= "center"
-                alignItems= "center"
+                <Autocomplete
+                data={filteredStocks}
                 value={searchQuery}
                 onChangeText={onChangeSearch}
-                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: userParam}) : "";setLoad(true);cancelRequest();}}
-              /> 
+                placeholder="Enter the stock symbol"
+                flatListProps={{
+                keyExtractor: (_, idx) => idx,
+                renderItem: ({ item ,index}) =>  (
+                <TouchableOpacity
+                  key={index.toString()} 
+                onPress={() => {
+                console.log(item[0]+"&&");
+                setSearchQuery(item);
+                setLoad("true");
+                setFilteredStocks([]);
+              
+              }}> 
+                <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title >{item}</ListItem.Title>
+                </ListItem.Content>
+                <ListItem.Chevron />
+                </ListItem>
+              </TouchableOpacity>) }}  />
           </View>
-
           <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading} hidesWhenStopped={true} /> 
-
           <View style={{backgroundColor: "#131822",alignItems: "center"}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
@@ -303,7 +327,6 @@ const handleColors = (value) => {
                 </>}
             </Text> 
           </View>
-
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
@@ -315,7 +338,7 @@ const handleColors = (value) => {
                   </View>
 
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'}  monthly sentiment score:{sentiment} {'\n'} {data["volume"]}  volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+                    <><p>{'\n'}  monthly sentiment score:{sentiment} {'\n'}   volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
 
                     </>}
                   </Text> 
@@ -363,6 +386,12 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginVertical: 40,
     marginTop: 50,
+  },
+  itemText: {
+    fontSize: 15,
+    paddingTop: 5,
+    paddingBottom: 5,
+    margin: 2,
   },
   btnSignUpText:{
     textTransform:'capitalize',
