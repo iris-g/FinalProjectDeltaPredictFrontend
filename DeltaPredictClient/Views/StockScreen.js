@@ -11,11 +11,14 @@ ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, 
 import { Searchbar } from 'react-native-paper';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from "react-native-vector-icons/Ionicons";
+
 import { addStockToFavoriteStockList, fetchSentimentData, fetchMonteCarlo } from "../client/deltaPredicrClient"
+
 import Papa from 'papaparse';
 import { ListItem } from 'react-native-elements'
 
 //get file with top 50 stocks
+
 var topStocks = require('../assets/top50.csv');
 
 function StockScreen({ route, navigation }) {
@@ -36,7 +39,9 @@ function StockScreen({ route, navigation }) {
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
+
   console.log(parsedCsvData.includes(""));
+
 
   //reac csv file with top stocks into  an array
   const parseFile = file => {
@@ -56,6 +61,7 @@ function StockScreen({ route, navigation }) {
     });
   };
 
+
   //read top50 stock csv file
   useEffect(() => {
     parseFile(topStocks);
@@ -63,6 +69,7 @@ function StockScreen({ route, navigation }) {
   },  []
   
 )
+
 
   //check if stock exchange is open and update text
   if(usa.isTradingNow()){
@@ -88,7 +95,7 @@ function StockScreen({ route, navigation }) {
   };
 
   const onChangeSearch = query => {
-    setSearchQuery(query);
+   setSearchQuery(query);
     setPredicted("");
     //create a filtered stock list 
     if (query) {
@@ -129,10 +136,12 @@ function StockScreen({ route, navigation }) {
 
 
 
+
   // *** generate data lables for graph**
   function padTo2Digits(num) {
     return num.toString().padStart(2, '0');
   }
+
 
   function formatDate(date) {
     return [
@@ -188,6 +197,7 @@ function StockScreen({ route, navigation }) {
         var obj=null; 
         const dailyArimaData =new Array();
       
+
       // console.log(response)
         for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
         {
@@ -205,6 +215,7 @@ function StockScreen({ route, navigation }) {
     } 
     }
     
+
   //cancel arima fetch
   const cancelRequest= () => controller.current && controller.current.abort();
 
@@ -224,6 +235,7 @@ function StockScreen({ route, navigation }) {
   
   )
   useEffect(() => {
+
     //call function to get arima prediction  when a new search is being made
     setStamps(getDateArray(tomorrow,nextweek));
     if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
@@ -243,6 +255,7 @@ function StockScreen({ route, navigation }) {
     if (val < 0) return "red";
     
   };
+
 
 //get stock live data from the server
   async function fetch_Data(text) {
@@ -284,8 +297,6 @@ function StockScreen({ route, navigation }) {
         } catch (error) {
         } 
         }
-       
-  
 
   return (
 
@@ -324,9 +335,7 @@ function StockScreen({ route, navigation }) {
                 </ListItem>
               </TouchableOpacity>) }}  />
           </View>
-
           <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading} hidesWhenStopped={true} /> 
-
           <View style={{backgroundColor: "#131822",alignItems: "center"}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
@@ -335,7 +344,6 @@ function StockScreen({ route, navigation }) {
                 </>}
             </Text> 
           </View>
-
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
@@ -347,7 +355,7 @@ function StockScreen({ route, navigation }) {
                   </View>
 
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'}  monthly sentiment score:{sentiment} {'\n'} {data["volume"]}  volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+                    <><p>{'\n'}  monthly sentiment score:{sentiment} {'\n'}   volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
 
                     </>}
                   </Text> 
@@ -395,6 +403,12 @@ const styles = StyleSheet.create({
     marginLeft: 50,
     marginVertical: 40,
     marginTop: 50,
+  },
+  itemText: {
+    fontSize: 15,
+    paddingTop: 5,
+    paddingBottom: 5,
+    margin: 2,
   },
   btnSignUpText:{
     textTransform:'capitalize',
