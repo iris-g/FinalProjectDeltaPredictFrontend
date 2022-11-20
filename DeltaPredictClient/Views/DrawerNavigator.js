@@ -1,6 +1,6 @@
 
 import React from "react";
-import { StyleSeet, Text, View,Button ,Pressable,Dimensions, Image} from 'react-native';
+import { Text, View, Button ,Pressable, Image} from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import Home from "./Home.js";
 import SectorStockScreen from "./SectorStockScreen.js"
@@ -19,7 +19,7 @@ const DrawerContent = (props) => {
     return (
         <View>
             <View style={{ flexDirection: 'row' }}>
-                    <Image style={{ flex: 0.8, width: 100, height: 80, margin: 20, }} resizeMode="contain" source={require('../assets/ImageForDrawer_rev.png')} />
+                    <Image style={{ flex: 0.8, width: 100, height: 80, margin: 20, }} resizeMode="contain" source={require('../assets/Photos/ImageForDrawer_rev.png')} />
             </View>
  
             <View>

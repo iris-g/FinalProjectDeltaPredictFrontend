@@ -1,7 +1,4 @@
-
-
 import { Text, View ,Button,TouchableOpacity } from 'react-native';
-
 import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
@@ -14,15 +11,18 @@ ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, 
 import { Searchbar } from 'react-native-paper';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from "react-native-vector-icons/Ionicons";
-import { addStockToFavoriteStockList,fetchSentimentData } from "../client/deltaPredicrClient"
+
+import { addStockToFavoriteStockList, fetchSentimentData, fetchMonteCarlo } from "../client/deltaPredicrClient"
+
 import Papa from 'papaparse';
 import { ListItem } from 'react-native-elements'
 
 //get file with top 50 stocks
-var topStocks = require('../csvFiles/top50.csv');
+
+var topStocks = require('../assets/top50.csv');
 
 function StockScreen({ route, navigation }) {
-  const {  otherParam, userParam } = route.params;
+  const {otherParam, userParam} = route.params;
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
@@ -35,10 +35,13 @@ function StockScreen({ route, navigation }) {
   // For Filtered search Data
   const [filteredStocks, setFilteredStocks] = useState([]);
   let marketStatus;
+  const {monteCarloResults, setMonteCarlo} = useState({})
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
-console.log(parsedCsvData.includes(""));
+
+  console.log(parsedCsvData.includes(""));
+
 
   //reac csv file with top stocks into  an array
   const parseFile = file => {
@@ -58,6 +61,7 @@ console.log(parsedCsvData.includes(""));
     });
   };
 
+
   //read top50 stock csv file
   useEffect(() => {
     parseFile(topStocks);
@@ -66,27 +70,29 @@ console.log(parsedCsvData.includes(""));
   
 )
 
-//check if stock exchange is open and update text
-if(usa.isTradingNow()){
-  marketStatus="NasdaqGS Real Time Price in USD"
-  // market is open right now
-} else {
-  // market is closed right now
-  marketStatus="Price as of last close";
-}
 
-//handle graph button clicks- set the correct dataset
-const onWeekButtonPress = query => {
-  console.log(graphPredictedPrices)
-  setStamps(weeklyTimestamps)
-  setgraphPredicted(weeklyPredictedPrices);
+  //check if stock exchange is open and update text
+  if(usa.isTradingNow()){
+    marketStatus="NasdaqGS Real Time Price in USD"
+    // market is open right now
+  } else {
+    // market is closed right now
+    marketStatus="Price as of last close";
+  }
 
-};
-const onDailyButtonPress = query => {
-  setStamps(dailyTimestamps)
-  setgraphPredicted(predictedPrices);
+  //handle graph button clicks- set the correct dataset
+  const onWeekButtonPress = query => {
+    console.log(graphPredictedPrices)
+    setStamps(weeklyTimestamps)
+    setgraphPredicted(weeklyPredictedPrices);
 
-};
+  };
+
+  const onDailyButtonPress = query => {
+    setStamps(dailyTimestamps)
+    setgraphPredicted(predictedPrices);
+
+  };
 
   const onChangeSearch = query => {
    setSearchQuery(query);
@@ -130,18 +136,20 @@ const onDailyButtonPress = query => {
 
 
 
-// *** generate data lables for graph**
-function padTo2Digits(num) {
-  return num.toString().padStart(2, '0');
-}
 
-function formatDate(date) {
-  return [
-    date.getFullYear(),
-    padTo2Digits(date.getMonth() + 1),
-    padTo2Digits(date.getDate()),
-  ].join('-');
-}
+  // *** generate data lables for graph**
+  function padTo2Digits(num) {
+    return num.toString().padStart(2, '0');
+  }
+
+
+  function formatDate(date) {
+    return [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate()),
+    ].join('-');
+  }
 
 
   let today = new Date();
@@ -167,41 +175,47 @@ function formatDate(date) {
 // ***
  const  controller = useRef("");
 
-//GET DATA FOR ARIMA PREDICTION
-async function fetch_Arima_Data() {
- 
-  try { 
-    controller.current=new AbortController();
-    let signal = controller.current.signal;
-   // console.log(signal);
+//  monteCarloResults = fetchMonteCarlo(otherParam)
+//  setMonteCarlo()
+  // console.log(monteCarloResults)
 
-    const promise = new Promise((resolve, reject) => {
-      resolve(fetchArima(otherParam,signal) )
-      
-    })
+  //GET DATA FOR ARIMA PREDICTION
+  async function fetch_Arima_Data() {
   
-    promise.then((response) => {
-      //console.log(response)
-      var obj=null; 
-      const dailyArimaData =new Array();
-     
-     // console.log(response)
-      for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
-      {
-          obj= JSON.parse(response["daily"]["mean"][i])
-          dailyArimaData.push(obj)
-      }
-      setgraphPredicted(dailyArimaData);
-      //console.log(response["weekly"])
-      setPredicted(dailyArimaData);
-      setWeeklyPredicted(response["weekly"]["mean"]);
-      setweeklyStamps((response["weekly"]["dates"]));
+    try { 
+      controller.current=new AbortController();
+      let signal = controller.current.signal;
+    // console.log(signal);
+
+      const promise = new Promise((resolve, reject) => {
+        resolve(fetchArima(otherParam,signal) )
+        
+      })
+    
+      promise.then((response) => {
+        //console.log(response)
+        var obj=null; 
+        const dailyArimaData =new Array();
       
-    })
-  } catch (error) {
-  } 
-  }
-  
+
+      // console.log(response)
+        for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
+        {
+            obj= JSON.parse(response["daily"]["mean"][i])
+            dailyArimaData.push(obj)
+        }
+        setgraphPredicted(dailyArimaData);
+        //console.log(response["weekly"])
+        setPredicted(dailyArimaData);
+        setWeeklyPredicted(response["weekly"]["mean"]);
+        setweeklyStamps((response["weekly"]["dates"]));
+        
+      })
+    } catch (error) {
+    } 
+    }
+    
+
   //cancel arima fetch
   const cancelRequest= () => controller.current && controller.current.abort();
 
@@ -221,25 +235,27 @@ async function fetch_Arima_Data() {
   
   )
   useEffect(() => {
- //call function to get arima prediction  when a new search is being made
-  setStamps(getDateArray(tomorrow,nextweek));
-  if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
-  {
-    fetch_sentiment_Data(searchQuery);
-  //fetch_Arima_Data()
+
+    //call function to get arima prediction  when a new search is being made
+    setStamps(getDateArray(tomorrow,nextweek));
+    if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
+    {
+      fetch_sentiment_Data(searchQuery);
+    //fetch_Arima_Data()
   }
    
 
-},  [searchQuery]
+  },  [searchQuery]
 
-)
+  )
   //handle price text color according to sign
-const handleColors = (value) => {
-  let val =(parseFloat(value))
-  if (val > 0) return "green";
-  if (val < 0) return "red";
-  
-};
+  const handleColors = (value) => {
+    let val =(parseFloat(value))
+    if (val > 0) return "green";
+    if (val < 0) return "red";
+    
+  };
+
 
 //get stock live data from the server
   async function fetch_Data(text) {
@@ -287,11 +303,12 @@ const handleColors = (value) => {
     <View style={styles.container}> 
           <Pressable onPress={() => {navigation.navigate('Home');cancelRequest();}} style={styles.backImage}>
               <Image
-              source={require('../assets/icon.png')}
+              source={require('../assets/Photos/icon.png')}
               style={{ flex: 1 }}
               resizeMode="contain"
               />
           </Pressable>   
+
           <View style={styles.centered}>
                 <Autocomplete
                 data={filteredStocks}
@@ -451,9 +468,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   backImage: {
-    width: 350,
-    height: 150,
-    marginLeft: 25,
+    backgroundColor: "#131722",
+    justifyContent:"flex-start",
+    flexDirection: "row",
+    width: 275,
+    height: 100 ,
+    marginLeft: 25, 
+    marginTop: 10
   },
 });
 

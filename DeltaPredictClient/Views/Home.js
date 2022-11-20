@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View ,StatusBar } from 'react-native';
+import { StyleSheet, Text, View ,ActivityIndicator, StatusBar } from 'react-native';
 import { useState } from 'react'
 import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
 import { useNavigation } from '@react-navigation/native';
@@ -16,10 +16,11 @@ function Home({route, navigation}){
     const [searchQuery, setSearchQuery] = React.useState('');
     const [currentPrice, setAPrice] = useState([]);
     const [counter, setCounter] = useState(0)
+    const [loading, setLoad] = useState(true); 
     const onChangeSearch = query => setSearchQuery(query);
     const user = route.params;
     const [getUser, setUser] = useState(user);
-   
+    
 
     async function getMarketData() {
         try { 
@@ -47,7 +48,7 @@ function Home({route, navigation}){
               active.push(obj)
             }
             setActive(active)
-            
+            setLoad(false)
           })
         } catch (error) {
 
@@ -138,7 +139,7 @@ const handleColors = (newPrice, stockSymbol) => {
     }
   }
 };
-
+//<ActivityIndicator style={{width: '100%', height: '100%' }} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
     
   return (
  
@@ -179,9 +180,9 @@ const handleColors = (newPrice, stockSymbol) => {
                 <Text style={styles.subTitle}>  Top Losers ↑↓  </Text>
                 <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
                   <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                  
                   ))} 
                 </Text>
+                
               </View>
 
               <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>

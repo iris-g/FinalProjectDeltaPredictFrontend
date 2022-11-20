@@ -15,6 +15,7 @@ export default function FavoriteStocks({route, navigation}) {
     const [stocks, setData] = useState(''); 
     const header = ['Price ↑↓', 'Symbol', 'Volume', 'Day Low', 'Day High', 'Remove']
     const user = route.params;
+    
 
 
     async function fetch_Data(text) {
