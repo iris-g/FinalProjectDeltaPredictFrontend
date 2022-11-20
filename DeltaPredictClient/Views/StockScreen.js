@@ -1,7 +1,4 @@
-
-
-import { Text, View ,Button } from 'react-native';
-
+import { Text, View ,Button,TouchableOpacity } from 'react-native';
 import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
@@ -12,13 +9,17 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
+import Autocomplete from 'react-native-autocomplete-input';
 import Icon from "react-native-vector-icons/Ionicons";
-import { addStockToFavoriteStockList,fetchSentimentData } from "../client/deltaPredicrClient"
+import { addStockToFavoriteStockList, fetchSentimentData, fetchMonteCarlo } from "../client/deltaPredicrClient"
+import Papa from 'papaparse';
+import { ListItem } from 'react-native-elements'
 
+//get file with top 50 stocks
+var topStocks = require('../assets/top50.csv');
 
 function StockScreen({ route, navigation }) {
-  const {  otherParam, userParam } = route.params;
- // console.log("other =" + otherParam)
+  const {otherParam, userParam} = route.params;
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
@@ -28,52 +29,87 @@ function StockScreen({ route, navigation }) {
   const [searchQuery, setSearchQuery] = React.useState(otherParam);
   const [dailyTimestamps, setStamps] = React.useState(otherParam);
   const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
+  // For Filtered search Data
+  const [filteredStocks, setFilteredStocks] = useState([]);
   let marketStatus;
+  const {monteCarloResults, setMonteCarlo} = useState({})
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
+  const [parsedCsvData, setParsedCsvData] = useState([]);
+  console.log(parsedCsvData.includes(""));
 
-//check if stock exchange is open and update text
-if(usa.isTradingNow()){
-  marketStatus="NasdaqGS Real Time Price in USD"
-  // market is open right now
-} else {
-  // market is closed right now
-  marketStatus="Price as of last close";
-}
+  //reac csv file with top stocks into  an array
+  const parseFile = file => {
+    Papa.parse(file, {
+      header: false,
+      download: true,
+      complete: results => {
+        const arr =new Array();
+            for(let i=0;i<Object.keys(results.data).length;i++)
+            {
+              const  obj= (results.data[i ][0])
+              arr.push(obj)
+            }
+        setParsedCsvData(arr)
+      
+      },
+    });
+  };
 
-//handle graph button clicks- set the correct dataset
-const onWeekButtonPress = query => {
-  console.log(graphPredictedPrices)
-  setStamps(weeklyTimestamps)
-  setgraphPredicted(weeklyPredictedPrices);
+  //read top50 stock csv file
+  useEffect(() => {
+    parseFile(topStocks);
 
-};
-const onDailyButtonPress = query => {
-  setStamps(dailyTimestamps)
-  setgraphPredicted(predictedPrices);
+  },  []
+  
+)
 
-};
+  //check if stock exchange is open and update text
+  if(usa.isTradingNow()){
+    marketStatus="NasdaqGS Real Time Price in USD"
+    // market is open right now
+  } else {
+    // market is closed right now
+    marketStatus="Price as of last close";
+  }
+
+  //handle graph button clicks- set the correct dataset
+  const onWeekButtonPress = query => {
+    console.log(graphPredictedPrices)
+    setStamps(weeklyTimestamps)
+    setgraphPredicted(weeklyPredictedPrices);
+
+  };
+
+  const onDailyButtonPress = query => {
+    setStamps(dailyTimestamps)
+    setgraphPredicted(predictedPrices);
+
+  };
 
   const onChangeSearch = query => {
     setSearchQuery(query);
     setPredicted("");
+    //create a filtered stock list 
+    if (query) {
+      // Making a case insensitive regular expression
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      const temp = query
+      // Setting the filtered film array according the query
+      const tempList = parsedCsvData.filter(item => {
+        if (String(item).substring(0,temp.length).search(temp) >=0)
+          return item
+
+      })
+      setFilteredStocks(tempList)
     
-    try{
-    if (controller) {
+    } else {
+      // If the query is null then return blank
+      setFilteredStocks([]);
+    }
 
-          controller.abort();
-          console.log("Download aborted");
-        }
-
-    }catch( error) {
-      if (error.name === "AbortError") {
-        console.log("Operation timed out");
-      } else {
-        console.error(err);
-      }
-
- 
-}};
+    
+  };
 
 
  //predicted prices dataset
@@ -91,59 +127,20 @@ const onDailyButtonPress = query => {
     borderWidth: 1 ,
   };
 
-const options = {
-  responsive: true,
-  title: {
-    display: true,
-    text: 'Chart.js Line Chart'
-  },
-  tooltips: {
-    mode: 'label'
-  },
-  hover: {
-    mode: 'dataset'
-  },
-  scales: {
-    xAxes: [
-      {
-        display: true,
-        scaleLabel: {
-          show: true,
-          labelString: 'Month'
-        }
-      }
-    ],
-    yAxes: [
-      {
-        display: true,
-        scaleLabel: {
-          show: true,
-          labelString: 'Value'
-        },
-        ticks: {
-          suggestedMin: -10,
-          suggestedMax: 250
-        }
-      }
-    ]
+
+
+  // *** generate data lables for graph**
+  function padTo2Digits(num) {
+    return num.toString().padStart(2, '0');
   }
-}
 
-
-
-// *** generate data lables for graph
-
-function padTo2Digits(num) {
-  return num.toString().padStart(2, '0');
-}
-
-function formatDate(date) {
-  return [
-    date.getFullYear(),
-    padTo2Digits(date.getMonth() + 1),
-    padTo2Digits(date.getDate()),
-  ].join('-');
-}
+  function formatDate(date) {
+    return [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate()),
+    ].join('-');
+  }
 
 
   let today = new Date();
@@ -169,42 +166,46 @@ function formatDate(date) {
 // ***
  const  controller = useRef("");
 
-//GET DATA FOR ARIMA PREDICTION
-async function fetch_Arima_Data() {
- 
-  try { 
-    controller.current=new AbortController();
-    let signal = controller.current.signal;
-   // console.log(signal);
+//  monteCarloResults = fetchMonteCarlo(otherParam)
+//  setMonteCarlo()
+  // console.log(monteCarloResults)
 
-    const promise = new Promise((resolve, reject) => {
-      resolve(fetchArima(otherParam,signal) )
-      
-    })
+  //GET DATA FOR ARIMA PREDICTION
+  async function fetch_Arima_Data() {
   
-    promise.then((response) => {
-      //console.log(response)
-      var obj=null; 
-      const dailyArimaData =new Array();
-     
-     // console.log(response)
-      for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
-      {
-          obj= JSON.parse(response["daily"]["mean"][i])
-          dailyArimaData.push(obj)
-      }
-      setgraphPredicted(dailyArimaData);
-      //console.log(response["weekly"])
-      setPredicted(dailyArimaData);
-      setWeeklyPredicted(response["weekly"]["mean"]);
-      setweeklyStamps((response["weekly"]["dates"]));
+    try { 
+      controller.current=new AbortController();
+      let signal = controller.current.signal;
+    // console.log(signal);
+
+      const promise = new Promise((resolve, reject) => {
+        resolve(fetchArima(otherParam,signal) )
+        
+      })
+    
+      promise.then((response) => {
+        //console.log(response)
+        var obj=null; 
+        const dailyArimaData =new Array();
       
-    })
-  } catch (error) {
-  } 
-  }
-  
-  //cancel arima etch
+      // console.log(response)
+        for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
+        {
+            obj= JSON.parse(response["daily"]["mean"][i])
+            dailyArimaData.push(obj)
+        }
+        setgraphPredicted(dailyArimaData);
+        //console.log(response["weekly"])
+        setPredicted(dailyArimaData);
+        setWeeklyPredicted(response["weekly"]["mean"]);
+        setweeklyStamps((response["weekly"]["dates"]));
+        
+      })
+    } catch (error) {
+    } 
+    }
+    
+  //cancel arima fetch
   const cancelRequest= () => controller.current && controller.current.abort();
 
   
@@ -212,21 +213,36 @@ async function fetch_Arima_Data() {
   //call function to get arima prediction  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    fetch_sentiment_Data(searchQuery);
+    if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
+    {
+       fetch_sentiment_Data(searchQuery);
     //fetch_Arima_Data()
+    }
+    
 
   },  []
   
   )
+  useEffect(() => {
+    //call function to get arima prediction  when a new search is being made
+    setStamps(getDateArray(tomorrow,nextweek));
+    if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
+    {
+      fetch_sentiment_Data(searchQuery);
+    //fetch_Arima_Data()
+  }
+   
 
+  },  [searchQuery]
+
+  )
   //handle price text color according to sign
-const handleColors = (value) => {
-  let befor = value
-  let val =(parseFloat(value))
-  if (val > 0) return "green";
-  if (val < 0) return "red";
-  
-};
+  const handleColors = (value) => {
+    let val =(parseFloat(value))
+    if (val > 0) return "green";
+    if (val < 0) return "red";
+    
+  };
 
 //get stock live data from the server
   async function fetch_Data(text) {
@@ -237,6 +253,7 @@ const handleColors = (value) => {
       })
     
       promise.then((response) => {
+        console.log(response["symbol"] )
         if(response["symbol"] == searchQuery)
           setData(response)
           setLoad(false)
@@ -246,12 +263,14 @@ const handleColors = (value) => {
     } 
     }
     useInterval(() => {
-
-      fetch_Data(searchQuery)
+      console.log(searchQuery+"SQ")
+      if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
+        fetch_Data(searchQuery)
     },  8000// Delay in milliseconds or null to stop it
     
     )
  
+      //get stocks monthly sentiment score
       async function fetch_sentiment_Data(text) {
  
         try { 
@@ -259,10 +278,8 @@ const handleColors = (value) => {
           const promise = new Promise((resolve, reject) => {
             resolve(fetchSentimentData(text) )
           })
-        
           promise.then((response) => {
-           setSentiment(response)
-            
+          setSentiment(response)   
           })
         } catch (error) {
         } 
@@ -275,22 +292,37 @@ const handleColors = (value) => {
     <View style={styles.container}> 
           <Pressable onPress={() => {navigation.navigate('Home');cancelRequest();}} style={styles.backImage}>
               <Image
-              source={require('../assets/icon.png')}
+              source={require('../assets/Photos/icon.png')}
               style={{ flex: 1 }}
               resizeMode="contain"
               />
           </Pressable>   
+
           <View style={styles.centered}>
-            <Searchbar 
-                style={{height: 40}}
-                placeholder="enter symbol"
-                type="text"
-                justifyContent= "center"
-                alignItems= "center"
+                <Autocomplete
+                data={filteredStocks}
                 value={searchQuery}
                 onChangeText={onChangeSearch}
-                onIconPress={ event =>{event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: userParam}) : "";setLoad(true);cancelRequest();}}
-              /> 
+                placeholder="Enter the stock symbol"
+                flatListProps={{
+                keyExtractor: (_, idx) => idx,
+                renderItem: ({ item ,index}) =>  (
+                <TouchableOpacity
+                  key={index.toString()} 
+                onPress={() => {
+                console.log(item[0]+"&&");
+                setSearchQuery(item);
+                setLoad("true");
+                setFilteredStocks([]);
+              
+              }}> 
+                <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title >{item}</ListItem.Title>
+                </ListItem.Content>
+                <ListItem.Chevron />
+                </ListItem>
+              </TouchableOpacity>) }}  />
           </View>
 
           <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading} hidesWhenStopped={true} /> 
@@ -422,9 +454,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   backImage: {
-    width: 350,
-    height: 150,
-    marginLeft: 25,
+    backgroundColor: "#131722",
+    justifyContent:"flex-start",
+    flexDirection: "row",
+    width: 275,
+    height: 100 ,
+    marginLeft: 25, 
+    marginTop: 10
   },
 });
 

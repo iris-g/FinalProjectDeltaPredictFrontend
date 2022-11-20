@@ -6,9 +6,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DrawerNavigator from './Views/DrawerNavigator.js';
 import SignUp from './Views/SignUp.js';
 import 'react-native-gesture-handler';
-import stockScreen from './Views/StockScreen.js';
+import LearnMoreScreen from './Views/LearnMoreScreen.js';
 import StockScreen from './Views/StockScreen.js';
-import FavoriteStocks from './Views/FavoriteStocks.js';
 
 
 //create stack for navigation bewteen screens   
@@ -22,6 +21,7 @@ export default function App() {
       <Stack.Screen name="Dashboard" component={DrawerNavigator}  options={{ headerShown: false }} />
       <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }}/>
       <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
+      <Stack.Screen name="LearnMoreScreen" component={LearnMoreScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="StockScreen" component={StockScreen} options={{ headerShown: false }}/>
 
     </Stack.Navigator>
