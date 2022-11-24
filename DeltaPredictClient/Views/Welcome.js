@@ -81,7 +81,7 @@ export default function App()  {
                                     <Button title ="Sign Up" color = "#131822" onPress={() => navigation.navigate('SignUp')}/>
                                 </View>
                                 <View style={styles.btnStart}>
-                                    <Button title = "Start  ➤" color = "#307D7E" onPress={() => _onPressButtonLogin(email,password,navigation)}/>
+                                    <Button title = "Start  ►" color = "#307D7E" onPress={() => _onPressButtonLogin(email,password,navigation)}/>
                                 </View>
                         </View>
                     </View> 
