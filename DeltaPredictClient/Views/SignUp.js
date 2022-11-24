@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, TextInput, Button, Image, Pressable } from "rea
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
 import {_onPressButtonsignUp} from '../client/deltaPredicrClient'
-
+import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login';
 
 export default function SignUp() {
 
@@ -13,14 +14,17 @@ export default function SignUp() {
     const [answer1, setAnswer1] = useState("");
     const [answer2, setAnswer2] = useState("");
     const [answer3, setAnswer3] = useState("");
+    const [redColor, setRedColor] = useState([])
     const navigation = useNavigation();
    
 
     function cheackAnswer(){
 
-        if(email === "")
+        if(email === ""){
             setAnswer1("You must enter email address.")
-        else setAnswer1("")
+            setRedColor()
+        }
+        else{setAnswer1("") } 
 
         if(password === "")
             setAnswer2("You must enter a password.")
@@ -30,8 +34,20 @@ export default function SignUp() {
             setAnswer3("You must confirm your password.")
         else setAnswer3("")
 
+        if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/.test(email) === false) 
+            setAnswer1("Your email is incorrect.")
+        else setAnswer1("")
+
         if(email !== "" && password !== "" && confirmPassword !== "" )
             _onPressButtonsignUp(email, password, confirmPassword, navigation)
+    }
+
+    const responseGoogle = (response) => {
+        console.log(response);
+      }
+
+    const responseFacebook = (response) => {
+        console.log(response);
     }
     
     return (
@@ -94,10 +110,50 @@ export default function SignUp() {
                         onPress={() => cheackAnswer()}/>
                     </View>
                 </View>
+                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
+                <Text style={{alignSelf: "center", color: 'white', marginTop: 10}}> ─ Or ─ </Text> 
+                </View>
+                
+                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
 
-                <Text style={{alignSelf: "center", color: 'white'}}>Already have an account?  Sign in</Text>
+                    <View style={{ backgroundColor: "#131722",  margin: 8, marginLeft: 22}}>
+                    <GoogleLogin
+                    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                    buttonText="Sing up with Google"
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy={'single_host_origin'}
+                    render={renderProps => (
+                    <button style={{backgroundColor: "white",  alignItems: 'center', borderColor: "red", borderRadius: 3, borderWidth: 1.9}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'red'}} size={19} name="logo-google"></Icon><Text style = {{color: 'red', fontSize: 18, alignSelf: 'center'}}>︳With Google</Text></button>
+                    )}
+                    />
+                    </View>
+
+                    <View style={{alignSelf: "center", backgroundColor: "#131722",  margin: 8, borderColor: "blue", borderRadius: 3, borderWidth: 1 }}>
+                    
+                    <FacebookLogin
+                        appId="1088597931155576"
+                        autoLoad={false}
+                        fields="email"
+                        textButton = <Text style={{color: '#1569C7', fontSize: 18}}>︳Wite Facebook</Text>
+                        size = "small"
+                        cssClass ="lol"
+                        icon = <Icon style ={{color: '#1569C7'}} size={19} name="logo-facebook"></Icon>
+                        //onClick={componentClicked}
+                        //callback={responseFacebook} 
+                        />
+                        
+                        
+                        
+                    </View>
+                </View>
+                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
+                <Text style={{alignSelf: "center", color: 'white',}}>Already have an account? </Text> <Pressable onPress={() => {navigation.navigate('Welcome')}}><Text style={{color: '#1569C7'}}> Sign in</Text></Pressable>
+                </View>
 
             </View>
+            
+        
         </View>
 
     );
@@ -118,8 +174,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
     },
     HeadLineText: {
-        fontSize: 20,
-        fontWeight: "bold",
+        fontSize: 35,
+        margin: 20,
         color: 'white',
         justifyContent: 'center',
         alignSelf: 'center',

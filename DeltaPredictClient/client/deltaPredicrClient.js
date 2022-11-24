@@ -1,9 +1,9 @@
 
 
 /** 
- name: _onPressButtonLogin
- Page: Welcome
- Description: This function check if login details are correct in DB.
+name: _onPressButtonLogin
+Page: Welcome
+Description: This function check if login details are correct in DB.
 **/
 
 export  function _onPressButtonLogin (email,password,navigation) {
@@ -17,9 +17,9 @@ export  function _onPressButtonLogin (email,password,navigation) {
 }
 
 /** 
- name: _onPressButtonsignUp
- Page: SignUp
- Description: This function add use to DB.
+name: _onPressButtonsignUp
+Page: SignUp
+Description: This function add use to DB.
 **/
 
 export function _onPressButtonsignUp (email,password,confirmPassword,navigation) {
@@ -35,9 +35,9 @@ export function _onPressButtonsignUp (email,password,confirmPassword,navigation)
 
 
 /** 
- name: fetch_from_server
- Page: Home
- Description: This function POST to server list of stock sector and receive the data abut the stocks.
+name: fetch_from_server
+Page: Home
+Description: This function POST to server list of stock sector and receive the data abut the stocks.
 **/
 
 export  async  function fetch_from_server(type,url){
@@ -129,16 +129,28 @@ export async function fetchFavoritesData(userEmail){
   return json
 }
 
+/** 
+name: fetchSentimentData
+Page: StockScreen
+Description: This function POST to server the email of the user and receive the user favorite list.
+**/
+
 export async function fetchSentimentData(Symbol){
     const response = await fetch('http://localhost:5000/sentimentScore', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({  symbol:Symbol  }) 
     })
-    const json = await response.json()
+    //const json = await response.json()
   
-    return json
+    return response.toString()
   }
+
+/** 
+name: fetchMonteCarlo
+Page: StockScreen
+Description: This function POST to server the symbol of the stock. receive the Monte Carlo forecasting.
+**/
 
   export async function fetchMonteCarlo(symbol){
     const response = await fetch('http://localhost:5000/monteCarloResults', {
@@ -150,6 +162,12 @@ export async function fetchSentimentData(Symbol){
     console.log(json)
     return json
 }
+
+/** 
+name: fetchArima
+Page: StockScreen
+Description: This function POST to server the symbol of the stock. receive the Monte Carlo forecasting.
+**/
 
 export async function fetchArima(symbol,Signal){
     const response = await fetch('http://localhost:5000/arimaResults', {
@@ -163,6 +181,12 @@ export async function fetchArima(symbol,Signal){
     return json
 }
 
+/** 
+name: addStockToFavoriteStockList
+Page: StockScreen
+Description: This function POST to server the symbol of the stock. receive the Monte Carlo forecasting.
+**/
+
 export async function addStockToFavoriteStockList(userEmail,symbol){
     fetch('http://localhost:5000/addStocktoFavoriteList', {
         method: 'POST', 
@@ -172,6 +196,12 @@ export async function addStockToFavoriteStockList(userEmail,symbol){
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
 }
+
+/** 
+name: deletFromFavoriteStockList
+Page: FavoriteStocks
+Description: This function POST to server the user email and symbol of the stock and the server delete the stock from the favoriteStock.
+**/
 
 export async function deletFromFavoriteStockList(userEmail,symbol){
     fetch('http://localhost:5000/deletStocktoFavoriteList', {
