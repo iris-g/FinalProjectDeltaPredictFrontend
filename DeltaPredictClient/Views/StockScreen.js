@@ -11,11 +11,10 @@ ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, 
 import { Searchbar } from 'react-native-paper';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from "react-native-vector-icons/Ionicons";
-
 import { addStockToFavoriteStockList, fetchSentimentData, fetchMonteCarlo } from "../client/deltaPredicrClient"
-
 import Papa from 'papaparse';
 import { ListItem } from 'react-native-elements'
+
 
 //get file with top 50 stocks
 
@@ -35,7 +34,8 @@ function StockScreen({ route, navigation }) {
   // For Filtered search Data
   const [filteredStocks, setFilteredStocks] = useState([]);
   let marketStatus;
-  const {monteCarloResults, setMonteCarlo} = useState({})
+  let monteCarloResults
+  const [monteCarlo, setMonteCarlo] = React.useState('')
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
@@ -119,6 +119,11 @@ function StockScreen({ route, navigation }) {
   };
 
 
+  const as = query => {
+    sett(monteCarlo)
+
+  };
+
  //predicted prices dataset
   const prices = {
     labels: dailyTimestamps,
@@ -173,11 +178,25 @@ function StockScreen({ route, navigation }) {
 }
 
 // ***
- const  controller = useRef("");
+  const  controller = useRef("");
 
-//  monteCarloResults = fetchMonteCarlo(otherParam)
-//  setMonteCarlo()
-  // console.log(monteCarloResults)
+  /* */
+  async function fetch_MonteCarlo(otherParam) {
+      try { 
+        const promise = new Promise((resolve, reject) => {
+          resolve(fetchMonteCarlo(otherParam) )
+        })
+      
+        promise.then((response) => {
+          setMonteCarlo(response)
+        })
+        } catch (error) {} 
+    }
+  useEffect(() => {
+    fetch_MonteCarlo(otherParam)
+  },  [])
+ 
+
 
   //GET DATA FOR ARIMA PREDICTION
   async function fetch_Arima_Data() {
@@ -310,6 +329,7 @@ function StockScreen({ route, navigation }) {
           </Pressable>   
 
           <View style={styles.centered}>
+          
                 <Autocomplete
                 data={filteredStocks}
                 value={searchQuery}
@@ -353,9 +373,9 @@ function StockScreen({ route, navigation }) {
                       <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 20, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
                     </Pressable>   
                   </View>
-
+                  <Text style={{color: 'white'}}>{monteCarlo.Min} {monteCarlo.Max}</Text>
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'}  monthly sentiment score:{sentiment} {'\n'}   volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+                    <><p>{'\n'} monthly sentiment score:{sentiment} {'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
 
                     </>}
                   </Text> 
