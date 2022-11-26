@@ -141,9 +141,9 @@ export async function fetchSentimentData(Symbol){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({  symbol:Symbol  }) 
     })
-    //const json = await response.json()
-  
-    return response.toString()
+    const json = await response.json()
+
+   return json
   }
 
 /** 

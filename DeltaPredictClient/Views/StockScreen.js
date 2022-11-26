@@ -40,7 +40,7 @@ function StockScreen({ route, navigation }) {
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
 
-  console.log(parsedCsvData.includes(""));
+  console.log(parsedCsvData);
 
 
   //reac csv file with top stocks into  an array
@@ -56,6 +56,8 @@ function StockScreen({ route, navigation }) {
               arr.push(obj)
             }
         setParsedCsvData(arr)
+     
+        
       
       },
     });
@@ -65,6 +67,7 @@ function StockScreen({ route, navigation }) {
   //read top50 stock csv file
   useEffect(() => {
     parseFile(topStocks);
+  
 
   },  []
   
@@ -232,7 +235,7 @@ function StockScreen({ route, navigation }) {
       })
     } catch (error) {
     } 
-    }
+    }parsedCsvData
     
 
   //cancel arima fetch
@@ -240,14 +243,17 @@ function StockScreen({ route, navigation }) {
 
   
 
-  //call function to get arima prediction  for the first time only
+  //call function to get arima prediction and sentiment score  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
-    {
+    console.log(parsedCsvData)
+    console.log(parsedCsvData.includes(searchQuery)  )
+    // if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
+    // {
+      //console.log("FETCH")
        fetch_sentiment_Data(searchQuery);
     //fetch_Arima_Data()
-    }
+   // }
     
 
   },  []
@@ -285,7 +291,7 @@ function StockScreen({ route, navigation }) {
       })
     
       promise.then((response) => {
-        console.log(response["symbol"] )
+        //console.log(response["symbol"] )
         if(response["symbol"] == searchQuery)
           setData(response)
           setLoad(false)
@@ -295,7 +301,7 @@ function StockScreen({ route, navigation }) {
     } 
     }
     useInterval(() => {
-      console.log(searchQuery+"SQ")
+      console.log(parsedCsvData.includes(searchQuery))
       if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
         fetch_Data(searchQuery)
     },  8000// Delay in milliseconds or null to stop it
@@ -311,6 +317,7 @@ function StockScreen({ route, navigation }) {
             resolve(fetchSentimentData(text) )
           })
           promise.then((response) => {
+            console.log(response)
           setSentiment(response)   
           })
         } catch (error) {
@@ -341,7 +348,7 @@ function StockScreen({ route, navigation }) {
                 <TouchableOpacity
                   key={index.toString()} 
                 onPress={() => {
-                console.log(item[0]+"&&");
+              //  console.log(item[0]+"&&");
                 setSearchQuery(item);
                 setLoad("true");
                 setFilteredStocks([]);
@@ -358,7 +365,7 @@ function StockScreen({ route, navigation }) {
           <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading} hidesWhenStopped={true} /> 
           <View style={{backgroundColor: "#131822",alignItems: "center"}}>
             <Text style={styles.title}> {  
-                <><p > {data["name"]} - {data["symbol"]} {'\n'} NasdaqGS Real Time Price in USD {data["close"]}
+                <><p > {data["name"]} - {data["symbol"]} {'\n'} {marketStatus} {data["close"]}
                     <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
                     <Text style={{ color:handleColors(data["regularMarketChange"]) }}>  {data["regularMarketChange"]}</Text> </p>
                 </>}
