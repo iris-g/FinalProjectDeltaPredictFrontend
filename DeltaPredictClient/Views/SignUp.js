@@ -14,32 +14,36 @@ export default function SignUp() {
     const [answer1, setAnswer1] = useState("");
     const [answer2, setAnswer2] = useState("");
     const [answer3, setAnswer3] = useState("");
-    const [redColor, setRedColor] = useState([])
+    const [answer4, setAnswer4] = useState("");
     const navigation = useNavigation();
    
 
     function cheackAnswer(){
 
-        if(email === ""){
+        if(email === "")
             setAnswer1("You must enter email address.")
-            setRedColor()
-        }
-        else{setAnswer1("") } 
+        else setAnswer1("") 
 
         if(password === "")
             setAnswer2("You must enter a password.")
         else setAnswer2("")
 
+        if(/^(\d)(?!\1{7})\d{7}/g.test(password) === false)
+            setAnswer4("The password must be eight characters or longer")
+        else setAnswer4("")
+
         if(confirmPassword === "")
             setAnswer3("You must confirm your password.")
         else setAnswer3("")
+
+        
 
         if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/.test(email) === false) 
             setAnswer1("Your email is incorrect.")
         else setAnswer1("")
 
         if(email !== "" && password !== "" && confirmPassword !== "" )
-            _onPressButtonsignUp(email, password, confirmPassword, navigation)
+            _onPressButtonsignUp(email, password, navigation)
     }
 
     const responseGoogle = (response) => {
@@ -48,6 +52,9 @@ export default function SignUp() {
 
     const responseFacebook = (response) => {
         console.log(response);
+        console.log(response.email)
+        console.log(response.id)
+        _onPressButtonsignUp(response.email, response.id, navigation )
     }
     
     return (
@@ -92,6 +99,7 @@ export default function SignUp() {
                     </View>
  
                     <Text style={{color: 'red'}}>{answer2}</Text>
+                    <Text style={{color: 'red'}}>{answer4}</Text>
 
                     <View style={styles.inputView}>
                         <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
@@ -110,7 +118,7 @@ export default function SignUp() {
                         onPress={() => cheackAnswer()}/>
                     </View>
                 </View>
-                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
+                <View style={{ alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
                 <Text style={{alignSelf: "center", color: 'white', marginTop: 10}}> ─ Or ─ </Text> 
                 </View>
                 
@@ -132,15 +140,15 @@ export default function SignUp() {
                     <View style={{alignSelf: "center", backgroundColor: "#131722",  margin: 8, borderColor: "blue", borderRadius: 3, borderWidth: 1 }}>
                     
                     <FacebookLogin
-                        appId="1088597931155576"
+                        appId="5851953558159752"
                         autoLoad={false}
-                        fields="email"
-                        textButton = <Text style={{color: '#1569C7', fontSize: 18}}>︳Wite Facebook</Text>
+                        fields="email, name"
+                        textButton = <Text style={{color: '#1569C7', fontSize: 18}}>︳With Facebook</Text>
                         size = "small"
                         cssClass ="lol"
                         icon = <Icon style ={{color: '#1569C7'}} size={19} name="logo-facebook"></Icon>
                         //onClick={componentClicked}
-                        //callback={responseFacebook} 
+                        callback={responseFacebook} 
                         />
                         
                         
