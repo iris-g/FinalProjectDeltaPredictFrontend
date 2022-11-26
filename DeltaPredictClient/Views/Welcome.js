@@ -11,6 +11,8 @@ export default function App()  {
     const [password, setPassword] = useState(""); 
     const [eyePress, setEyePress] = useState("eye-off-outline")
     const [changePasswordVisibility, setViisibility] = useState(true)
+    const [answer1, setAnswer1] = useState("");
+    const [answer2, setAnswer2] = useState("");
     //get app navigation
     const navigation = useNavigation();
 
@@ -26,6 +28,22 @@ export default function App()  {
             console.log(changePasswordVisibility)
        }
     }
+
+
+    function cheackAnswer(){
+
+        if(email === "")
+            setAnswer1("You must enter email address.")
+        else setAnswer1("")
+
+        if(password === "")
+            setAnswer2("You must enter a password.")
+        else setAnswer2("")
+
+        if(email !== "" && password !== "")
+            _onPressButtonLogin(email,password,navigation)
+    }
+
 
     return (
        
@@ -61,27 +79,29 @@ export default function App()  {
                                     <Icon style={styles.iconInInputView} name="person-outline" size={20} color="#000"/>
                                     <TextInput
                                     style={styles.TextInput}
-                                    placeholder="Email"
+                                    placeholder= "Email"
                                     placeholderTextColor="#fff"
                                     onChangeText={(email) => setEmail(email)}
                                     />
                                 </View>
+                                <Text style={{color: 'red'}}>{answer1}</Text>
                                 <View style={styles.inputView}>
                                     <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
                                     <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
                                     <TextInput
                                     style={styles.TextInput}
-                                    placeholder="Password"
+                                    placeholder= "Password"
                                     placeholderTextColor="#fff"
                                     secureTextEntry={changePasswordVisibility}
                                     onChangeText={(password) => setPassword(password)}
                                     />
                                 </View>
+                                <Text style={{color: 'red'}}>{answer2}</Text>
                                 <View style={styles.btnSignUp}>
                                     <Button title ="Sign Up" color = "#131822" onPress={() => navigation.navigate('SignUp')}/>
                                 </View>
                                 <View style={styles.btnStart}>
-                                    <Button title = "Start  ►" color = "#307D7E" onPress={() => _onPressButtonLogin(email,password,navigation)}/>
+                                    <Button title = "Start  ►" color = "#307D7E" onPress={() => cheackAnswer()}/>
                                 </View>
                         </View>
                     </View> 
