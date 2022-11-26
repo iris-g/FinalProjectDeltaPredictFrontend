@@ -22,7 +22,7 @@ Page: SignUp
 Description: This function add use to DB.
 **/
 
-export function _onPressButtonsignUp (email,password,confirmPassword,navigation) {
+export function _onPressButtonsignUp (email,password,navigation) {
     fetch('http://localhost:5000/signnup', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
