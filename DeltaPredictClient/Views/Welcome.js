@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image, Pressable, Platform } from "react-native";
+import {StyleSheet, Text, View, TextInput, Button, Image, Pressable,TouchableHighlight,TouchableOpacity,  Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { _onPressButtonLogin } from "../client/deltaPredicrClient"
-
+import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 
 
 export default function App()  {
@@ -45,18 +46,28 @@ export default function App()  {
     }
 
 
+    const responseGoogle = (response) => {
+        console.log(response);
+      }
+
+    const responseFacebook = (response) => {
+        console.log(response);
+
+        _onPressButtonsignUp(response.email, response.id, navigation )
+    }
+
     return (
        
         <View style={styles.container}>
             <View style={styles.colorContainer}>
 
-                    <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.LogoImage}>
+                    <TouchableHighlight onPress={() => {navigation.navigate('Welcome')}} style={styles.LogoImage}>
                         <Image
                             source={require('../assets/Photos/icon.png')}
                             style={{ flex: 1, backgroundColor: "#131722"}}
                             resizeMode="contain"
                         />
-                    </Pressable>   
+                    </TouchableHighlight>   
                         
                     
                     <View style={styles.rowContainer}>
@@ -68,11 +79,12 @@ export default function App()  {
                                     resizeMode="contain"
                                 />
                                 <View style={styles.learnMoreContainer}>
-                                    <Pressable onPress={() => navigation.navigate('LearnMoreScreen')}> <Text style={styles.learnMoreText}>  Learn more →  </Text></Pressable> 
+                                    <Pressable  onPress={() => navigation.navigate('LearnMoreScreen')}> <Text style={styles.learnMoreText}>  Learn more →  </Text> </Pressable> 
+                                    
                                 </View>        
                             </View>
-                        </View>
-
+                        </View> 
+                       
                         <View style={styles.columnContainer}>
                             <Text style={styles.loginText}> Login </Text>
                                 <View style={styles.inputView}>
@@ -98,13 +110,48 @@ export default function App()  {
                                 </View>
                                 <Text style={{color: 'red'}}>{answer2}</Text>
                                 <View style={styles.btnSignUp}>
-                                    <Button title ="Sign Up" color = "#131822" onPress={() => navigation.navigate('SignUp')}/>
+                                    <Button title ="Sign Up" color = "#131822"  onPress={() => navigation.navigate('SignUp')}/>
                                 </View>
                                 <View style={styles.btnStart}>
-                                    <Button title = "Start  ►" color = "#307D7E" onPress={() => cheackAnswer()}/>
+                                    <Button title = "Start  ►" color = "#307D7E"  onPress={() => cheackAnswer()}/>
+                                </View>
+
+                                <Text style={{alignSelf: "center", color: 'white', marginTop: 25}}> ────  Or login with  ──── </Text> 
+
+                                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', flexDirection: "row",  marginTop: 15}}>
+
+                                    <View style={{ backgroundColor: "#131722",  marginRight: 8}}>
+                                    <GoogleLogin
+                                        clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                                        buttonText="Sing up with Google"
+                                        onSuccess={responseGoogle}
+                                        onFailure={responseGoogle}
+                                        cookiePolicy={'single_host_origin'}
+                                        render={renderProps => (
+                                        <button style={{backgroundColor: "#df4930",  alignItems: 'center', borderColor: "#df4930", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'white'}} size={13} name="logo-google"></Icon><Text style = {{color: 'white', fontSize: 13, alignSelf: 'center'}}>︳Google</Text></button>
+                                        )}
+                                    />
+                                    </View>
+
+                                    <View style={{alignSelf: "center", backgroundColor: "#131722" }}>
+                                    
+                                    <FacebookLogin
+                                        appId="5851953558159752"
+                                        autoLoad={false}
+                                        fields="email, name"
+                                        //textButton = <Text style={{color: '#1569C7', fontSize: 13}}>︳Facebook</Text>
+                                        size = "-10"
+                                        //cssClass ="lol"
+                                        //icon = <Icon style ={{color: '#1569C7'}} size={13} name="logo-facebook"></Icon>
+                                        //onClick={componentClicked}
+                                        callback={responseFacebook} 
+                                        render={renderProps => (<button style={{backgroundColor: "#507cc0",  alignItems: 'center',borderColor: "#507cc0", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick}><Icon style ={{color: 'white'}} size={13} name="logo-facebook"></Icon><Text style = {{color: 'white', fontSize: 13, alignSelf: 'center'}}>︳Facebook</Text> </button>)}
+                                    />
+                                        
+                                    </View>
                                 </View>
                         </View>
-                    </View> 
+                    </View>     
             </View>   
         </View>
         
@@ -244,7 +291,7 @@ const styles = StyleSheet.create({
     btnStart:{
         backgroundColor: "#131722",
         alignSelf: "center",
-        marginTop: 35,
+        marginTop: 10,
         flexDirection: "row",
     },
     LogoImage: {
