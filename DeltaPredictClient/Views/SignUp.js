@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
 import {_onPressButtonsignUp} from '../client/deltaPredicrClient'
 import { GoogleLogin } from 'react-google-login';
-import FacebookLogin from 'react-facebook-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 
 export default function SignUp() {
 
@@ -16,7 +16,7 @@ export default function SignUp() {
     const [answer3, setAnswer3] = useState("");
     const [answer4, setAnswer4] = useState("");
     const navigation = useNavigation();
-   
+    
 
     function cheackAnswer(){
 
@@ -34,6 +34,8 @@ export default function SignUp() {
 
         if(confirmPassword === "")
             setAnswer3("You must confirm your password.")
+        else if (confirmPassword !== password)
+            setAnswer3("Passwoad and confirm password should be same.")
         else setAnswer3("")
 
         
@@ -122,39 +124,36 @@ export default function SignUp() {
                 <Text style={{alignSelf: "center", color: 'white', marginTop: 10}}> ─ Or ─ </Text> 
                 </View>
                 
-                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
-
+                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 10, flexDirection: "row" }}>
                     <View style={{ backgroundColor: "#131722",  margin: 8, marginLeft: 22}}>
-                    <GoogleLogin
-                    clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
-                    buttonText="Sing up with Google"
-                    onSuccess={responseGoogle}
-                    onFailure={responseGoogle}
-                    cookiePolicy={'single_host_origin'}
-                    render={renderProps => (
-                    <button style={{backgroundColor: "white",  alignItems: 'center', borderColor: "red", borderRadius: 3, borderWidth: 1.9}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'red'}} size={19} name="logo-google"></Icon><Text style = {{color: 'red', fontSize: 18, alignSelf: 'center'}}>︳With Google</Text></button>
-                    )}
-                    />
+                        <GoogleLogin
+                        clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                        buttonText="Sing up with Google"
+                        onSuccess={responseGoogle}
+                        onFailure={responseGoogle}
+                        cookiePolicy={'single_host_origin'}
+                        render={renderProps => (
+                        <button style={{backgroundColor: "#df4930",  alignItems: 'center', borderColor: "#df4930", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'white'}} size={19} name="logo-google"></Icon><Text style = {{color: 'white', fontSize: 18, alignSelf: 'center'}}> ︳With Google</Text></button>
+                        )}
+                        />
                     </View>
 
-                    <View style={{alignSelf: "center", backgroundColor: "#131722",  margin: 8, borderColor: "blue", borderRadius: 3, borderWidth: 1 }}>
-                    
-                    <FacebookLogin
-                        appId="5851953558159752"
-                        autoLoad={false}
-                        fields="email, name"
-                        textButton = <Text style={{color: '#1569C7', fontSize: 18}}>︳With Facebook</Text>
-                        size = "small"
-                        cssClass ="lol"
-                        icon = <Icon style ={{color: '#1569C7'}} size={19} name="logo-facebook"></Icon>
-                        //onClick={componentClicked}
-                        callback={responseFacebook} 
-                        />
-                        
-                        
-                        
+                    <View style={{alignSelf: "center", backgroundColor: "#131722",  margin: 8 }}>
+                        <FacebookLogin
+                            appId="5851953558159752"
+                            autoLoad={false}
+                            fields="email, name"
+                            textButton = <Text style={{color: '#1569C7', fontSize: 18}}>︳With Facebook</Text>
+                            size = "small"
+                            cssClass ="lol"
+                            icon = <Icon style ={{color: '#1569C7'}} size={19} name="logo-facebook"></Icon>
+                            //onClick={componentClicked}
+                            render={renderProps => (<button style={{backgroundColor: "#507cc0",  alignItems: 'center',borderColor: "#507cc0", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick}><Icon style ={{color: 'white'}} size={19} name="logo-facebook"></Icon><Text style = {{color: 'white', fontSize: 18, alignSelf: 'center'}}> ︳With Facebook</Text> </button>)}
+                            callback={responseFacebook} 
+                            />
                     </View>
                 </View>
+                
                 <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', margin: 12, flexDirection: "row" }}>
                 <Text style={{alignSelf: "center", color: 'white',}}>Already have an account? </Text> <Pressable onPress={() => {navigation.navigate('Welcome')}}><Text style={{color: '#1569C7'}}> Sign in</Text></Pressable>
                 </View>
