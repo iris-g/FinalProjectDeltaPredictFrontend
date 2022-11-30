@@ -27,7 +27,7 @@
     "react-dom": "18.0.0",
     "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.2.2",
-    "react-native": "0.69.5",
+    "react-native": "0.69.6",
     "react-native-autocomplete-input": "^5.2.0",
     "react-native-bootstrap-styles": "^4.5.0-r",
     "react-native-elements": "^3.4.2",
