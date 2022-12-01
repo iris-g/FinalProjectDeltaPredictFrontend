@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {StyleSheet, Text, View, FlatList, Pressable } from "react-native";
+import {StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
 import { fetchFavoritesData } from "../client/deltaPredicrClient";
@@ -13,6 +13,7 @@ export default function FavoriteStocks({route, navigation}) {
     const [searchQuery, setSearchQuery] = React.useState('');
     const onChangeSearch = query => setSearchQuery(query);
     const [stocks, setData] = useState(''); 
+    const [loading, setLoad] = useState(true); 
     const header = ['Price ↑↓', 'Symbol', 'Volume', 'Day Low', 'Day High', 'Remove']
     const user = route.params;
     
@@ -31,13 +32,14 @@ export default function FavoriteStocks({route, navigation}) {
                     stocksData.push(obj)
                 }
                 setData(stocksData)
+                setLoad(false)
              })
         } catch (error) {} 
     
     }
      useInterval(() => {
         fetch_Data(user)
-        },  7000 // Delay in milliseconds or null to stop it
+        },  5000 // Delay in milliseconds or null to stop it
     )
 
     function _onPressButton (symbol) { // On press button its transition to stock page.
@@ -64,7 +66,7 @@ export default function FavoriteStocks({route, navigation}) {
                 <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
                     <Row textStyle={{color: 'white', textAlign: 'center' , fontSize: 18, fontWeight: 'bold'}} flexArr={[1, 1, 1, 1, 1, 1]} style={{height: 30}} data={header} />        
                 </Table>
-
+                
                 <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
                     <FlatList
                         data={ Object.values(stocks).map(({ currentPrice, symbol, volume, dayLow, dayHigh }) => (
@@ -84,7 +86,9 @@ export default function FavoriteStocks({route, navigation}) {
                         );}}
                     >  
                     </FlatList>
+                    
                 </ScrollViewIndicator>  
+                <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
             </View>
         </View>
     </View>

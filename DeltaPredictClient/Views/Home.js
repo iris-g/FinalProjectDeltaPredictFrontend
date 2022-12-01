@@ -1,8 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View ,ActivityIndicator, StatusBar } from 'react-native';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
-import { useNavigation } from '@react-navigation/native';
 import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
 import { useInterval } from "react-use";
@@ -14,12 +13,12 @@ function Home({route, navigation}){
     const [gainerStocks, setGainers] = useState(""); 
     const [market, setMarket] = useState(""); 
     const [searchQuery, setSearchQuery] = React.useState('');
-    const [currentPrice, setAPrice] = useState([]);
-    const [counter, setCounter] = useState(0)
+    const [currentPrice, setAPrice] = useState([]);   
     const [loading, setLoad] = useState(true); 
     const onChangeSearch = query => setSearchQuery(query);
     const user = route.params;
     const [getUser, setUser] = useState(user);
+    
     
 
     async function getMarketData() {
@@ -28,8 +27,7 @@ function Home({route, navigation}){
             resolve(fetch_clock() )
           })
           promise.then((response) => {
-            setMarket(response["clock"].date+" , "+  response["clock"].description+  " next change: "+ response["clock"].next_change )
-            
+            setMarket(response["clock"].date+" , "+  response["clock"].description+  " next change: "+ response["clock"].next_change)
           })
         } catch (error) {}
     }
@@ -157,39 +155,37 @@ const handleColors = (newPrice, stockSymbol) => {
         </View>
 
         <View style={{backgroundColor: "#131722"}}>
-          <View style={{backgroundColor: "#131722", flexDirection: 'row', margin: 35, alignItem: "center",}}>
+          <View style={styles.viewMarketTime}>
             <Icon name="time-outline" size={33} color="white"/>
-            <Text style={{color: 'white', marginLeft: 15, fontSize: 25, fontWeight: 'bold',}}>
+            <Text style={styles.textMarketTime}>
               {market}
             </Text>
           </View>
         </View>
 
         <View style={{backgroundColor: "#131722"}}>
+        
           <View style={styles.blackScreen}>
 
-              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.33}}> 
+              <View style={styles.viewSubTitle}> 
                 <Text style={styles.subTitle}>  Most Active ↑↓ </Text>
-                <Text style={{color: 'white', fontSize: 20, alignSelf: "center" }}> { Object.values(activeStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                  ))} 
+                <Text style={styles.textStocks}> { Object.values(activeStocks).map(({ close, symbol }) => (
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>))} 
                 </Text>
               </View>
               
-              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
+              <View style={styles.viewSubTitle}>
                 <Text style={styles.subTitle}>  Top Losers ↑↓  </Text>
-                <Text style={{ fontSize: 20, alignSelf: "center"}}> { Object.values(loserStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                  ))} 
+                <Text style={styles.textStocks}> { Object.values(loserStocks).map(({ close, symbol }) => (
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>))} 
                 </Text>
-                
+                <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
               </View>
 
-              <View style={{backgroundColor: "#131722", margin: 10, flex: 0.333}}>
+              <View style={styles.viewSubTitle}>
                 <Text style={styles.subTitle}>  Top Gainers ↑↓  </Text>
-                <Text style={{ color: 'white', fontSize: 20, alignSelf: "center" }}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>
-                  ))}
+                <Text style={styles.textStocks}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
+                  <p key={close}> <Text style={{ color: 'white'}}> {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>))}
                 </Text>
               </View>
 
@@ -210,11 +206,28 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
       alignItem: "center",
     },
+    viewMarketTime: {
+      backgroundColor: "#131722",
+      flexDirection: 'row',
+      margin: 35,
+      alignItem: "center",
+    },
+    textMarketTime: {
+      color: 'white',
+      marginLeft: 15,
+      fontSize: 25,
+      fontWeight: 'bold',
+    },
     blackScreen: {
       alignItem: "center",
       backgroundColor: "#131722",
       flexDirection: "row",
       margin:20
+    },
+    viewSubTitle: {
+      backgroundColor: "#131722",
+      margin: 10,
+      flex: 0.333,
     },
     subTitle: {
       backgroundColor: "#307d7e",
@@ -224,6 +237,10 @@ const styles = StyleSheet.create({
       borderColor: '#1e222d',
       fontSize: 25,
       fontWeight: 'bold',
+      alignSelf: "center",
+    },
+    textStocks: {
+      fontSize: 20,
       alignSelf: "center",
     },
     centered: {

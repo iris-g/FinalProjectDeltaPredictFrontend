@@ -24,7 +24,7 @@ function SectorStockScreen({ route, navigation }) {
   const sector_name = useRoute();
   const header = ['Symbol', 'Company', 'Price ↑↓', 'Volume', 'Change ٪']
  
- 
+  /*Brings data stocks*/
   async function fetch_Data(text) {
     try { 
       
@@ -44,7 +44,7 @@ function SectorStockScreen({ route, navigation }) {
     useInterval(() => {
 
       fetch_Data(sector_name)
-    },  7000// Delay in milliseconds or null to stop it
+    },  5000// Delay in milliseconds or null to stop it
     
     )
     
@@ -76,12 +76,12 @@ function SectorStockScreen({ route, navigation }) {
               onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
           /> 
       </View> 
-      <View style={{backgroundColor: "#131722",marginLeft: 150, marginRight: 150, marginTop: 20, flex: 0.9}}>
-        <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{marginTop: 30, height: 32, width: '100%', alignSelf: 'center', flexDirection: "row",  justifyContent: 'center',}}>
-            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={{ flexDirection: "row", width: '100%', alignItems: 'center', justifyContent: 'center', height: 30}} data={header} />        
+      <View style={styles.viewTable}>
+        <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={styles.tableHead}>
+            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={styles.tableRow} data={header} />        
         </Table>
         
-        <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
+        <ScrollViewIndicator  shouldIndicatorHide={false}  scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
           <FlatList  
             data={Object.values(stockData).map(({ Ticker, Company, Price, Volume, Change }) => (
             <p key={Ticker}> <View style={{width: "5%"}}><Text>{Ticker}</Text></View>
@@ -100,7 +100,7 @@ function SectorStockScreen({ route, navigation }) {
                   );}}    
                 />
         </ScrollViewIndicator>
-       
+        <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
       </View>
 
       </View>
@@ -117,10 +117,31 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
       alignItem: "center",
     },
+    viewTable: {
+      backgroundColor: "#131722",
+      marginLeft: 150,
+      marginRight: 150,
+      marginTop: 20,
+      flex: 0.8,
+    },
+    tableHead:{
+      marginTop: 30,
+      height: 32,
+      width: '100%',
+      alignSelf: 'center',
+      flexDirection: "row",
+      justifyContent: 'center',
+    },
+    tableRow:{
+      flexDirection: "row",
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 30,
+    },
     flat:{
       backgroundColor: "#131722",
-      marginTop: 20,
-      marginBottom: 10,
+      marginTop: 10,
     },
     titles:{
       backgroundColor: "#131722",

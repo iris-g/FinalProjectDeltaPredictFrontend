@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {StyleSheet, Text, View, TextInput, Button, Image, Pressable,TouchableHighlight,TouchableOpacity,  Platform } from "react-native";
+import {StyleSheet, Text, View, TextInput, Button, Image, Pressable,TouchableHighlight,Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { _onPressButtonLogin } from "../client/deltaPredicrClient"
@@ -14,9 +14,9 @@ export default function App()  {
     const [changePasswordVisibility, setViisibility] = useState(true)
     const [answer1, setAnswer1] = useState("");
     const [answer2, setAnswer2] = useState("");
-    //get app navigation
-    const navigation = useNavigation();
+    const navigation = useNavigation(); //get app navigation
 
+    /*A function that shows the password to the user.*/
     function _onPressButtonEye(){
         console.log(eyePress)
         if(eyePress == "eye-off-outline"){
@@ -30,7 +30,7 @@ export default function App()  {
        }
     }
 
-
+    /*Checking the input text.*/
     function cheackAnswer(){
 
         if(email === "")
@@ -45,15 +45,15 @@ export default function App()  {
             _onPressButtonLogin(email,password,navigation)
     }
 
-
+    /*Login with Google response */ 
     const responseGoogle = (response) => {
         console.log(response);
       }
 
+    /*Login with Faceboik response */ 
     const responseFacebook = (response) => {
         console.log(response);
-
-        _onPressButtonsignUp(response.email, response.id, navigation )
+        _onPressButtonLogin(response.email, response.id, navigation)
     }
 
     return (
@@ -61,97 +61,91 @@ export default function App()  {
         <View style={styles.container}>
             <View style={styles.colorContainer}>
 
-                    <TouchableHighlight onPress={() => {navigation.navigate('Welcome')}} style={styles.LogoImage}>
-                        <Image
-                            source={require('../assets/Photos/icon.png')}
-                            style={{ flex: 1, backgroundColor: "#131722"}}
-                            resizeMode="contain"
+                <TouchableHighlight onPress={() => {navigation.navigate('Welcome')}} style={styles.LogoImage}>
+                    <Image
+                        source={require('../assets/Photos/icon.png')}
+                        style={{ flex: 1, backgroundColor: "#131722"}}
+                        resizeMode="contain"
                         />
-                    </TouchableHighlight>   
+                </TouchableHighlight>   
                         
                     
-                    <View style={styles.rowContainer}>
-                        <View style={styles.featuredDetails} > 
-                            <View style={styles.welcomeImage} >
-                                <Image
-                                    source={require('../assets/Photos/Welcome.png')}
-                                    style={{ flex: 1, backgroundColor: "#131722"}}
-                                    resizeMode="contain"
+                <View style={styles.rowContainer}>
+                    <View style={styles.featuredDetails} > 
+                        <View style={styles.welcomeImage} >
+                            <Image
+                                source={require('../assets/Photos/Welcome.png')}
+                                style={{ flex: 1, backgroundColor: "#131722"}}
+                                resizeMode="contain"
                                 />
-                                <View style={styles.learnMoreContainer}>
-                                    <Pressable  onPress={() => navigation.navigate('LearnMoreScreen')}> <Text style={styles.learnMoreText}>  Learn more →  </Text> </Pressable> 
-                                    
-                                </View>        
-                            </View>
-                        </View> 
+                            <View style={styles.learnMoreContainer}>
+                                <Pressable  onPress={() => navigation.navigate('LearnMoreScreen')}> <Text style={styles.learnMoreText}>  Learn more →  </Text> </Pressable>   
+                            </View>        
+                        </View>
+                    </View> 
                        
-                        <View style={styles.columnContainer}>
-                            <Text style={styles.loginText}> Login </Text>
-                                <View style={styles.inputView}>
-                                    <Icon style={styles.iconInInputView} name="person-outline" size={20} color="#000"/>
-                                    <TextInput
+                    <View style={styles.columnContainer}>
+                        <Text style={styles.loginText}> Login </Text>
+                            <View style={styles.inputView}>
+                                <Icon style={styles.iconInInputView} name="person-outline" size={20} color="#000"/>
+                                <TextInput
                                     style={styles.TextInput}
                                     placeholder= "Email"
                                     placeholderTextColor="#fff"
                                     onChangeText={(email) => setEmail(email)}
                                     />
-                                </View>
-                                <Text style={{color: 'red'}}>{answer1}</Text>
-                                <View style={styles.inputView}>
-                                    <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
-                                    <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
-                                    <TextInput
+                            </View>
+                            <Text style={{color: 'red'}}>{answer1}</Text>
+                            <View style={styles.inputView}>
+                                <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
+                                <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
+                                <TextInput
                                     style={styles.TextInput}
                                     placeholder= "Password"
                                     placeholderTextColor="#fff"
                                     secureTextEntry={changePasswordVisibility}
                                     onChangeText={(password) => setPassword(password)}
                                     />
-                                </View>
-                                <Text style={{color: 'red'}}>{answer2}</Text>
-                                <View style={styles.btnSignUp}>
-                                    <Button title ="Sign Up" color = "#131822"  onPress={() => navigation.navigate('SignUp')}/>
-                                </View>
-                                <View style={styles.btnStart}>
-                                    <Button title = "Start  ►" color = "#307D7E"  onPress={() => cheackAnswer()}/>
-                                </View>
+                            </View>
 
-                                <Text style={{alignSelf: "center", color: 'white', marginTop: 25}}> ────  Or login with  ──── </Text> 
+                            <Text style={{color: 'red'}}>{answer2}</Text>
 
-                                <View style={{ backgroundColor: "#131722", alignSelf: "center", alignItems: 'center', flexDirection: "row",  marginTop: 15}}>
+                            <View style={styles.btnSignUp}>
+                                <Button title ="Sign Up" color = "#131822"  onPress={() => navigation.navigate('SignUp')}/>
+                            </View>
 
-                                    <View style={{ backgroundColor: "#131722",  marginRight: 8}}>
+                            <View style={styles.btnStart}>
+                                <Button title = "Start  ►" color = "#307D7E"  onPress={() => cheackAnswer()}/>
+                            </View>
+
+                            <Text style={styles.orLogin}> ────  Or login with  ──── </Text> 
+
+                            <View style={styles.loginWithSocialNetworksView}>
+                                <View style={styles.loginWithGoogleView}>
                                     <GoogleLogin
-                                        clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                                        clientId="96384931447-ni484afarfecl7b3bvpdjd1iuh4hhqbd.apps.googleusercontent.com"
                                         buttonText="Sing up with Google"
                                         onSuccess={responseGoogle}
                                         onFailure={responseGoogle}
                                         cookiePolicy={'single_host_origin'}
                                         render={renderProps => (
-                                        <button style={{backgroundColor: "#df4930",  alignItems: 'center', borderColor: "#df4930", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'white'}} size={13} name="logo-google"></Icon><Text style = {{color: 'white', fontSize: 13, alignSelf: 'center'}}>︳Google</Text></button>
-                                        )}
-                                    />
-                                    </View>
+                                        <button style={{backgroundColor: "#df4930",  alignItems: 'center', borderColor: "#df4930", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'white'}} size={13} name="logo-google"></Icon><Text style = {{color: 'white', fontSize: 13, alignSelf: 'center'}}>︳Google</Text></button>)}
+                                        />
+                                </View>
 
-                                    <View style={{alignSelf: "center", backgroundColor: "#131722" }}>
-                                    
+                                <View style={styles.loginWithFacebookView}>
                                     <FacebookLogin
                                         appId="5851953558159752"
                                         autoLoad={false}
                                         fields="email, name"
-                                        //textButton = <Text style={{color: '#1569C7', fontSize: 13}}>︳Facebook</Text>
-                                        size = "-10"
-                                        //cssClass ="lol"
-                                        //icon = <Icon style ={{color: '#1569C7'}} size={13} name="logo-facebook"></Icon>
                                         //onClick={componentClicked}
                                         callback={responseFacebook} 
                                         render={renderProps => (<button style={{backgroundColor: "#507cc0",  alignItems: 'center',borderColor: "#507cc0", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick}><Icon style ={{color: 'white'}} size={13} name="logo-facebook"></Icon><Text style = {{color: 'white', fontSize: 13, alignSelf: 'center'}}>︳Facebook</Text> </button>)}
-                                    />
-                                        
-                                    </View>
+                                        />    
                                 </View>
-                        </View>
-                    </View>     
+                            </View>
+                    </View>
+                </View>     
             </View>   
         </View>
         
@@ -159,23 +153,7 @@ export default function App()  {
 
 }
 
-// const PickerOS = () => {
-//     return Platform.OS === "android" ? (
-//         <Text >
-           
-        
-//         </Text>
-//     ) : (
-//         <Text style={styles.descriptionText}>Delta predict is a stock market prediction app. 
-//         Stock forecasts can be a helpful tool for making investment decisions. They can help you:{'\n'}dentify undervalued and overvalued stocks: when a stock's price is not in line with its fundamentals, it may be undervalued {'\n'}
-//         or overvalued. Why buy an overvalued stock when you can buy an undervalued stock for less? This is where stock price targets can be helpful.
-//         {'\n'}Make more informed investment decisions: it all comes down to making more informed investment decisions.{'\n'}
-//         Stock forecasts can help you do just that. A good stock forecast can help you separate the wheat from the chaff.{'\n'}
-//         With so many stocks to choose from, it can be challenging to know which ones are worth investing in.{'\n'}
-//         A stock forecast can help you narrow down your options and make more informed investment decisions.
-//         </Text>
-//     );
-//   };
+
 
 
 const styles = StyleSheet.create({
@@ -184,9 +162,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         justifyContent: 'flex-start',
         alignItem: "center",
-        // ...Platform.select({
-        //     android: {backgroundColor: '#FFFFFF',},
-        // })
     },
     colorContainer:{
         backgroundColor: "#131722",
@@ -204,9 +179,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'flex-start',
         flexDirection: "column",
-        // ...Platform.select({
-        //     android: {marginLeft: 40, width: 230, height: 300,},
-        // })
     },
     loginText: {
         backgroundColor: "#131722",
@@ -218,9 +190,6 @@ const styles = StyleSheet.create({
         marginTop: 220,
         fontSize: 22,
         fontWeight: 'bold',
-        // ...Platform.select({
-        //     android: {marginLeft: 75,},
-        // })
     },
     inputView: {
         backgroundColor: "#131722",
@@ -258,9 +227,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         flex: 0.5,
         flexDirection: "row",
-        //  ...Platform.select({
-        //     android: {backgroundColor: '#1e222d', marginHorizontal: 20, marginTop: 80,},
-        //  })
     },
     learnMoreContainer:{
         backgroundColor: "#1e3841",
@@ -307,6 +273,25 @@ const styles = StyleSheet.create({
         backgroundColor: "#131722",
         width: '100%',
         height: 700,
-        
+    },
+    orLogin: {
+        alignSelf: "center",
+        color: 'white',
+        marginTop: 25,
+    },
+    loginWithSocialNetworksView: {
+        backgroundColor: "#131722",
+        alignSelf: "center",
+        alignItems: 'center',
+        flexDirection: "row",
+        marginTop: 15,
+    },
+    loginWithGoogleView: {
+        backgroundColor: "#131722",
+         marginRight: 8,
+    },
+    loginWithFacebookView: {
+        alignSelf: "center",
+        backgroundColor: "#131722",
     },
 });

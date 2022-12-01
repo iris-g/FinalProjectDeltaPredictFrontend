@@ -2,7 +2,7 @@ import { Text, View ,Button,TouchableOpacity } from 'react-native';
 import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
-import { StyleSheet,ActivityIndicator,Platform ,StatusBar, Image, Pressable} from 'react-native';
+import { StyleSheet,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable} from 'react-native';
 import { useInterval } from "react-use";
 import { Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
@@ -34,13 +34,11 @@ function StockScreen({ route, navigation }) {
   // For Filtered search Data
   const [filteredStocks, setFilteredStocks] = useState([]);
   let marketStatus;
-  let monteCarloResults
   const [monteCarlo, setMonteCarlo] = React.useState('')
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
 
-  console.log(parsedCsvData);
 
 
   //reac csv file with top stocks into  an array
@@ -183,7 +181,7 @@ function StockScreen({ route, navigation }) {
 // ***
   const  controller = useRef("");
 
-  /* */
+  /*Monte Carlo calculation*/
   async function fetch_MonteCarlo(otherParam) {
       try { 
         const promise = new Promise((resolve, reject) => {
@@ -301,7 +299,6 @@ function StockScreen({ route, navigation }) {
     } 
     }
     useInterval(() => {
-      console.log(parsedCsvData.includes(searchQuery))
       if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
         fetch_Data(searchQuery)
     },  8000// Delay in milliseconds or null to stop it
@@ -327,13 +324,13 @@ function StockScreen({ route, navigation }) {
   return (
 
     <View style={styles.container}> 
-          <Pressable onPress={() => {navigation.navigate('Home');cancelRequest();}} style={styles.backImage}>
+          <TouchableHighlight onPress={() => {navigation.navigate('Home');cancelRequest();}} style={styles.backImage}>
               <Image
               source={require('../assets/Photos/icon.png')}
               style={{ flex: 1 }}
               resizeMode="contain"
               />
-          </Pressable>   
+          </TouchableHighlight>   
 
           <View style={styles.centered}>
           
