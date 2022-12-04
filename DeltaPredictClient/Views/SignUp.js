@@ -15,29 +15,48 @@ export default function SignUp() {
     const [answer2, setAnswer2] = useState("");
     const [answer3, setAnswer3] = useState("");
     const [answer4, setAnswer4] = useState("");
+    const [signCheck, setCheck] = useState("");
+    const [colorset, setColor] = useState("");
+    const [colorInputText] = useState(['white', 'white', 'white']);
     const navigation = useNavigation();
     
 
     /*Checking the input text.*/ 
     function cheackAnswer(){
 
-        if(email === "")
+        if(email === ""){
             setAnswer1("You must enter email address.")
-        else setAnswer1("") 
+            colorInputText[0]="#DC143C"
+        }
+        else{ 
+            setAnswer1("")
+            colorInputText[0]= "white"
+        } 
 
-        if(password === "")
+        if(password === ""){
             setAnswer2("You must enter a password.")
-        else setAnswer2("")
-
+            colorInputText[1]= "#DC143C"
+        }
+        else {setAnswer2("")
+            colorInputText[1]= "white"
+        } 
+        
         if(/^(\d)(?!\1{7})\d{7}/g.test(password) === false)
             setAnswer4("The password must be eight characters or longer")
         else setAnswer4("")
 
-        if(confirmPassword === "")
+        if(confirmPassword === ""){
             setAnswer3("You must confirm your password.")
-        else if (confirmPassword !== password)
+            colorInputText[2]= "#DC143C"
+        }
+        else if (confirmPassword !== password){
             setAnswer3("Passwoad and confirm password should be same.")
-        else setAnswer3("")
+            colorInputText[2]= "#DC143C"
+        }
+        else {
+            setAnswer3("")
+            colorInputText[2]= "white"
+        }
 
         if(email !== ""){
             if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/.test(email) === false) 
@@ -46,19 +65,46 @@ export default function SignUp() {
         }
 
         if(email !== "" && password !== "" && confirmPassword !== "" )
-            _onPressButtonsignUp(email, password, navigation)
+            setSignCheck(email, password, navigation)
     }
+    
+
+
+     /*Monte Carlo calculation*/
+    async function setSignCheck(email, password, navigation) {
+        try { 
+        const promise = new Promise((resolve, reject) => {
+            resolve(_onPressButtonsignUp(email, password, navigation) )
+        })
+        
+        promise.then((response) => {
+            if(response.result == "true"){
+                setCheck("✔ Registration successful")
+                setColor("#DC143C")
+            }
+            else if(response.result == "password"){
+                setCheck("✘ Sorry, that password already exists!")
+                setColor("#DC143C")
+            }
+            else{
+                setCheck("✘ Sorry, that email already exists!")
+                setColor("#DC143C")
+            }
+        })
+        } catch (error) {} 
+    }
+   
 
     /*Login with Google response */ 
     const responseGoogle = (response) => {
-        console.log(response);
+        //console.log(response);
     }
 
     /*Login with Faceboik response */ 
     const responseFacebook = (response) => {
-        console.log(response);
-        console.log(response.email)
-        console.log(response.id)
+        //console.log(response);
+        //console.log(response.email)
+        //console.log(response.id)
         _onPressButtonsignUp(response.email, response.id, navigation )
     }
     
@@ -81,42 +127,42 @@ export default function SignUp() {
                     </View>
                     
                     <View style={styles.inputView}>
-                        <Icon style={{color: 'white', padding: 15, position: 'absolute'}} name="person-outline" size={20} color="#000"/>
+                        <Icon style={{ padding: 15, position: 'absolute'}} name="person-outline" size={20} color={colorInputText[0]}/>
                         <TextInput style={styles.TextInput}
                             numberOfLines={1}
                             placeholder="Email"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor={colorInputText[0]}
                             onChangeText={(email) => setEmail(email)}>
                         </TextInput>
                     </View>
 
-                    <Text style={{color: 'red'}}>{answer1}</Text>
+                    <Text style={{color: '#DC143C'}}>{answer1}</Text>
 
                     <View style={styles.inputView}>
-                        <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
+                        <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color={colorInputText[1]}/>
                         <TextInput style={styles.TextInput}
                             numberOfLines={1}
                             placeholder="Password"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor={colorInputText[1]}
                             secureTextEntry={true}
                             onChangeText={(password) => setPassword(password)}>
                         </TextInput>
                     </View>
  
-                    <Text style={{color: 'red'}}>{answer2}</Text>
-                    <Text style={{color: 'red'}}>{answer4}</Text>
+                    <Text style={{color: '#DC143C'}}>{answer2}</Text>
+                    <Text style={{color: '#DC143C'}}>{answer4}</Text>
 
                     <View style={styles.inputView}>
-                        <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
+                        <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color={colorInputText[2]}/>
                         <TextInput style={styles.TextInput}
                             placeholder="Confirm Password"
-                            placeholderTextColor="#fff"
+                            placeholderTextColor={colorInputText[2]}
                             secureTextEntry={true}
                             onChangeText={(confirmPassword) => setConfirmPassword(confirmPassword)}>
                         </TextInput>
                     </View>
 
-                    <Text style={{color: 'red'}}>{answer3}</Text>
+                    <Text style={{color: '#DC143C'}}>{answer3}</Text>
                     
                     <View style={styles.btnSignUp}>
                         <Button style={styles.btnSignUpText} uppercase = {true} title ="Sign Up" color = "#01a37b"
@@ -160,7 +206,9 @@ export default function SignUp() {
                 <View style={styles.viewAccount}>
                     <Text style={{alignSelf: "center", color: 'white',}}>Already have an account? </Text> <Pressable onPress={() => {navigation.navigate('Welcome')}}><Text style={{color: '#1569C7'}}> Sign in</Text></Pressable>
                 </View>
-
+                <View>
+                    <Text style={{marginTop: 10, fontSize: 22, alignSelf: "center", color: colorset}}>{signCheck}</Text>   
+                </View>     
             </View>
             
         
@@ -220,7 +268,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     iconInInputView:{
-        color: 'white',
+        
         padding: 15,
         position: 'absolute',
     },
@@ -234,6 +282,7 @@ const styles = StyleSheet.create({
         textTransform: 'lowercase',
     },
     btnSignUpText:{
+        margin: 15,
         backgroundColor: "#131722",
         textTransform:'capitalize',
         width: 330,
@@ -249,7 +298,7 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     orView: {
-        backgroundColor: "#131722",
+        
         alignSelf: "center",
         alignItems: 'center',
         margin: 10,
@@ -258,7 +307,7 @@ const styles = StyleSheet.create({
     orText:{
         alignSelf: "center",
         color: 'white',
-        marginTop: 10,
+        marginTop: 20,
     },
     loginWithSocialNetworksView: {
         backgroundColor: "#131722",
