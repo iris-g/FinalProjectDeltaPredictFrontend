@@ -6,14 +6,15 @@ Page: Welcome
 Description: This function check if login details are correct in DB.
 **/
 
-export  function _onPressButtonLogin (email,password,navigation) {
-    fetch('http://localhost:5000/authenticate', {
+export async function _onPressButtonLogin (email,password,navigation) {
+    const res = await fetch('http://localhost:5000/authenticate', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({name: email, Password: password})
     })
-    .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {otherParam: email,}) : alert("wrong details") });
+    const json = await res.json()
+    
+    return json
 }
 
 /** 
@@ -22,15 +23,15 @@ Page: SignUp
 Description: This function add use to DB.
 **/
 
-export function _onPressButtonsignUp (email,password,navigation) {
-    fetch('http://localhost:5000/signnup', {
+export async function _onPressButtonsignUp (email,password,navigation) {
+    const res = await fetch('http://localhost:5000/signnup', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({Email: email, Password: password})
     })
-    .then(res => res.json())
-    .then(data => { data.result === "true" ? navigation.navigate('Welcome') : alert("wrong details") });
+    const json = await res.json()
     
+    return json
 }
 
 
@@ -90,7 +91,6 @@ export async function fetchData(symbol){
       body: JSON.stringify({  Symbol:symbol  }) ,
   })
   const json = await response.json()
-
 
   return json
 }
@@ -159,7 +159,7 @@ Description: This function POST to server the symbol of the stock. receive the M
         body: JSON.stringify({ Symbol: symbol }),
     })
     const json = await response.json()
-    console.log(json)
+    
     return json
 }
 

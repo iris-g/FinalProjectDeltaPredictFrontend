@@ -1,8 +1,7 @@
-import { Text, View ,Button,TouchableOpacity } from 'react-native';
+import {StyleSheet,Text,View,Button,TouchableOpacity,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable, KeyboardAvoidingView} from 'react-native';
 import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
-import { StyleSheet,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable} from 'react-native';
 import { useInterval } from "react-use";
 import { Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
@@ -126,19 +125,19 @@ function StockScreen({ route, navigation }) {
   };
 
  //predicted prices dataset
-  const prices = {
-    labels: dailyTimestamps,
-    datasets: [
-      {
-        label: "Predicted price",
-        data: graphPredictedPrices,
-        backgroundColor: "rgba(75,192,192,0.2)",
-        borderColor: "rgba(75,192,192,1)",
-        fill: false
-      }
-    ],
-    borderWidth: 1 ,
-  };
+ const prices = {
+  labels: dailyTimestamps,
+  datasets: [
+    {
+      label: "Predicted price",
+      data: graphPredictedPrices,
+      backgroundColor: "rgba(75,192,192,0.2)",
+      borderColor: "rgba(75,192,192,1)",
+      fill: false
+    }
+  ],
+  borderWidth: 1 ,
+};
 
 
 
@@ -320,7 +319,7 @@ function StockScreen({ route, navigation }) {
         } catch (error) {
         } 
         }
-
+     
   return (
 
     <View style={styles.container}> 
@@ -333,34 +332,38 @@ function StockScreen({ route, navigation }) {
           </TouchableHighlight>   
 
           <View style={styles.centered}>
-          
-                <Autocomplete
+            
+            <View style={styles.searchSection}>
+            <View style={{alignSelf: "center"}}>
+              <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
+              
+              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16}}
+                containerStyle={styles.autocompleteContainer}
+                inputContainerStyle={styles.inputContainer}
+                autoCorrect={false}
+                autoCapitalize="none"
                 data={filteredStocks}
                 value={searchQuery}
                 onChangeText={onChangeSearch}
                 placeholder="Enter the stock symbol"
-                flatListProps={{
-                keyExtractor: (_, idx) => idx,
-                renderItem: ({ item ,index}) =>  (
-                <TouchableOpacity
-                  key={index.toString()} 
-                onPress={() => {
-              //  console.log(item[0]+"&&");
-                setSearchQuery(item);
-                setLoad("true");
-                setFilteredStocks([]);
-              
-              }}> 
-                <ListItem bottomDivider>
-                <ListItem.Content>
-                  <ListItem.Title >{item}</ListItem.Title>
-                </ListItem.Content>
-                <ListItem.Chevron />
-                </ListItem>
-              </TouchableOpacity>) }}  />
+                flatListProps={{ keyExtractor: (_, idx) => idx, renderItem: ({ item ,index}) =>  (
+                  <TouchableOpacity
+                    key={index.toString()} 
+                    onPress={() => { setSearchQuery(item); setLoad("true"); setFilteredStocks([]);}}> 
+            
+                    <ListItem bottomDivider >
+                    <ListItem.Content>
+                    <ListItem.Title>{item}</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                    </ListItem>
+                  </TouchableOpacity>)}}/> 
+                </View> 
+            </View>    
           </View>
-          <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#00ff00"  animating={loading} hidesWhenStopped={true} /> 
-          <View style={{backgroundColor: "#131822",alignItems: "center"}}>
+
+
+          <View style={{backgroundColor: "#131822",alignItems: "center",  marginTop: -16}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} {marketStatus} {data["close"]}
                     <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
@@ -368,41 +371,49 @@ function StockScreen({ route, navigation }) {
                 </>}
             </Text> 
           </View>
+
+          <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#307D7E" animating={loading} hidesWhenStopped={true} /> 
+          
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
-                  <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center" }}>
-                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => addStockToFavoriteStockList(userParam, otherParam)}>
-                      <Icon style={{color: "#4bc0c0", fontWeight: 'bold', backgroundColor: "#1e3841"}} name="add-circle" size={20} color="#000"/>
-                      <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 20, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
-                    </Pressable>   
+                  
+
+                  <View style={{backgroundColor: '#131722', alignSelf: "center",alignItems: "center"}}>
+                    <Text style={{ backgroundColor: '#1d415f', color:'#35a2eb', fontWeight: "bold", fontSize: 20, borderRadius: 5, borderWidth: 1 }} >  Monte Carlo  </Text>
+                    <Text style={{ color:'#35a2eb', fontWeight: "bold", fontSize: 20 }} > {monteCarlo.Min} Mɪɴ ━━━━━━━━━━━━━ Mᴀx {monteCarlo.Max} </Text>
                   </View>
-                  <Text style={{color: 'white'}}>{monteCarlo.Min} {monteCarlo.Max}</Text>
+
                   <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
                     <><p>{'\n'} monthly sentiment score:{sentiment} {'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
 
                     </>}
                   </Text> 
 
+                  <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center"}}>
+                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#362b1d', borderWidth: 2}} onPress={() => addStockToFavoriteStockList(userParam, otherParam)}>
+                      <Icon style={{color: "#35a2eb", fontWeight: 'bold', backgroundColor: "#1d415f"}} name="add-circle" size={20} color="#000"/>
+                      <Text style={{color: "#35a2eb", fontWeight: 'bold',fontSize: 17, backgroundColor: "#1d415f"}}> Add To Favorite </Text>
+                    </Pressable>   
+                  </View>
+                 
                 </View>
 
                 <View style={styles.graphContainer}>
-                  <Line  data={prices}  width={100}  height={300} options={{maintainAspectRatio: false}}/>
+                  <Line style={{fontSize: 70}} data={prices }  width={100}  height={300} options={{maintainAspectRatio: false, responsive: true}}/>
                   <View style={{ flexDirection:"row" ,alignItems:"top", margin: 15}}>
-                    <Button   uppercase = {true}  color="#131722" title ="daily" 
-                        onPress={() => onDailyButtonPress()}/>
-                    <Button   uppercase = {true}  color="#131722"  title ="weekly"
-                        onPress={() => onWeekButtonPress()}/>
+                    <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 1}} onPress={() => onDailyButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15 }} >  Daily  </Text></TouchableOpacity>
+                    <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 1}} onPress={() => onWeekButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15}} >  Weekly  </Text> </TouchableOpacity>
                   </View> 
                 </View>
 
 
             </View>
-
+          
             <View style={styles.detailedBlock}>
               <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
             </View>
-
+     
               
           </View>   
     </View>
@@ -415,6 +426,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#131822",
     justifyContent: 'flex-start',
     alignItem: "center",
+    position: 'relative',
   },
   stocksBlock: {
     flexDirection: "column",
@@ -486,6 +498,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     backgroundColor: "#131722",
     marginTop: 10,
+    zIndex: 1,
   },
   blackScreen: {
     flexDirection: "row",
@@ -499,6 +512,29 @@ const styles = StyleSheet.create({
     height: 100 ,
     marginLeft: 25, 
     marginTop: 10
+  },
+  searchSection: {
+    flexDirection: 'row',
+    marginLeft: '5%',
+    marginRight: '5%',
+  },
+  autocompleteContainer: {
+    borderWidth: 0,
+    marginLeft: 10,
+    marginRight: 10,
+    paddingLeft: 15,
+  },
+  inputContainer: {
+    minWidth: 330,
+    width: "90%",
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+  },
+  iconInAutocomplete:{
+    paddingLeft: 35,
+    padding: 10,
+    position: 'absolute',
+    zIndex: 100,
   },
 });
 

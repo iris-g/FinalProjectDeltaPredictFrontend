@@ -7,13 +7,16 @@ import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 
 
-export default function App()  {
+export default function Welcome()  {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
     const [eyePress, setEyePress] = useState("eye-off-outline")
     const [changePasswordVisibility, setViisibility] = useState(true)
     const [answer1, setAnswer1] = useState("");
     const [answer2, setAnswer2] = useState("");
+    const [signCheck, setCheck] = useState("");
+    const [colorset, setColor] = useState("");
+    const [colorInputText] = useState(['white', 'white']);
     const navigation = useNavigation(); //get app navigation
 
     /*A function that shows the password to the user.*/
@@ -33,27 +36,64 @@ export default function App()  {
     /*Checking the input text.*/
     function cheackAnswer(){
 
-        if(email === "")
+        if(email === ""){
             setAnswer1("You must enter email address.")
-        else setAnswer1("")
+            colorInputText[1] = "#DC143C"
+        }
+        else{ 
+            setAnswer1("")
+            colorInputText[1] = "white"
+        }
 
-        if(password === "")
+        if(password === ""){
             setAnswer2("You must enter a password.")
-        else setAnswer2("")
+            colorInputText[0] = "#DC143C"
+        }
+        else{ setAnswer2("")
+        colorInputText[0] = "white"
+        }
 
         if(email !== "" && password !== "")
-            _onPressButtonLogin(email,password,navigation)
+            setSignCheck(email,password,navigation)
     }
+
+
+     /*Monte Carlo calculation*/
+     async function setSignCheck(email, password, navigation) {
+        try { 
+        const promise = new Promise((resolve, reject) => {
+            resolve(_onPressButtonLogin(email,password,navigation))
+        })
+        
+        promise.then((response) => {
+            if(response.result == "true"){
+                navigation.navigate('Home',{otherParam: email})
+                
+            }
+            else if(response.result == "password"){
+                setCheck("✘ Wrong password")
+                setColor("#DC143C")
+                colorInputText[0] = "#DC143C"
+            }
+            else{
+                setCheck("✘ Incorrect email")
+                setColor("#DC143C")
+                colorInputText[1] = "#DC143C"
+            }
+        })
+        } catch (error) {} 
+    }
+
 
     /*Login with Google response */ 
     const responseGoogle = (response) => {
-        console.log(response);
+        //console.log(response);
       }
 
     /*Login with Faceboik response */ 
     const responseFacebook = (response) => {
         console.log(response);
-        _onPressButtonLogin(response.email, response.id, navigation)
+        setSignCheck(response.email, response.id, navigation)
     }
 
     return (
@@ -86,29 +126,29 @@ export default function App()  {
                        
                     <View style={styles.columnContainer}>
                         <Text style={styles.loginText}> Login </Text>
-                            <View style={styles.inputView}>
-                                <Icon style={styles.iconInInputView} name="person-outline" size={20} color="#000"/>
+                            <View style={styles.inputView }>
+                                <Icon style={styles.iconInInputView} name="person-outline" size={20} color={colorInputText[1]}/>
                                 <TextInput
                                     style={styles.TextInput}
                                     placeholder= "Email"
-                                    placeholderTextColor="#fff"
+                                    placeholderTextColor={colorInputText[1]}
                                     onChangeText={(email) => setEmail(email)}
                                     />
                             </View>
-                            <Text style={{color: 'red'}}>{answer1}</Text>
+                            <Text style={{color: '#DC143C'}}>{answer1}</Text>
                             <View style={styles.inputView}>
-                                <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ color: 'white' ,padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color="#000"/> </Pressable>
-                                <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color="#000"/>
+                                <Pressable style={{ position: 'absolute', right: 0, flexDirection: "row"}} onPress={() => _onPressButtonEye()}> <Icon style={{ padding: 9,  position: 'absolute', right: 0}} name={eyePress} size={20} color={colorInputText[0]}/> </Pressable>
+                                <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color= {colorInputText[0]}/>
                                 <TextInput
                                     style={styles.TextInput}
                                     placeholder= "Password"
-                                    placeholderTextColor="#fff"
+                                    placeholderTextColor= {colorInputText[0]}
                                     secureTextEntry={changePasswordVisibility}
                                     onChangeText={(password) => setPassword(password)}
                                     />
                             </View>
 
-                            <Text style={{color: 'red'}}>{answer2}</Text>
+                            <Text style={{color: '#DC143C'}}>{answer2}</Text>
 
                             <View style={styles.btnSignUp}>
                                 <Button title ="Sign Up" color = "#131822"  onPress={() => navigation.navigate('SignUp')}/>
@@ -144,6 +184,9 @@ export default function App()  {
                                         />    
                                 </View>
                             </View>
+                            <View>
+                                <Text style={{marginTop: 10, fontSize: 15, alignSelf: "center", color: colorset}}>{signCheck}</Text>   
+                            </View>     
                     </View>
                 </View>     
             </View>   
@@ -210,7 +253,6 @@ const styles = StyleSheet.create({
         color: 'white', 
     },
     iconInInputView:{
-        color: 'white',
         padding: 8,
         position: 'absolute',
     },
