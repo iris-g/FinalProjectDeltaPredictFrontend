@@ -18,7 +18,7 @@ export default function App() {
     <NavigationContainer>
     
     <Stack.Navigator initialRouteName="Welcome" >
-      <Stack.Screen name="Dashboard" component={DrawerNavigator}  options={{ headerShown: false }} />
+      <Stack.Screen name="Home" component={DrawerNavigator}  options={{ headerShown: false }} />
       <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }}/>
       <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
       <Stack.Screen name="LearnMoreScreen" component={LearnMoreScreen} options={{ headerShown: false }}/>

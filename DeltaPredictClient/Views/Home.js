@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View ,ActivityIndicator, StatusBar } from 'react-native';
+import { StyleSheet, Text, View ,ActivityIndicator, StatusBar, Alert } from 'react-native';
 import { useState, useEffect } from 'react'
 import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
 import { Searchbar } from 'react-native-paper';
@@ -113,31 +113,37 @@ function Home({route, navigation}){
     },  3000    // Delay in milliseconds or null to stop it
     )
 
-const handleColors = (newPrice, stockSymbol) => {
-  
-  const myNextList = [...currentPrice];
-  if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){  
-    currentPrice.push({ symbol: stockSymbol, price: newPrice })
-      // Items after the insertion point:
-  }else{
-    const artwork = myNextList.find(a=>a.symbol === stockSymbol)
-    if(artwork.symbol == stockSymbol) {
-      if(artwork.price < newPrice ){
-        artwork.price = newPrice
-        return '#1f8779';
-      }
-      else if (artwork.price > newPrice ){
-        
-        currentPrice.price = newPrice
-        return '#af2d3a';
-      }
-      else{
-          return "white";
+  const handleColors = (newPrice, stockSymbol) => {
+    
+    const myNextList = [...currentPrice];
+    if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){  
+      currentPrice.push({ symbol: stockSymbol, price: newPrice })
+        // Items after the insertion point:
+    }else{
+      const artwork = myNextList.find(a=>a.symbol === stockSymbol)
+      if(artwork.symbol == stockSymbol) {
+        if(artwork.price < newPrice ){
+          artwork.price = newPrice
+          return '#1f8779';
+        }
+        else if (artwork.price > newPrice ){
+          
+          currentPrice.price = newPrice
+          return '#af2d3a';
+        }
+        else{
+            return "white";
+        }
       }
     }
+  };
+  const checkInputSearchbar = () => {
+    if(searchQuery != "")
+      navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: getUser})
+    else alert("Stock not found")
   }
-};
-//<ActivityIndicator style={{width: '100%', height: '100%' }} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
+
+
     
   return (
  
@@ -150,7 +156,7 @@ const handleColors = (newPrice, stockSymbol) => {
             type="text"
             value={searchQuery}
             onChangeText={onChangeSearch}
-            onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: getUser}) : ""}
+            onIconPress={checkInputSearchbar}
           /> 
         </View>
 

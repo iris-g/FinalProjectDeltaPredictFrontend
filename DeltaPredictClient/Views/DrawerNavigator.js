@@ -40,7 +40,6 @@ const DrawerContent = (props) => {
  
 const DrawerNavigator = ({route,navigation}) => { //##
     
- 
     return (
         <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
            
