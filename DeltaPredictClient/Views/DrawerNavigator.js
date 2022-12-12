@@ -5,6 +5,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerI
 import Home from "./Home.js";
 import SectorStockScreen from "./SectorStockScreen.js"
 import FavoriteStocks from "./FavoriteStocks"
+import Recommendation from "./RecommendationScreen"
 import { color } from "react-native-reanimated";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from "react-native-vector-icons/Ionicons";
@@ -123,7 +124,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-         <Drawer.Screen name="Basic Materials" component={SectorStockScreen} initialParams={"Basic Materials"} options={{
+        <Drawer.Screen name="Basic Materials" component={SectorStockScreen} initialParams={"Basic Materials"} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="ios-construct"
@@ -151,10 +152,24 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-          <Drawer.Screen name="Utilities" component={SectorStockScreen} initialParams={"Utilities"} options={{
+        <Drawer.Screen name="Utilities" component={SectorStockScreen} initialParams={"Utilities"} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="cash"
+                     size={size}
+                     color={focused ? '#7cc' : '#ccc'}
+                    />
+                ),
+          headerTitleStyle: {color: 'white', fontSize: 18,},
+          headerStyle: {backgroundColor: '#1e222d'},          
+          drawerItemStyle: {color: 'white', fontSize: 18,},
+          drawerLabelStyle:{color:'white', fontSize: 18,},
+          
+        }}/>
+        <Drawer.Screen name="Recommendation" component={Recommendation} initialParams={"Recommendation"} options={{
+                drawerIcon: ({focused, size}) => (
+                    <Ionicons
+                     name="trending-up"
                      size={size}
                      color={focused ? '#7cc' : '#ccc'}
                     />
