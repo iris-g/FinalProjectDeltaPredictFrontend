@@ -1,11 +1,11 @@
-import {StyleSheet,Text,View,Button,TouchableOpacity,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet,Text,View,Button,TouchableOpacity,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable,AppRegistry,KeyboardAvoidingView} from 'react-native';
 import React, { useRef } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
 import {useEffect,useState } from 'react'
 import { useInterval } from "react-use";
 import { Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,} from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Colors} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { Searchbar } from 'react-native-paper';
 import Autocomplete from 'react-native-autocomplete-input';
@@ -13,13 +13,13 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { addStockToFavoriteStockList, fetchSentimentData, fetchMonteCarlo } from "../client/deltaPredicrClient"
 import Papa from 'papaparse';
 import { ListItem } from 'react-native-elements'
+import  {StackedBarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts'
 
 
 //get file with top 50 stocks
-
 var topStocks = require('../assets/top50.csv');
 
-function StockScreen({ route, navigation }) {
+function StockScreen({ route, navigation })  {
   const {otherParam, userParam} = route.params;
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
@@ -29,6 +29,7 @@ function StockScreen({ route, navigation }) {
   const [weeklyPredictedPrices,setWeeklyPredicted]=useState(""); 
   const [searchQuery, setSearchQuery] = React.useState(otherParam);
   const [dailyTimestamps, setStamps] = React.useState(otherParam);
+  const [dailyTime, dailyTimes] = React.useState(otherParam);
   const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
   // For Filtered search Data
   const [filteredStocks, setFilteredStocks] = useState([]);
@@ -37,8 +38,9 @@ function StockScreen({ route, navigation }) {
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
-
-
+ 
+  const colors = ['#522526', '#255245']
+  const keys =  ['apples', 'bananas']
 
   //reac csv file with top stocks into  an array
   const parseFile = file => {
@@ -66,9 +68,7 @@ function StockScreen({ route, navigation }) {
     parseFile(topStocks);
   
 
-  },  []
-  
-)
+  },  [])
 
 
   //check if stock exchange is open and update text
@@ -89,7 +89,7 @@ function StockScreen({ route, navigation }) {
   };
 
   const onDailyButtonPress = query => {
-    setStamps(dailyTimestamps)
+    setStamps(dailyTime)
     setgraphPredicted(predictedPrices);
 
   };
@@ -119,26 +119,47 @@ function StockScreen({ route, navigation }) {
   };
 
 
-  const as = query => {
-    sett(monteCarlo)
 
+  //Change borderColor chart and change label color. 
+  //ChartJS.defaults.backgroundColor = 'white';
+  ChartJS.defaults.borderColor = '#212430';
+  ChartJS.defaults.color = '#f0f0f1';
+
+  //predicted prices dataset
+  const prices = {
+    labels: dailyTimestamps,
+    datasets: [
+      {
+        label: "Predicted price",
+        data: graphPredictedPrices,
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
+        fill: false
+      },
+      {
+        label: "Predicted price",
+        data: [monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max],
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
+        borderWidth: 4,
+        borderDash: [ 5, 5 ],
+        borderDashOffset: 3,
+        fill: false
+      },
+      {
+        label: "Predicted price",
+        data: [monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min],
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
+        borderWidth: 4,
+        borderDash: [ 5, 5 ],
+        borderDashOffset: 2,
+        fill: false
+      }
+      
+    ],
+    borderWidth: 1 ,
   };
-
- //predicted prices dataset
- const prices = {
-  labels: dailyTimestamps,
-  datasets: [
-    {
-      label: "Predicted price",
-      data: graphPredictedPrices,
-      backgroundColor: "rgba(75,192,192,0.2)",
-      borderColor: "rgba(75,192,192,1)",
-      fill: false
-    }
-  ],
-  borderWidth: 1 ,
-};
-
 
 
 
@@ -164,7 +185,7 @@ function StockScreen({ route, navigation }) {
   tomorrow.setDate(today.getDate() + 1)
   var nextweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()+7);
 
-
+  //Get date for the daily predict in the chart.
   var getDateArray = function(start, end) {
   var arr = new Array();
   var  dt = new Date(start);
@@ -172,10 +193,11 @@ function StockScreen({ route, navigation }) {
       arr.push(formatDate(new Date(dt)));
       dt.setDate(dt.getDate() + 1);
     }
-
+    console.log(arr)
+    dailyTimes(arr)
     return arr;
 
-}
+  }
 
 // ***
   const  controller = useRef("");
@@ -249,7 +271,7 @@ function StockScreen({ route, navigation }) {
     // {
       //console.log("FETCH")
        fetch_sentiment_Data(searchQuery);
-    //fetch_Arima_Data()
+    fetch_Arima_Data()
    // }
     
 
@@ -263,14 +285,14 @@ function StockScreen({ route, navigation }) {
     if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
     {
       fetch_sentiment_Data(searchQuery);
-    //fetch_Arima_Data()
+    fetch_Arima_Data()
   }
    
 
   },  [searchQuery]
 
   )
-  //handle price text color according to sign
+  //handle price text color according to sign.
   const handleColors = (value) => {
     let val =(parseFloat(value))
     if (val > 0) return "green";
@@ -279,7 +301,7 @@ function StockScreen({ route, navigation }) {
   };
 
 
-//get stock live data from the server
+//get stock live data from the server.
   async function fetch_Data(text) {
  
     try { 
@@ -300,11 +322,11 @@ function StockScreen({ route, navigation }) {
     useInterval(() => {
       if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
         fetch_Data(searchQuery)
-    },  8000// Delay in milliseconds or null to stop it
+    },  8000// Delay in milliseconds or null to stop it.
     
     )
  
-      //get stocks monthly sentiment score
+      //get stocks monthly sentiment score.
       async function fetch_sentiment_Data(text) {
  
         try { 
@@ -319,7 +341,14 @@ function StockScreen({ route, navigation }) {
         } catch (error) {
         } 
         }
-     
+    
+
+        const data1 = [
+          {
+              apples: 38,
+              bananas: 62,
+          },
+      ]
   return (
 
     <View style={styles.container}> 
@@ -337,7 +366,7 @@ function StockScreen({ route, navigation }) {
             <View style={{alignSelf: "center"}}>
               <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
               
-              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16}}
+              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16,}}
                 containerStyle={styles.autocompleteContainer}
                 inputContainerStyle={styles.inputContainer}
                 autoCorrect={false}
@@ -377,33 +406,60 @@ function StockScreen({ route, navigation }) {
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
-                  
-
-                  <View style={{backgroundColor: '#131722', alignSelf: "center",alignItems: "center"}}>
-                    <Text style={{ backgroundColor: '#1d415f', color:'#35a2eb', fontWeight: "bold", fontSize: 20, borderRadius: 5, borderWidth: 1 }} >  Monte Carlo  </Text>
-                    <Text style={{ color:'#35a2eb', fontWeight: "bold", fontSize: 20 }} > {monteCarlo.Min} Mɪɴ ━━━━━━━━━━━━━ Mᴀx {monteCarlo.Max} </Text>
+                  <Text style={{alignSelf: "center", color: 'white'}}>Monthly sentiment score: {sentiment}</Text>
+                  <View style={ {alignSelf: "center", flexDirection: 'row'} }>
+                    <Text style={{padding: 10, color: '#4c2223', fontSize: 20, fontWeight: "bold"}}>Low</Text>
+                      <StackedBarChart
+                        style={{ height: 15, width: "70%", alignSelf: 'center' }}
+                        keys={keys}
+                        colors={colors}
+                        data={data1}
+                        showGrid={false}
+                        horizontal= {true}       
+                      />
+                      <XAxis
+                        style={{ marginHorizontal: -10 }}
+                        data={data1}
+                        formatLabel={(value, index) => index}
+                        contentInset={{ left: 10, right: 10 }}
+                        svg={{ fontSize: 10, fill: 'black' }}
+                        />
+                      <YAxis
+                        style={ { position: 'relative', top: 10, bottom: 10 }}
+                        data={data1}
+                        keys={keys}
+                        contentInset={ { top: 10, bottom: 10 } }
+                        svg={ {
+                            fontSize: 18,
+                            fill: 'red',
+                            stroke: 'black',
+                            strokeWidth: 0.2,
+                            alignmentBaseline: 'baseline',
+                            baselineShift: '3',
+                        } }
+                        />
+                      <Text style={{padding: 10, color: '#224c4b', fontSize: 20, fontWeight: "bold",}}>High</Text>
                   </View>
-
-                  <Text style={{ color: 'white', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'} monthly sentiment score:{sentiment} {'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+                  <Text style={{ color: '#f0f0f1', fontSize: 20, flex: 2 }}> {  
+                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
 
                     </>}
                   </Text> 
-
-                  <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center"}}>
-                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#362b1d', borderWidth: 2}} onPress={() => addStockToFavoriteStockList(userParam, otherParam)}>
-                      <Icon style={{color: "#35a2eb", fontWeight: 'bold', backgroundColor: "#1d415f"}} name="add-circle" size={20} color="#000"/>
-                      <Text style={{color: "#35a2eb", fontWeight: 'bold',fontSize: 17, backgroundColor: "#1d415f"}}> Add To Favorite </Text>
+                  
+                 <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center", marginTop: 20}}>
+                    <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => addStockToFavoriteStockList(userParam, otherParam)}>
+                      <Icon style={{color: "#4bc0c0", fontWeight: 'bold', backgroundColor: "#1e3841"}} name="add-circle" size={20} color="#000"/>
+                      <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 17, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
                     </Pressable>   
                   </View>
-                 
+                  
                 </View>
 
                 <View style={styles.graphContainer}>
-                  <Line style={{fontSize: 70}} data={prices }  width={100}  height={300} options={{maintainAspectRatio: false, responsive: true}}/>
+                  <Line style={{fontSize: 70,color: 'white'}} data={prices}  width={100}  height={300} options={{maintainAspectRatio: false, responsive: true,  plugins: {legend: {display: true, data: {  color: 'rgb(255, 99, 132)'}}}}}/>
                   <View style={{ flexDirection:"row" ,alignItems:"top", margin: 15}}>
-                    <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 1}} onPress={() => onDailyButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15 }} >  Daily  </Text></TouchableOpacity>
-                    <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 1}} onPress={() => onWeekButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15}} >  Weekly  </Text> </TouchableOpacity>
+                    <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 2}} onPress={() => onDailyButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15 }} >  Daily  </Text></TouchableOpacity>
+                    <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 2}} onPress={() => onWeekButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15}} >  Weekly  </Text> </TouchableOpacity>
                   </View> 
                 </View>
 
@@ -411,7 +467,7 @@ function StockScreen({ route, navigation }) {
             </View>
           
             <View style={styles.detailedBlock}>
-              <Paragraph style={{color: 'white'}}>{data["info"]}</Paragraph>
+              <Paragraph style={{color: '#f0f0f1'}}>{data["info"]}</Paragraph>
             </View>
      
               
@@ -473,6 +529,7 @@ const styles = StyleSheet.create({
   detailedBlock: {
     backgroundColor: "#131722",
     margin: 50,
+    marginTop: 100,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#1e222d',
@@ -498,6 +555,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     backgroundColor: "#131722",
     marginTop: 10,
+    marginRight: 50,
     zIndex: 1,
   },
   blackScreen: {
@@ -536,6 +594,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 100,
   },
+
 });
 
 
