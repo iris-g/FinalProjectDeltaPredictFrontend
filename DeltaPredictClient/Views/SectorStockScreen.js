@@ -3,7 +3,7 @@ import { Dimensions, Text, View } from 'react-native';
 
 import React from "react";
 import {fetcSectorData} from "../client/deltaPredicrClient";
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { StyleSheet, Platform, ActivityIndicator, ScrollView, Pressable, FlatList} from 'react-native';
 import { useInterval } from "react-use";
 import { Badge, Button, Card, Paragraph } from 'react-native-paper';
@@ -12,6 +12,11 @@ import { Searchbar } from 'react-native-paper';
 import ScrollViewIndicator from 'react-native-scroll-indicator';
 import { Table, Row} from 'react-native-table-component';
 import Icon from "react-native-vector-icons/Ionicons";
+import Autocomplete from 'react-native-autocomplete-input';
+import Papa from 'papaparse';
+import { ListItem } from 'react-native-elements'
+    // For Filtered search Data
+
 
 
 function SectorStockScreen({ route, navigation }) {
@@ -20,11 +25,35 @@ function SectorStockScreen({ route, navigation }) {
   const [loading, setLoad] = useState(true); 
   const [searchQuery, setSearchQuery] = React.useState('');
   const [saveChange, setChange] = useState(""); 
-  const onChangeSearch = query => setSearchQuery(query);
+  const [filteredStocks, setFilteredStocks] = useState([]);
   const sector_name = useRoute();
   const header = ['Symbol', 'Company', 'Price ↑↓', 'Volume', 'Change ٪']
- 
-  /*Brings data stocks*/
+    //get file with top 50 stocks
+  var topStocks = require('../assets/top50.csv');
+  const [parsedCsvData, setParsedCsvData] = useState([]);
+  //reac csv file with top stocks into  an array
+    const parseFile = file => {
+    Papa.parse(file, {
+    header: false, download: true,   complete: results => {
+        const arr =new Array();
+            for(let i=0;i<Object.keys(results.data).length;i++)
+            {
+                const  obj= (results.data[i ][0])
+                arr.push(obj)
+            }
+        setParsedCsvData(arr)   
+            
+      },
+    });
+  };
+
+    //read top50 stock csv file
+    useEffect(() => {
+        parseFile(topStocks);
+    
+      },  [])
+
+  /*Brings stocks data*/
   async function fetch_Data(text) {
     try { 
       
@@ -49,7 +78,9 @@ function SectorStockScreen({ route, navigation }) {
     )
     
     function _onPressButton (symbol) { // On press button its transition to stock page.
-      navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
+      console.log(parsedCsvData)
+      if(parsedCsvData.includes(symbol.key))
+        navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
     }
 
     const handleColors = (value) => {
@@ -59,23 +90,55 @@ function SectorStockScreen({ route, navigation }) {
       if (val < 0) return "red";
       
     };
+    const onChangeSearch = query => {
+      setSearchQuery(query);
+       //create a filtered stock list 
+      if (query) 
+      {
+          const temp = query
+          // Setting the filtered film array according the query
+          const tempList = parsedCsvData.filter(item => {
+          if (String(item).substring(0,temp.length).search(temp) >=0)
+              return item
+      })
+          setFilteredStocks(tempList)}
+      else {
+         // If the query is null then return blank
+      setFilteredStocks([])}};
+  
 
   return (
     
     <View style={styles.container}>
       <View style={{backgroundColor: "#131722"}}>
-      <View style={styles.centeredSearch}>
-          <Searchbar 
-              style={{height: 40}}
-              placeholder="enter symbol"
-              type="text"
-              justifyContent= "center"
-              alignItems= "center"
-              value={searchQuery}
-              onChangeText={onChangeSearch} 
-              onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
-          /> 
-      </View> 
+      <View style={styles.centered}>
+            <View style={styles.searchSection}>
+            <View style={{alignSelf: "center"}}>
+              <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
+              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16,}}
+                containerStyle={styles.autocompleteContainer}
+                inputContainerStyle={styles.inputContainer}
+                autoCorrect={false}
+                autoCapitalize="none"
+                data={filteredStocks}
+                value={searchQuery}
+                onChangeText={onChangeSearch}
+                placeholder="Enter the stock symbol"
+                flatListProps={{ keyExtractor: (_, idx) => idx, renderItem: ({ item ,index}) =>  (
+                  <TouchableOpacity
+                    key={index.toString()} 
+                    onPress={() => { setSearchQuery(item); setFilteredStocks([]);  navigation.navigate('StockScreen',{otherParam: item, userParam: otherParam})}}> 
+            
+                    <ListItem bottomDivider >
+                    <ListItem.Content>
+                    <ListItem.Title>{item}</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                    </ListItem>
+                  </TouchableOpacity>)}}/> 
+                </View> 
+            </View>    
+          </View> 
       <View style={styles.viewTable}>
         <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={styles.tableHead}>
             <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={styles.tableRow} data={header} />        
@@ -166,6 +229,43 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
       backgroundColor: "#131722",
       marginTop: 50,
+    },
+    iconInAutocomplete:{
+      paddingLeft: 35,
+      padding: 10,
+      position: 'absolute',
+      zIndex: 100,
+    },
+  listItem: {
+      borderWidth: 1,
+      marginTop: 10,
+      backgroundColor: "#1e222d",
+      paddingLeft: 20,
+  },
+  centeredSearch: {
+      alignSelf: "center",
+      justifyContent: 'flex-start',
+      backgroundColor: "#131722",
+      marginTop: 50,
+      margin: 35,
+  },
+  inputContainer: {
+      minWidth: 330,
+      width: "90%",
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+    },
+    searchSection: {
+      flexDirection: 'row',
+      alignSelf: "center",
+      marginLeft: '5%',
+      marginRight: '5%',
+    },
+    autocompleteContainer: {
+      borderWidth: 0,
+      marginLeft: 10,
+      marginRight: 10,
+      paddingLeft: 15,
     },
 });
 
