@@ -127,7 +127,7 @@ export default function SignUp() {
                     </View>
                     
                     <View style={styles.inputView}>
-                        <Icon style={{ padding: 15, position: 'absolute'}} name="person-outline" size={20} color={colorInputText[0]}/>
+                        <Icon style={{ padding: 15, position: 'absolute'}} name="mail-outline" size={20} color={colorInputText[0]}/>
                         <TextInput style={styles.TextInput}
                             numberOfLines={1}
                             placeholder="Email"

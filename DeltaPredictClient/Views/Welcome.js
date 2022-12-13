@@ -67,7 +67,7 @@ export default function Welcome()  {
         
         promise.then((response) => {
             if(response.result == "true"){
-                navigation.navigate('Home',{otherParam: email})
+                navigation.navigate('Dashboard',{otherParam: email})
                 
             }
             else if(response.result == "password"){
@@ -92,7 +92,7 @@ export default function Welcome()  {
 
     /*Login with Faceboik response */ 
     const responseFacebook = (response) => {
-        console.log(response);
+        //console.log(response);
         setSignCheck(response.email, response.id, navigation)
     }
 
@@ -127,7 +127,7 @@ export default function Welcome()  {
                     <View style={styles.columnContainer}>
                         <Text style={styles.loginText}> Login </Text>
                             <View style={styles.inputView }>
-                                <Icon style={styles.iconInInputView} name="person-outline" size={20} color={colorInputText[1]}/>
+                                <Icon style={styles.iconInInputView} name="mail-outline" size={20} color={colorInputText[1]}/>
                                 <TextInput
                                     style={styles.TextInput}
                                     placeholder= "Email"
