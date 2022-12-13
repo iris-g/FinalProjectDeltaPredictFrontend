@@ -1,11 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View ,ActivityIndicator, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View ,ActivityIndicator,TouchableOpacity, StatusBar, Alert } from 'react-native';
 import { useState, useEffect } from 'react'
 import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
 import { Searchbar } from 'react-native-paper';
 import Icon from "react-native-vector-icons/Ionicons";
 import { useInterval } from "react-use";
-
+import Autocomplete from 'react-native-autocomplete-input';
+import Papa from 'papaparse';
+import { ListItem } from 'react-native-elements'
+    
 
 function Home({route, navigation}){
     const [activeStocks, setActive] = React.useState("");
@@ -15,12 +18,40 @@ function Home({route, navigation}){
     const [searchQuery, setSearchQuery] = React.useState('');
     const [currentPrice, setAPrice] = useState([]);   
     const [loading, setLoad] = useState(true); 
-    const onChangeSearch = query => setSearchQuery(query);
     const user = route.params;
     const [getUser, setUser] = useState(user);
+    const [parsedCsvData, setParsedCsvData] = useState([]);
+      // For Filtered search Data
+    const [filteredStocks, setFilteredStocks] = useState([]);
+  
+    //get file with top 50 stocks
+    var topStocks = require('../assets/top50.csv');
+    //reac csv file with top stocks into  an array
+    const parseFile = file => {
+      Papa.parse(file, {
+        header: false,
+        download: true,
+        complete: results => {
+          const arr =new Array();
+              for(let i=0;i<Object.keys(results.data).length;i++)
+              {
+                const  obj= (results.data[i ][0])
+                arr.push(obj)
+              }
+          setParsedCsvData(arr)   
+              
+        },
+      });
+    };
+  
+  
+    //read top50 stock csv file
+    useEffect(() => {
+      parseFile(topStocks);
     
-    
-
+  
+    },  [])
+  
     async function getMarketData() {
         try { 
           const promise = new Promise((resolve, reject) => {
@@ -110,6 +141,7 @@ function Home({route, navigation}){
     )
     useInterval(() => {
       getGainers()
+      
     },  3000    // Delay in milliseconds or null to stop it
     )
 
@@ -137,28 +169,57 @@ function Home({route, navigation}){
       }
     }
   };
-  const checkInputSearchbar = () => {
-    if(searchQuery != "")
-      navigation.navigate('StockScreen',{otherParam: searchQuery, userParam: getUser})
-    else alert("Stock not found")
-  }
-
+  const onChangeSearch = query => {
+    setSearchQuery(query);
+     //create a filtered stock list 
+    if (query) {
+      const temp = query
+       // Setting the filtered film array according the query
+      const tempList = parsedCsvData.filter(item => {
+        if (String(item).substring(0,temp.length).search(temp) >=0)
+          return item
+    })
+       setFilteredStocks(tempList)
+     
+     } else {
+       // If the query is null then return blank
+       setFilteredStocks([]);
+     }
+   };
 
     
   return (
  
     <View style={styles.container}>
       <View style={{backgroundColor: "#131722"}}>
-        <View style={styles.centered}>
-          <Searchbar 
-            style={{height: 40}}
-            placeholder="enter symbol"
-            type="text"
-            value={searchQuery}
-            onChangeText={onChangeSearch}
-            onIconPress={checkInputSearchbar}
-          /> 
-        </View>
+      <View style={styles.centered}>
+            <View style={styles.searchSection}>
+            <View style={{alignSelf: "center"}}>
+              <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
+              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16,}}
+                containerStyle={styles.autocompleteContainer}
+                inputContainerStyle={styles.inputContainer}
+                autoCorrect={false}
+                autoCapitalize="none"
+                data={filteredStocks}
+                value={searchQuery}
+                onChangeText={onChangeSearch}
+                placeholder="Enter the stock symbol"
+                flatListProps={{ keyExtractor: (_, idx) => idx, renderItem: ({ item ,index}) =>  (
+                  <TouchableOpacity
+                    key={index.toString()} 
+                    onPress={() => { setSearchQuery(item); setFilteredStocks([]); console.log(getUser); navigation.navigate('StockScreen',{otherParam: item, userParam: getUser})}}> 
+            
+                    <ListItem bottomDivider >
+                    <ListItem.Content>
+                    <ListItem.Title>{item}</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                    </ListItem>
+                  </TouchableOpacity>)}}/> 
+                </View> 
+            </View>    
+          </View>
 
         <View style={{backgroundColor: "#131722"}}>
           <View style={styles.viewMarketTime}>
@@ -212,6 +273,12 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
       alignItem: "center",
     },
+    iconInAutocomplete:{
+      paddingLeft: 35,
+      padding: 10,
+      position: 'absolute',
+      zIndex: 100,
+    },
     viewMarketTime: {
       backgroundColor: "#131722",
       flexDirection: 'row',
@@ -230,10 +297,27 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       margin:20
     },
+    inputContainer: {
+      minWidth: 330,
+      width: "90%",
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+    },
     viewSubTitle: {
       backgroundColor: "#131722",
       margin: 10,
       flex: 0.333,
+    },
+    searchSection: {
+      flexDirection: 'row',
+      marginLeft: '5%',
+      marginRight: '5%',
+    },
+    autocompleteContainer: {
+      borderWidth: 0,
+      marginLeft: 10,
+      marginRight: 10,
+      paddingLeft: 15,
     },
     subTitle: {
       backgroundColor: "#307d7e",
