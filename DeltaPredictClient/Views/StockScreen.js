@@ -143,7 +143,7 @@ function StockScreen({ route, navigation })  {
         borderColor: "rgba(75,192,192,1)",
         borderWidth: 4,
         borderDash: [ 5, 5 ],
-        borderDashOffset: 3,
+        borderDashOffset: 2,
         fill: false
       },
       {
@@ -406,9 +406,9 @@ function StockScreen({ route, navigation })  {
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
-                  <Text style={{alignSelf: "center", color: 'white'}}>Monthly sentiment score: {sentiment}</Text>
+                  <Text style={{fontSize: 18, alignSelf: "center", color: 'white'}}>Monthly sentiment score: {sentiment}</Text>
                   <View style={ {alignSelf: "center", flexDirection: 'row'} }>
-                    <Text style={{padding: 10, color: '#4c2223', fontSize: 20, fontWeight: "bold"}}>Low</Text>
+                    <Text style={{padding: 8, color: '#4c2223', fontSize: 20, fontWeight: "bold"}}>Low</Text>
                       <StackedBarChart
                         style={{ height: 15, width: "70%", alignSelf: 'center' }}
                         keys={keys}
@@ -438,7 +438,7 @@ function StockScreen({ route, navigation })  {
                             baselineShift: '3',
                         } }
                         />
-                      <Text style={{padding: 10, color: '#224c4b', fontSize: 20, fontWeight: "bold",}}>High</Text>
+                      <Text style={{padding: 9, color: '#224c4b', fontSize: 20, fontWeight: "bold",}}>High</Text>
                   </View>
                   <Text style={{ color: '#f0f0f1', fontSize: 20, flex: 2 }}> {  
                     <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
