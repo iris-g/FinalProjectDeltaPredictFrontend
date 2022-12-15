@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import {StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator } from "react-native";
+import React, { useState, useEffect  } from "react";
+import {StyleSheet, Text, View, FlatList, Pressable, ActivityIndicator ,TouchableOpacity} from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { useInterval } from "react-use";
 import { fetchFavoritesData } from "../client/deltaPredicrClient";
@@ -7,15 +7,63 @@ import { deletFromFavoriteStockList } from "../client/deltaPredicrClient";
 import ScrollViewIndicator from 'react-native-scroll-indicator';
 import { Table, Row } from 'react-native-table-component';
 import Icon from "react-native-vector-icons/Ionicons";
+import Autocomplete from 'react-native-autocomplete-input';
+import Papa from 'papaparse';
+import { ListItem } from 'react-native-elements'
 
 export default function FavoriteStocks({route, navigation}) {
     
     const [searchQuery, setSearchQuery] = React.useState('');
-    const onChangeSearch = query => setSearchQuery(query);
     const [stocks, setData] = useState(''); 
     const [loading, setLoad] = useState(true); 
     const header = ['Price ↑↓', 'Symbol', 'Volume', 'Day Low', 'Day High', 'Remove']
     const user = route.params;
+    const [parsedCsvData, setParsedCsvData] = useState([]);
+    // For Filtered search Data
+    const [filteredStocks, setFilteredStocks] = useState([]);
+    const [getUser, setUser] = useState(user);
+    const {otherParam, userParam} = route.params;
+    
+    console.log(otherParam)
+  //get file with top 50 stocks
+    var topStocks = require('../assets/top50.csv');
+  //reac csv file with top stocks into  an array
+    const parseFile = file => {
+    Papa.parse(file, {
+    header: false, download: true,   complete: results => {
+        const arr =new Array();
+            for(let i=0;i<Object.keys(results.data).length;i++)
+            {
+                const  obj= (results.data[i ][0])
+                arr.push(obj)
+            }
+        setParsedCsvData(arr)   
+            
+      },
+    });
+  };
+
+    //read top50 stock csv file
+    useEffect(() => {
+        parseFile(topStocks);
+      
+    
+      },  [])
+      const onChangeSearch = query => {
+        setSearchQuery(query);
+         //create a filtered stock list 
+        if (query) 
+        {
+            const temp = query
+            // Setting the filtered film array according the query
+            const tempList = parsedCsvData.filter(item => {
+            if (String(item).substring(0,temp.length).search(temp) >=0)
+                return item
+        })
+            setFilteredStocks(tempList)}
+        else {
+           // If the query is null then return blank
+        setFilteredStocks([])}};
     
 
 
@@ -49,18 +97,34 @@ export default function FavoriteStocks({route, navigation}) {
     return (
         <View style={styles.container}>
             <View style={{backgroundColor: "#131722"}}>
-                <View style={styles.centeredSearch}>
-                    <Searchbar 
-                    style={{height: 40}}
-                    placeholder="enter symbol"
-                    type="text"
-                    justifyContent= "center"
-                    alignItems= "center"
-                    value={searchQuery}
-                    onChangeText={onChangeSearch}
-                    onIconPress={ event =>event != "" ?  navigation.navigate('StockScreen',{otherParam: searchQuery,}) : ""}
-                    /> 
-                </View>
+            <View style={styles.centered}>
+            <View style={styles.searchSection}>
+            <View style={{alignSelf: "center"}}>
+              <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
+              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16,}}
+                containerStyle={styles.autocompleteContainer}
+                inputContainerStyle={styles.inputContainer}
+                autoCorrect={false}
+                autoCapitalize="none"
+                data={filteredStocks}
+                value={searchQuery}
+                onChangeText={onChangeSearch}
+                placeholder="Enter the stock symbol"
+                flatListProps={{ keyExtractor: (_, idx) => idx, renderItem: ({ item ,index}) =>  (
+                  <TouchableOpacity
+                    key={index.toString()} 
+                    onPress={() => { setSearchQuery(item); setFilteredStocks([]);  navigation.navigate('StockScreen',{otherParam: item, userParam: otherParam})}}> 
+            
+                    <ListItem bottomDivider >
+                    <ListItem.Content>
+                    <ListItem.Title>{item}</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron />
+                    </ListItem>
+                  </TouchableOpacity>)}}/> 
+                </View> 
+            </View>    
+          </View>
             
                 <View style={{backgroundColor: "#131722",marginLeft: 150, marginRight: 150, marginTop: 20, flex: 0.9,}}>
                 <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
@@ -106,6 +170,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItem: "center",
     },
+    iconInAutocomplete:{
+        paddingLeft: 35,
+        padding: 10,
+        position: 'absolute',
+        zIndex: 100,
+      },
     flat: {
         backgroundColor: "#131722",
         marginTop: 20,
@@ -124,12 +194,29 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: 'center'
     },
-      centeredSearch: {
+    centeredSearch: {
         alignSelf: "center",
         justifyContent: 'flex-start',
         backgroundColor: "#131722",
         marginTop: 50,
         margin: 35,
-        
+    },
+    inputContainer: {
+        minWidth: 330,
+        width: "90%",
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+      },
+      searchSection: {
+        flexDirection: 'row',
+        alignSelf: "center",
+        marginLeft: '5%',
+        marginRight: '5%',
+      },
+      autocompleteContainer: {
+        borderWidth: 0,
+        marginLeft: 10,
+        marginRight: 10,
+        paddingLeft: 15,
       },
 });
