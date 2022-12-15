@@ -212,8 +212,17 @@ export async function deletFromFavoriteStockList(userEmail,symbol){
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
 }
+export async function sendResultsToMail(userEmail){
+    fetch('http://localhost:5000/mail', {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({Email: userEmail})
+    })
+    .then(res => res.json())
+    // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+}
 
 
-export default{_onPressButtonLogin,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchSentimentData,fetchFavoritesData,fetchMonteCarlo,fetchArima,addStockToFavoriteStockList,deletFromFavoriteStockList} ;
+export default{_onPressButtonLogin,sendResultsToMail,_onPressButtonsignUp,fetch_from_server,fetch_clock,fetchData,fetcSectorData,fetchSentimentData,fetchFavoritesData,fetchMonteCarlo,fetchArima,addStockToFavoriteStockList,deletFromFavoriteStockList} ;
 
 
