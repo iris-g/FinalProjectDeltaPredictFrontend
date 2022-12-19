@@ -28,7 +28,7 @@ const DrawerContent = (props) => {
                     <DrawerItemList {...props} />
                 </DrawerContentScrollView>
             </View>
-            <View style={{ flexDirection: "row", marginTop: '50%', marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ flexDirection: "row", marginTop: '40%', marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
                 <Icon name={"exit-outline"} size={20} style= {{padding: 5, paddingRight: 75, position:'absolute', right: 0, color: 'white'}}/>
                 <Button title = "logout " uppercase={false} color = "#1e222d" style={{paddingRight: 100 }} onPress={() => {navigation.navigate('Welcome')} }/>
             </View>  
@@ -36,20 +36,17 @@ const DrawerContent = (props) => {
             
   )};
 
-
-
  
 const DrawerNavigator = ({route,navigation}) => { //##
     
     return (
-        <Drawer.Navigator initialRouteName="Dashboard" screenOptions={{
+        <Drawer.Navigator useLegacyImplementation initialRouteName="Dashboard" screenOptions={{
            
             drawerStyle: {backgroundColor: '#1e222d'},         //Change color  background  drawer
             headerTintColor: "white",        // Change color hamburger icon to white
             }}
             drawerContent = {(props)=> <DrawerContent {...props}/>}
         >   
-        
         
         
         <Drawer.Screen name="Home" initialParams={route.params} component={Home} options={{
@@ -166,10 +163,10 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-        <Drawer.Screen name="Recommendation" component={Recommendation} initialParams={"Recommendation"} options={{
+        <Drawer.Screen name="Recommendation" component={Recommendation} initialParams={"Recommendation "} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
-                     name="trending-up"
+                     name="briefcase-outline"
                      size={size}
                      color={focused ? '#7cc' : '#ccc'}
                     />

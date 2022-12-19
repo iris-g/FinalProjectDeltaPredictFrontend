@@ -84,7 +84,6 @@ Description: This function POST to server list of stock sector and receive the d
 **/
 
 export async function fetchData(symbol){
-
   const response = await fetch('http://localhost:5000/fundamental', {
       method:  'POST', 
       headers: { 'Content-Type': 'application/json' },
@@ -152,11 +151,12 @@ Page: StockScreen
 Description: This function POST to server the symbol of the stock. receive the Monte Carlo forecasting.
 **/
 
-  export async function fetchMonteCarlo(symbol){
+  export async function fetchMonteCarlo(symbol,Signal){
     const response = await fetch('http://localhost:5000/monteCarloResults', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Symbol: symbol }),
+        signal: Signal,
     })
     const json = await response.json()
     
