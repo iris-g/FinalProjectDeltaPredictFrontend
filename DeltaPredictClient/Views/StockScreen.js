@@ -1,26 +1,24 @@
-import {StyleSheet,Text,View,Button,TouchableOpacity,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable,AppRegistry,KeyboardAvoidingView} from 'react-native';
-import React, { useRef } from "react";
+import {StyleSheet,Text,View,Button,TouchableOpacity,ActivityIndicator,StatusBar,TouchableHighlight,Image,Pressable,Dimensions} from 'react-native';
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {fetchData,fetchArima} from "../client/deltaPredicrClient";
-import {useEffect,useState } from 'react'
 import { useInterval } from "react-use";
 import { Paragraph } from 'react-native-paper';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Colors} from 'chart.js';
 ChartJS.register( CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
-import { Searchbar } from 'react-native-paper';
-import Autocomplete from 'react-native-autocomplete-input';
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import Icon from "react-native-vector-icons/Ionicons";
 import { addStockToFavoriteStockList, fetchSentimentData, fetchMonteCarlo } from "../client/deltaPredicrClient"
 import Papa from 'papaparse';
-import { ListItem } from 'react-native-elements'
 import  {StackedBarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts'
-
+import Feather from 'react-native-vector-icons/Feather'
+Feather.loadFont()
 
 //get file with top 50 stocks
 var topStocks = require('../assets/top50.csv');
 
 function StockScreen({ route, navigation })  {
-  const {otherParam, userParam} = route.params;
+  const {otherParam, userParam} = route.params; // otherParam : "Symbol" , otherParam: "mail"
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
@@ -31,6 +29,9 @@ function StockScreen({ route, navigation })  {
   const [dailyTimestamps, setStamps] = React.useState(otherParam);
   const [dailyTime, dailyTimes] = React.useState(otherParam);
   const [weeklyTimestamps, setweeklyStamps] = React.useState(otherParam);
+  const onOpenSuggestionsList = useCallback(isOpened => {}, [])
+  const dropdownController = useRef(null)
+  const searchRef = useRef(null)
   // For Filtered search Data
   const [filteredStocks, setFilteredStocks] = useState([]);
   let marketStatus;
@@ -38,7 +39,7 @@ function StockScreen({ route, navigation })  {
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
- 
+  
   const colors = ['#522526', '#255245']
   const keys =  ['apples', 'bananas']
 
@@ -51,13 +52,11 @@ function StockScreen({ route, navigation })  {
         const arr =new Array();
             for(let i=0;i<Object.keys(results.data).length;i++)
             {
-              const  obj= (results.data[i ][0])
-              arr.push(obj)
+              const obj= (results.data[i][0])
+              arr.push({"id": i ,"title": obj})  
             }
         setParsedCsvData(arr)
-     
-        
-      
+
       },
     });
   };
@@ -66,10 +65,12 @@ function StockScreen({ route, navigation })  {
   //read top50 stock csv file
   useEffect(() => {
     parseFile(topStocks);
-  
-
   },  [])
 
+
+  const onClearPress = useCallback(() => {
+    setFilteredStocks(null)
+  }, [])
 
   //check if stock exchange is open and update text
   if(usa.isTradingNow()){
@@ -94,32 +95,7 @@ function StockScreen({ route, navigation })  {
 
   };
 
-  const onChangeSearch = query => {
-   setSearchQuery(query);
-    setPredicted("");
-    //create a filtered stock list 
-    if (query) {
-      // Making a case insensitive regular expression
-      const regex = new RegExp(`${query.trim()}`, 'i');
-      const temp = query
-      // Setting the filtered film array according the query
-      const tempList = parsedCsvData.filter(item => {
-        if (String(item).substring(0,temp.length).search(temp) >=0)
-          return item
-
-      })
-      setFilteredStocks(tempList)
-    
-    } else {
-      // If the query is null then return blank
-      setFilteredStocks([]);
-    }
-
-    
-  };
-
-
-
+ 
   //Change borderColor chart and change label color. 
   //ChartJS.defaults.backgroundColor = 'white';
   ChartJS.defaults.borderColor = '#212430';
@@ -137,21 +113,21 @@ function StockScreen({ route, navigation })  {
         fill: false
       },
       {
-        label: "Predicted price",
-        data: [monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max],
+        label: "Max price",
+        data: [monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max,monteCarlo.Max],
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
-        borderWidth: 4,
+        borderWidth: 3,
         borderDash: [ 5, 5 ],
         borderDashOffset: 2,
         fill: false
       },
       {
-        label: "Predicted price",
-        data: [monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min],
+        label: "Min price",
+        data: [monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min,monteCarlo.Min],
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
-        borderWidth: 4,
+        borderWidth: 3,
         borderDash: [ 5, 5 ],
         borderDashOffset: 2,
         fill: false
@@ -199,24 +175,29 @@ function StockScreen({ route, navigation })  {
 
   }
 
-// ***
+  // ***
   const  controller = useRef("");
 
   /*Monte Carlo calculation*/
   async function fetch_MonteCarlo(otherParam) {
-      try { 
-        const promise = new Promise((resolve, reject) => {
-          resolve(fetchMonteCarlo(otherParam) )
-        })
+    try { 
+      controller.current=new AbortController();
+      let signal = controller.current.signal;
       
-        promise.then((response) => {
-          setMonteCarlo(response)
-        })
-        } catch (error) {} 
-    }
+
+      const promise = new Promise((resolve, reject) => {
+        resolve(fetchMonteCarlo(otherParam,signal) )
+      })
+      
+      promise.then((response) => {
+        setMonteCarlo(response)
+      })
+      } catch (error) {} 
+  }
+
   useEffect(() => {
     fetch_MonteCarlo(otherParam)
-  },  [])
+  }, [])
  
 
 
@@ -226,7 +207,7 @@ function StockScreen({ route, navigation })  {
     try { 
       controller.current=new AbortController();
       let signal = controller.current.signal;
-    // console.log(signal);
+      // console.log(signal);
 
       const promise = new Promise((resolve, reject) => {
         resolve(fetchArima(otherParam,signal) )
@@ -265,33 +246,27 @@ function StockScreen({ route, navigation })  {
   //call function to get arima prediction and sentiment score  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    console.log(parsedCsvData)
-    console.log(parsedCsvData.includes(searchQuery)  )
+    //console.log(parsedCsvData.includes(otherParam)  )
     // if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
     // {
       //console.log("FETCH")
-       fetch_sentiment_Data(searchQuery);
+    fetch_sentiment_Data(otherParam);
     fetch_Arima_Data()
    // }
-    
+  },  [])
 
-  },  []
-  
-  )
+
   useEffect(() => {
-
     //call function to get arima prediction  when a new search is being made
     setStamps(getDateArray(tomorrow,nextweek));
-    if(parsedCsvData.includes(searchQuery) && searchQuery!= ""  )
+    //if(parsedCsvData.includes(otherParam) && otherParam!= ""  )
     {
-      fetch_sentiment_Data(searchQuery);
-    fetch_Arima_Data()
-  }
-   
+      fetch_sentiment_Data(otherParam);
+      fetch_Arima_Data()
+    }
+  }, [otherParam])
 
-  },  [searchQuery]
 
-  )
   //handle price text color according to sign.
   const handleColors = (value) => {
     let val =(parseFloat(value))
@@ -303,7 +278,6 @@ function StockScreen({ route, navigation })  {
 
 //get stock live data from the server.
   async function fetch_Data(text) {
- 
     try { 
       const promise = new Promise((resolve, reject) => {
         resolve(fetchData(text) )
@@ -311,44 +285,46 @@ function StockScreen({ route, navigation })  {
     
       promise.then((response) => {
         //console.log(response["symbol"] )
-        if(response["symbol"] == searchQuery)
+        if(response["symbol"] == otherParam)
           setData(response)
           setLoad(false)
-        
       })
-    } catch (error) {
-    } 
+
+    } catch (error) {} 
     }
-    useInterval(() => {
-      if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
-        fetch_Data(searchQuery)
-    },  8000// Delay in milliseconds or null to stop it.
-    
-    )
+
+
+  useInterval(() => {
+    //if(parsedCsvData.includes(otherParam) && otherParam!= "" )
+      fetch_Data(otherParam)
+  },  8000// Delay in milliseconds or null to stop it.
+  )
  
-      //get stocks monthly sentiment score.
-      async function fetch_sentiment_Data(text) {
- 
-        try { 
-          //console.log(text)
-          const promise = new Promise((resolve, reject) => {
-            resolve(fetchSentimentData(text) )
-          })
-          promise.then((response) => {
-            console.log(response)
-          setSentiment(response)   
-          })
-        } catch (error) {
-        } 
-        }
+  //get stocks monthly sentiment score.
+  async function fetch_sentiment_Data(text) {
+    try { 
+      //console.log(text)
+      const promise = new Promise((resolve, reject) => {
+          resolve(fetchSentimentData(text) )
+      })
+      promise.then((response) => {
+        console.log(response)
+        setSentiment(response)   
+      })
+    } catch (error) {} 
+    }
     
 
-        const data1 = [
-          {
-              apples: 38,
-              bananas: 62,
-          },
-      ]
+  /*Data for the StackedBarChart. */
+  const data1 = [
+    {
+      apples: 38,
+      bananas: 62,
+    },
+  ]
+
+
+
   return (
 
     <View style={styles.container}> 
@@ -360,39 +336,38 @@ function StockScreen({ route, navigation })  {
               />
           </TouchableHighlight>   
 
-          <View style={styles.centered}>
-            
-            <View style={styles.searchSection}>
-            <View style={{alignSelf: "center"}}>
-              <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
-              
-              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16,}}
-                containerStyle={styles.autocompleteContainer}
-                inputContainerStyle={styles.inputContainer}
-                autoCorrect={false}
-                autoCapitalize="none"
-                data={filteredStocks}
-                value={searchQuery}
-                onChangeText={onChangeSearch}
-                placeholder="Enter the stock symbol"
-                flatListProps={{ keyExtractor: (_, idx) => idx, renderItem: ({ item ,index}) =>  (
-                  <TouchableOpacity
-                    key={index.toString()} 
-                    onPress={() => { setSearchQuery(item); setLoad("true"); setFilteredStocks([]);}}> 
-            
-                    <ListItem bottomDivider >
-                    <ListItem.Content>
-                    <ListItem.Title>{item}</ListItem.Title>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                    </ListItem>
-                  </TouchableOpacity>)}}/> 
-                </View> 
-            </View>    
+          <View style={styles.searchSection}>
+            <Icon style={styles.iconInAutocomplete} name="search-sharp" size={22} color= "#777777"/>
+            <AutocompleteDropdown 
+                ref={searchRef}
+                controller={controller => {dropdownController.current = controller}}
+                // initialValue={'1'}
+                // useFilter={false} // set false to prevent rerender twice
+                dataSet={parsedCsvData} //Data set for suggestion list parsedCsvData = top50.csv
+                // onChangeText={{onChangeSearch}}
+                onSelectItem={item => {item && setSelectedItem(item.id)}}
+                debounce={600} 
+                suggestionsListMaxHeight={Dimensions.get('window').height * 0.2}
+                onClear={onClearPress}
+                onOpenSuggestionsList={onOpenSuggestionsList}
+                loading={loading}
+                textInputProps={{placeholder: 'Enter the stock symbol', autoCorrect: false, autoCapitalize: 'none', style: {color: '#434243', paddingLeft: 50}}}
+                rightButtonsContainerStyle={{right: 30, height: 30, alignSelf: 'center'}} // Style for x buttons container.
+                inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
+                suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
+                containerStyle={{ flexGrow: 1, flexShrink: 1 }}
+                renderItem={(item, text) => <TouchableOpacity onPress={() => {navigation.navigate('StockScreen',{otherParam: item.title, userParam: userParam})}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
+                ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
+                ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
+                inputHeight={38} // Change the input container height.
+                showChevron={true} //
+                closeOnBlur={false} //
+                // showClear={false}
+              />
           </View>
 
 
-          <View style={{backgroundColor: "#131822",alignItems: "center",  marginTop: -16}}>
+          <View style={{backgroundColor: "#131822", alignItems: "center", zIndex: -1}}>
             <Text style={styles.title}> {  
                 <><p > {data["name"]} - {data["symbol"]} {'\n'} {marketStatus} {data["close"]}
                     <Text style={{ color:handleColors(data["change"]) }}>  {data["change"]} </Text> 
@@ -401,7 +376,7 @@ function StockScreen({ route, navigation })  {
             </Text> 
           </View>
 
-          <ActivityIndicator style={{backgroundColor: "#131822"}} size="large" color="#307D7E" animating={loading} hidesWhenStopped={true} /> 
+          <ActivityIndicator style={{backgroundColor: "#131822", zIndex: -1}} size="large" color="#307D7E" animating={loading} hidesWhenStopped={true} /> 
           
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
@@ -441,7 +416,7 @@ function StockScreen({ route, navigation })  {
                       <Text style={{padding: 9, color: '#224c4b', fontSize: 20, fontWeight: "bold",}}>High</Text>
                   </View>
                   <Text style={{ color: '#f0f0f1', fontSize: 20, flex: 2 }}> {  
-                    <><p>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose"]} </p>
+                    <><Text>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose" ]} <Text style={{fontSize: 10, color: 'white'}}>USD</Text></Text>
 
                     </>}
                   </Text> 
@@ -573,23 +548,13 @@ const styles = StyleSheet.create({
   },
   searchSection: {
     flexDirection: 'row',
-    marginLeft: '5%',
-    marginRight: '5%',
-  },
-  autocompleteContainer: {
-    borderWidth: 0,
-    marginLeft: 10,
-    marginRight: 10,
-    paddingLeft: 15,
-  },
-  inputContainer: {
-    minWidth: 330,
-    width: "90%",
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+    alignSelf: "center",
+    alignItem: "center",
+    justifyContent: 'center',
+    marginTop: 30,
   },
   iconInAutocomplete:{
-    paddingLeft: 35,
+    left: 0,
     padding: 10,
     position: 'absolute',
     zIndex: 100,
