@@ -1,26 +1,27 @@
-import React from "react";
-import { StyleSheet, Text, View ,ActivityIndicator,TouchableOpacity, StatusBar, Alert } from 'react-native';
-import { useState, useEffect } from 'react'
-import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
-import { Searchbar } from 'react-native-paper';
-import Icon from "react-native-vector-icons/Ionicons";
+import React, { useState, useEffect, useCallback, useRef} from "react";
+import { StyleSheet, Text, View ,ActivityIndicator,TouchableOpacity, Dimensions, StatusBar, Alert } from 'react-native';
 import { useInterval } from "react-use";
-import Autocomplete from 'react-native-autocomplete-input';
+import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
+import Icon from "react-native-vector-icons/Ionicons";
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import Papa from 'papaparse';
-import { ListItem } from 'react-native-elements'
-    
+import Feather from 'react-native-vector-icons/Feather'
+Feather.loadFont()
 
 function Home({route, navigation}){
     const [activeStocks, setActive] = React.useState("");
     const [loserStocks, setLosers] = useState(""); 
     const [gainerStocks, setGainers] = useState(""); 
     const [market, setMarket] = useState(""); 
-    const [searchQuery, setSearchQuery] = React.useState('');
     const [currentPrice, setAPrice] = useState([]);   
     const [loading, setLoad] = useState(true); 
     const user = route.params;
     const [getUser, setUser] = useState(user);
     const [parsedCsvData, setParsedCsvData] = useState([]);
+    const onOpenSuggestionsList = useCallback(isOpened => {}, [])
+    const dropdownController = useRef(null)
+    const searchRef = useRef(null)
+   
       // For Filtered search Data
     const [filteredStocks, setFilteredStocks] = useState([]);
   
@@ -35,8 +36,8 @@ function Home({route, navigation}){
           const arr =new Array();
               for(let i=0;i<Object.keys(results.data).length;i++)
               {
-                const  obj= (results.data[i ][0])
-                arr.push(obj)
+                const  obj= (results.data[i][0])
+                arr.push({"id": i ,"title": obj})
               }
           setParsedCsvData(arr)   
               
@@ -44,14 +45,36 @@ function Home({route, navigation}){
       });
     };
   
-  
-    //read top50 stock csv file
+
+    //Read top50 stock csv file once.
     useEffect(() => {
       parseFile(topStocks);
-    
-  
     },  [])
+
+
+    // const onChangeSearch = query => {
+    //   setSearchQuery(query);
+    //    //create a filtered stock list 
+    //   if (query) {
+    //     const temp = query
+    //      // Setting the filtered film array according the query
+    //     const tempList = parsedCsvData.filter(item => {
+    //       if (String(item).substring(0,temp.length).search(temp) >=0)
+    //         return item
+    //   })
+    //      setFilteredStocks(tempList)
+       
+    //    } else {
+    //      // If the query is null then return blank
+    //      setFilteredStocks([]);
+    //    }
+    //  };
   
+     const onClearPress = useCallback(() => {
+      setFilteredStocks(null)
+    }, [])
+
+
     async function getMarketData() {
         try { 
           const promise = new Promise((resolve, reject) => {
@@ -126,10 +149,33 @@ function Home({route, navigation}){
       } finally {}
     }
 
+    const handleColors = (newPrice, stockSymbol) => {
+      if(currentPrice.find(a=>a.symbol === stockSymbol) === undefined ){  
+        currentPrice.push({ symbol: stockSymbol, price: newPrice })
+          // Items after the insertion point:
+      }else{
+        const artwork = currentPrice.find(a=>a.symbol === stockSymbol)
+        if(artwork.symbol == stockSymbol) {
+          if(artwork.price < newPrice ){
+            artwork.price = newPrice
+            return '#1f8779';
+          }
+          else if (artwork.price > newPrice ){
+            
+            currentPrice.price = newPrice
+            return '#af2d3a';
+          }
+          else{
+              return "white";
+          }
+        }
+      }
+    };
+
     //get active stock data not more than once in 3000 ms
     useInterval(() => {
         getActive()
-      }, 3000   // Delay in milliseconds or null to stop it
+    },  3000   // Delay in milliseconds or null to stop it
     )
     useInterval(() => {
       getMarketData()
@@ -141,110 +187,64 @@ function Home({route, navigation}){
     )
     useInterval(() => {
       getGainers()
-      
     },  3000    // Delay in milliseconds or null to stop it
     )
 
-  const handleColors = (newPrice, stockSymbol) => {
-    
-    const myNextList = [...currentPrice];
-    if(myNextList.find(a=>a.symbol === stockSymbol) === undefined ){  
-      currentPrice.push({ symbol: stockSymbol, price: newPrice })
-        // Items after the insertion point:
-    }else{
-      const artwork = myNextList.find(a=>a.symbol === stockSymbol)
-      if(artwork.symbol == stockSymbol) {
-        if(artwork.price < newPrice ){
-          artwork.price = newPrice
-          return '#1f8779';
-        }
-        else if (artwork.price > newPrice ){
-          
-          currentPrice.price = newPrice
-          return '#af2d3a';
-        }
-        else{
-            return "white";
-        }
-      }
-    }
-  };
-  const onChangeSearch = query => {
-    setSearchQuery(query);
-     //create a filtered stock list 
-    if (query) {
-      const temp = query
-       // Setting the filtered film array according the query
-      const tempList = parsedCsvData.filter(item => {
-        if (String(item).substring(0,temp.length).search(temp) >=0)
-          return item
-    })
-       setFilteredStocks(tempList)
-     
-     } else {
-       // If the query is null then return blank
-       setFilteredStocks([]);
-     }
-   };
 
     
   return (
  
     <View style={styles.container}>
       <View style={{backgroundColor: "#131722"}}>
-      <View style={styles.centered}>
-            <View style={styles.searchSection}>
-            <View style={{alignSelf: "center"}}>
-              <Icon style={styles.iconInAutocomplete} name="search-sharp" size={20} color= "gray"/>
-              <Autocomplete style={{ backgroundColor: 'white', color: 'gray', height: 40, flex: 1, padding: 10, paddingLeft: 50, borderRadius: 6, fontSize: 16,}}
-                containerStyle={styles.autocompleteContainer}
-                inputContainerStyle={styles.inputContainer}
-                autoCorrect={false}
-                autoCapitalize="none"
-                data={filteredStocks}
-                value={searchQuery}
-                onChangeText={onChangeSearch}
-                placeholder="Enter the stock symbol"
-                flatListProps={{ keyExtractor: (_, idx) => idx, renderItem: ({ item ,index}) =>  (
-                  <TouchableOpacity
-                    key={index.toString()} 
-                    onPress={() => { setSearchQuery(item); setFilteredStocks([]); console.log(getUser); navigation.navigate('StockScreen',{otherParam: item, userParam: getUser})}}> 
-            
-                    <ListItem bottomDivider >
-                    <ListItem.Content>
-                    <ListItem.Title>{item}</ListItem.Title>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                    </ListItem>
-                  </TouchableOpacity>)}}/> 
-                </View> 
-            </View>    
-          </View>
+        <View style={styles.searchSection}>
+        <Icon style={styles.iconInAutocomplete} name="search-sharp" size={22} color= "#777777"/>
+            <AutocompleteDropdown 
+                ref={searchRef}
+                controller={controller => {dropdownController.current = controller}}
+                // initialValue={'1'}
+                // useFilter={false} // set false to prevent rerender twice
+                dataSet={parsedCsvData} //Data set for suggestion list parsedCsvData = top50.csv
+                // onChangeText={{onChangeSearch}}
+                onSelectItem={item => {item && setSelectedItem(item.id)}}
+                debounce={600} 
+                suggestionsListMaxHeight={Dimensions.get('window').height * 0.2}
+                onClear={onClearPress}
+                onOpenSuggestionsList={onOpenSuggestionsList}
+                loading={loading}
+                textInputProps={{placeholder: 'Enter the stock symbol', autoCorrect: false, autoCapitalize: 'none', style: {color: '#434243', paddingLeft: 50}}}
+                rightButtonsContainerStyle={{right: 30, height: 30, alignSelf: 'center'}} // Style for x buttons container.
+                inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
+                suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
+                containerStyle={{ flexGrow: 1, flexShrink: 1 }}
+                renderItem={(item, text) => <TouchableOpacity onPress={() => {navigation.navigate('StockScreen',{otherParam: item.title, userParam: getUser})}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
+                ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
+                ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
+                inputHeight={38} // Change the input container height.
+                showChevron={true} //
+                closeOnBlur={false} //
+                // showClear={false}
+              />
+              </View>
 
-        <View style={{backgroundColor: "#131722"}}>
           <View style={styles.viewMarketTime}>
             <Icon name="time-outline" size={33} color="white"/>
             <Text style={styles.textMarketTime}>
               {market}
             </Text>
           </View>
-        </View>
-
-        <View style={{backgroundColor: "#131722"}}>
-        
+       
           <View style={styles.blackScreen}>
-
               <View style={styles.viewSubTitle}> 
                 <Text style={styles.subTitle}>  Most Active ↑↓ </Text>
                 <Text style={styles.textStocks}> { Object.values(activeStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>))} 
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))} 
                 </Text>
               </View>
               
               <View style={styles.viewSubTitle}>
                 <Text style={styles.subTitle}>  Top Losers ↑↓  </Text>
                 <Text style={styles.textStocks}> { Object.values(loserStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>))} 
+                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))} 
                 </Text>
                 <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
               </View>
@@ -252,12 +252,10 @@ function Home({route, navigation}){
               <View style={styles.viewSubTitle}>
                 <Text style={styles.subTitle}>  Top Gainers ↑↓  </Text>
                 <Text style={styles.textStocks}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}> {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} </Text> </p>))}
+                  <p key={close}> <Text style={{ color: 'white'}}> {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))}
                 </Text>
               </View>
-
           </View>
-        </View>
         
       </View>
     </View>
@@ -273,8 +271,15 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
       alignItem: "center",
     },
+    searchSection: {
+      flexDirection: 'row',
+      alignSelf: "center",
+      alignItem: "center",
+      justifyContent: 'center',
+      marginTop: 30,
+    },
     iconInAutocomplete:{
-      paddingLeft: 35,
+      left: 0,
       padding: 10,
       position: 'absolute',
       zIndex: 100,
@@ -284,6 +289,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       margin: 35,
       alignItem: "center",
+      zIndex: -1,
     },
     textMarketTime: {
       color: 'white',
@@ -295,29 +301,13 @@ const styles = StyleSheet.create({
       alignItem: "center",
       backgroundColor: "#131722",
       flexDirection: "row",
-      margin:20
-    },
-    inputContainer: {
-      minWidth: 330,
-      width: "90%",
-      backgroundColor: 'transparent',
-      borderColor: 'transparent',
+      margin:20,
+      zIndex: -1,
     },
     viewSubTitle: {
       backgroundColor: "#131722",
       margin: 10,
       flex: 0.333,
-    },
-    searchSection: {
-      flexDirection: 'row',
-      marginLeft: '5%',
-      marginRight: '5%',
-    },
-    autocompleteContainer: {
-      borderWidth: 0,
-      marginLeft: 10,
-      marginRight: 10,
-      paddingLeft: 15,
     },
     subTitle: {
       backgroundColor: "#307d7e",
@@ -332,13 +322,6 @@ const styles = StyleSheet.create({
     textStocks: {
       fontSize: 20,
       alignSelf: "center",
-    },
-    centered: {
-      alignSelf: "center",
-      justifyContent: 'flex-start',
-      backgroundColor: "#131722",
-      marginTop: 50,
-      marginRight: 50,
     },
   });
   
