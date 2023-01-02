@@ -170,11 +170,12 @@ Description: This function POST to server the symbol of the stock. receive the M
 **/
 
 export async function fetchArima(symbol,Signal){
+    console.log(Signal["signal"])
     const response = await fetch('http://localhost:5000/arimaResults', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({  Symbol:symbol ,signal: Signal, }) ,
-        signal: Signal,
+        body: JSON.stringify({  Symbol:symbol,signal:Signal["signal"]["aborted"]  }) ,
+        signal: Signal["signal"],
     })
     const json = await response.json()
 

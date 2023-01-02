@@ -13,7 +13,7 @@ import Papa from 'papaparse';
 import  {StackedBarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts'
 import Feather from 'react-native-vector-icons/Feather'
 Feather.loadFont()
-
+import {useIsFocused} from '@react-navigation/native';
 //get file with top 50 stocks
 var topStocks = require('../assets/top50.csv');
 
@@ -39,10 +39,11 @@ function StockScreen({ route, navigation })  {
   const { exchange } = require('trading-calendar');
   const usa = exchange('new-york');
   const [parsedCsvData, setParsedCsvData] = useState([]);
-  
+  const ref = React.useRef(null);
   const colors = ['#522526', '#255245']
   const keys =  ['apples', 'bananas']
-
+  const abortController =new AbortController()
+  const isFocused = useIsFocused();
   //reac csv file with top stocks into  an array
   const parseFile = file => {
     Papa.parse(file, {
@@ -176,14 +177,13 @@ function StockScreen({ route, navigation })  {
   }
 
   // ***
-  const  controller = useRef("");
+  //const  controller = useRef("");
 
   /*Monte Carlo calculation*/
   async function fetch_MonteCarlo(otherParam) {
     try { 
-      controller.current=new AbortController();
-      let signal = controller.current.signal;
-      
+      ref.current= new AbortController;
+      const signal = ref.current.signal;
 
       const promise = new Promise((resolve, reject) => {
         resolve(fetchMonteCarlo(otherParam,signal) )
@@ -200,17 +200,19 @@ function StockScreen({ route, navigation })  {
   }, [])
  
 
-
+  
   //GET DATA FOR ARIMA PREDICTION
   async function fetch_Arima_Data() {
-  
+    console.log("???");
     try { 
-      controller.current=new AbortController();
-      let signal = controller.current.signal;
-      // console.log(signal);
+      //abortController=new AbortController()
+      ref.current= new AbortController;
+      const signal = ref.current.signal;
+      console.log("???");
+      console.log(signal);
 
       const promise = new Promise((resolve, reject) => {
-        resolve(fetchArima(otherParam,signal) )
+        resolve(fetchArima(otherParam,{signal}) )
         
       })
     
@@ -234,24 +236,22 @@ function StockScreen({ route, navigation })  {
         
       })
     } catch (error) {
+      
     } 
     }parsedCsvData
     
 
   //cancel arima fetch
-  const cancelRequest= () => controller.current && controller.current.abort();
+  const cancelRequest= () => {ref.current.abort();console.log(ref.current.signal)}
 
   
 
   //call function to get arima prediction and sentiment score  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    //console.log(parsedCsvData.includes(otherParam)  )
-    // if(parsedCsvData.includes(searchQuery) && searchQuery!= "" )
-    // {
-      //console.log("FETCH")
+    //abortController=new AbortController();
     fetch_sentiment_Data(otherParam);
-    fetch_Arima_Data()
+    //fetch_Arima_Data()
    // }
   },  [])
 
@@ -262,6 +262,7 @@ function StockScreen({ route, navigation })  {
     //if(parsedCsvData.includes(otherParam) && otherParam!= ""  )
     {
       fetch_sentiment_Data(otherParam);
+      //abortController=new AbortController();
       fetch_Arima_Data()
     }
   }, [otherParam])
@@ -323,12 +324,13 @@ function StockScreen({ route, navigation })  {
     },
   ]
 
-
+  //;navigation.navigate('Home')
 
   return (
 
     <View style={styles.container}> 
-          <TouchableHighlight onPress={() => {navigation.navigate('Home');cancelRequest();}} style={styles.backImage}>
+          <TouchableHighlight onPress={() => {cancelRequest();navigation.goBack()
+}} style={styles.backImage}>
               <Image
               source={require('../assets/Photos/icon.png')}
               style={{ flex: 1 }}
