@@ -204,6 +204,7 @@ Description: This function POST to server the user email and symbol of the stock
 **/
 
 export async function deletFromFavoriteStockList(userEmail,symbol){
+    console.log(userEmail)
     fetch('http://localhost:5000/deletStocktoFavoriteList', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 

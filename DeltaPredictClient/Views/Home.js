@@ -199,6 +199,7 @@ function Home({route, navigation}){
         <View style={styles.searchSection}>
         <Icon style={styles.iconInAutocomplete} name="search-sharp" size={22} color= "#777777"/>
             <AutocompleteDropdown 
+               
                 ref={searchRef}
                 controller={controller => {dropdownController.current = controller}}
                 // initialValue={'1'}
