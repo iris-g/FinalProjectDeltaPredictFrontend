@@ -7,6 +7,7 @@ import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import Papa from 'papaparse';
 import Feather from 'react-native-vector-icons/Feather'
 Feather.loadFont()
+import {useIsFocused} from '@react-navigation/native';
 
 function Home({route, navigation}){
     const [activeStocks, setActive] = React.useState("");
@@ -21,10 +22,15 @@ function Home({route, navigation}){
     const onOpenSuggestionsList = useCallback(isOpened => {}, [])
     const dropdownController = useRef(null)
     const searchRef = useRef(null)
-   
+     // Dynamic delay
+    const [delay, setDelay] = useState(3000)
+    const [isRunning, setIsRunning] = useState(true);
+    
       // For Filtered search Data
     const [filteredStocks, setFilteredStocks] = useState([]);
-  
+   
+  const isFocused = useIsFocused();
+ 
     //get file with top 50 stocks
     var topStocks = require('../assets/top50.csv');
     //reac csv file with top stocks into  an array
@@ -44,11 +50,14 @@ function Home({route, navigation}){
         },
       });
     };
-  
+   
 
     //Read top50 stock csv file once.
     useEffect(() => {
       parseFile(topStocks);
+      console.log(isRunning)
+      //setIsRunning(!isRunning)
+      console.log(isRunning)
     },  [])
 
 
@@ -148,7 +157,39 @@ function Home({route, navigation}){
       } catch (error) {
       } finally {}
     }
+    useInterval(() => {
+      if(isFocused)
+      {
+        getActive()
+        getMarketData()
+        getLosers()
+        getGainers()
 
+      }
+        
+    },  4000// Delay in milliseconds or null to stop it.
+    )
+   
+  //   React.useEffect(() => {
+  //     const getData = setTimeout(() => {
+  //       getActive()
+  //       getMarketData()
+  //       getLosers()
+  //       getGainers()
+  //     }, 3000)
+      
+  //   return () => clearTimeout(getData)
+  // }, [isFocused])
+    // useEffect(() => {
+    //   // Do whatever you want to do when screen gets in focus
+    //   useInterval(() => {
+    //     getActive()
+    //     getMarketData()
+    //     getLosers()
+    //     getGainers()
+    // },   isRunning ? delay : null   // Delay in milliseconds or null to stop it
+    // )
+    // }, [ isFocused]);
     const handleColors = (newPrice, stockSymbol) => {
       if(currentPrice.find(a=>a.symbol === stockSymbol) === undefined ){  
         currentPrice.push({ symbol: stockSymbol, price: newPrice })
@@ -171,27 +212,19 @@ function Home({route, navigation}){
         }
       }
     };
+    
 
     //get active stock data not more than once in 3000 ms
-    useInterval(() => {
-        getActive()
-    },  3000   // Delay in milliseconds or null to stop it
-    )
-    useInterval(() => {
-      getMarketData()
-    },  3000    // Delay in milliseconds or null to stop it
-    )
-    useInterval(() => {
-      getLosers()
-    },  3000    // Delay in milliseconds or null to stop it
-    )
-    useInterval(() => {
-      getGainers()
-    },  3000    // Delay in milliseconds or null to stop it
-    )
+    // useInterval(() => {
+    //     getActive()
+    //     getMarketData()
+    //     getLosers()
+    //     getGainers()
+    // },   isRunning ? delay : null   // Delay in milliseconds or null to stop it
+    // )
+   
 
 
-    
   return (
  
     <View style={styles.container}>
@@ -216,7 +249,7 @@ function Home({route, navigation}){
                 inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
                 suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
                 containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-                renderItem={(item, text) => <TouchableOpacity onPress={() => {navigation.navigate('StockScreen',{otherParam: item.title, userParam: getUser})}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
+                renderItem={(item, text) => <TouchableOpacity onPress={() => {setIsRunning(false);navigation.navigate('StockScreen',{otherParam: item.title, userParam: getUser});}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
                 ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
                 ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
                 inputHeight={38} // Change the input container height.
