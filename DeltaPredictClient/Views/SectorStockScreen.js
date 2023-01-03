@@ -11,7 +11,7 @@ import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import Papa from 'papaparse';
 import Feather from 'react-native-vector-icons/Feather'
 Feather.loadFont()
-
+import {useIsFocused} from '@react-navigation/native';
 
 
 function SectorStockScreen({ route, navigation }) {
@@ -27,6 +27,7 @@ function SectorStockScreen({ route, navigation }) {
   const onOpenSuggestionsList = useCallback(isOpened => {}, [])
   const dropdownController = useRef(null)
   const searchRef = useRef(null)
+  const isFocused = useIsFocused();
 
   //get file with top 50 stocks
     var topStocks = require('../assets/top50.csv');
@@ -78,8 +79,9 @@ function SectorStockScreen({ route, navigation }) {
     }
     
     useInterval(() => {
-
-      fetch_Data(sector_name)
+      //fetch only if the current screen is active
+      if(isFocused)
+        fetch_Data(sector_name)
     },  5000// Delay in milliseconds or null to stop it
     
     )
