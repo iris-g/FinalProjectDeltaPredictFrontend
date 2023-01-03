@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Text, View, Button ,Pressable, Image} from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem,  } from "@react-navigation/drawer";
 import Home from "./Home.js";
 import SectorStockScreen from "./SectorStockScreen.js"
 import FavoriteStocks from "./FavoriteStocks"
@@ -28,9 +28,10 @@ const DrawerContent = (props) => {
                     <DrawerItemList {...props} />
                 </DrawerContentScrollView>
             </View>
-            <View style={{ flexDirection: "row", marginTop: '40%', marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
-                <Icon name={"exit-outline"} size={20} style= {{padding: 5, paddingRight: 75, position:'absolute', right: 0, color: 'white'}}/>
-                <Button title = "logout " uppercase={false} color = "#1e222d" style={{paddingRight: 100 }} onPress={() => {navigation.navigate('Welcome')} }/>
+
+            <View style={{ flexDirection: "row", marginTop: "10%", marginRight: 45, alignItems: 'center', justifyContent: 'center'}}>
+                <Icon name={"exit-outline"} size={20} style= {{paddingTop: 3, paddingRight: 75, position:'absolute', right: 0, color: 'white'}}/>
+                <Button title = "logout " uppercase={false} color = "#1e222d" style={{ paddingRight: 100 }} onPress={() => {navigation.navigate('Welcome')} }/>
             </View>  
         </View>
             
@@ -38,7 +39,7 @@ const DrawerContent = (props) => {
 
  
 const DrawerNavigator = ({route,navigation}) => { //##
-    
+    console.log(route.params)
     return (
         <Drawer.Navigator useLegacyImplementation initialRouteName="Dashboard" screenOptions={{
            
@@ -79,7 +80,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           
         }}/>
 
-          <Drawer.Screen name="Healthcare" component={SectorStockScreen} initialParams={"Healthcare"} options={{
+          <Drawer.Screen name="Healthcare" component={SectorStockScreen} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="pulse-outline"
@@ -93,7 +94,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-          <Drawer.Screen name="Technology" component={SectorStockScreen} initialParams={"Technology"} options={{
+          <Drawer.Screen name="Technology" component={SectorStockScreen} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="rocket-outline"
@@ -107,7 +108,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-        <Drawer.Screen name="Energy" component={SectorStockScreen} initialParams={"Energy"} options={{
+        <Drawer.Screen name="Energy" component={SectorStockScreen} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="ios-nuclear"
@@ -121,7 +122,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-        <Drawer.Screen name="Basic Materials" component={SectorStockScreen} initialParams={"Basic Materials"} options={{
+        <Drawer.Screen name="Basic Materials" component={SectorStockScreen} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="ios-construct"
@@ -135,7 +136,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-        <Drawer.Screen name="Real Estate" component={SectorStockScreen} initialParams={"Real Estate"} options={{
+        <Drawer.Screen name="Real Estate" component={SectorStockScreen} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="receipt-outline"
@@ -149,7 +150,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-        <Drawer.Screen name="Utilities" component={SectorStockScreen} initialParams={"Utilities"} options={{
+        <Drawer.Screen name="Utilities" component={SectorStockScreen} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="cash"
@@ -163,7 +164,7 @@ const DrawerNavigator = ({route,navigation}) => { //##
           drawerLabelStyle:{color:'white', fontSize: 18,},
           
         }}/>
-        <Drawer.Screen name="Recommendation" component={Recommendation} initialParams={"Recommendation "} options={{
+        <Drawer.Screen name="Recommendation" component={Recommendation} initialParams={route.params} options={{
                 drawerIcon: ({focused, size}) => (
                     <Ionicons
                      name="briefcase-outline"

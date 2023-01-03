@@ -15,7 +15,7 @@ Feather.loadFont()
 
 
 function SectorStockScreen({ route, navigation }) {
-
+  const user = route.params;
   const [stockData, setData] = useState(""); 
   const [loading, setLoad] = useState(true); 
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -73,6 +73,7 @@ function SectorStockScreen({ route, navigation }) {
         
       })
     } catch (error) {
+      console.log(error)
     } 
     }
     
@@ -138,7 +139,7 @@ function SectorStockScreen({ route, navigation }) {
               inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
               suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
               containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-              renderItem={(item, text) => <TouchableOpacity onPress={() => {navigation.navigate('StockScreen',{otherParam: item.title, userParam: getUser})}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
+              renderItem={(item, text) => <TouchableOpacity onPress={() => {navigation.navigate('StockScreen',{otherParam: item.title, userParam: user.otherParam})}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
               ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
               ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
               inputHeight={38} // Change the input container height.

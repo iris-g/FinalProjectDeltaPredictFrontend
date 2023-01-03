@@ -41,7 +41,7 @@ function StockScreen({ route, navigation })  {
   const [parsedCsvData, setParsedCsvData] = useState([]);
   const ref = React.useRef(null);
   const colors = ['#522526', '#255245']
-  const keys =  ['apples', 'bananas']
+  const keys =  ['Low', 'High']
   const abortController =new AbortController()
   const isFocused = useIsFocused();
   //reac csv file with top stocks into  an array
@@ -66,6 +66,7 @@ function StockScreen({ route, navigation })  {
   //read top50 stock csv file
   useEffect(() => {
     parseFile(topStocks);
+    marketStatus="NasdaqGS Real Time Price in USD"
   },  [])
 
 
@@ -73,14 +74,14 @@ function StockScreen({ route, navigation })  {
     setFilteredStocks(null)
   }, [])
 
-  //check if stock exchange is open and update text
-  if(usa.isTradingNow()){
-    marketStatus="NasdaqGS Real Time Price in USD"
-    // market is open right now
-  } else {
-    // market is closed right now
-    marketStatus="Price as of last close";
-  }
+  // //check if stock exchange is open and update text
+  // if(usa.isTradingNow()){
+  //   marketStatus="NasdaqGS Real Time Price in USD"
+  //   // market is open right now
+  // } else {
+  //   // market is closed right now
+  //   marketStatus="Price as of last close";
+  // }
 
   //handle graph button clicks- set the correct dataset
   const onWeekButtonPress = query => {
@@ -316,11 +317,11 @@ function StockScreen({ route, navigation })  {
     }
     
 
-  /*Data for the StackedBarChart. */
+ /*Data for the StackedBarChart. */
   const data1 = [
     {
-      apples: 38,
-      bananas: 62,
+      Low: 5-sentiment,
+      High: sentiment,
     },
   ]
 
@@ -329,8 +330,7 @@ function StockScreen({ route, navigation })  {
   return (
 
     <View style={styles.container}> 
-          <TouchableHighlight onPress={() => {cancelRequest();navigation.goBack()
-}} style={styles.backImage}>
+          <TouchableHighlight onPress={() => {navigation.navigate('Dashboard')}} style={styles.backImage}>
               <Image
               source={require('../assets/Photos/icon.png')}
               style={{ flex: 1 }}

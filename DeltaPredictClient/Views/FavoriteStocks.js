@@ -70,6 +70,7 @@ export default function FavoriteStocks({route, navigation}) {
               }
               setData(stocksData)
               setLoad(false)
+         
             })
     } catch (error) {}  
   }
@@ -83,6 +84,27 @@ export default function FavoriteStocks({route, navigation}) {
   function _onPressButton (symbol) { // On press button its transition to stock page.
     navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
   }
+
+
+  const PickerOS = () => {
+    if(loading === false && stocks.length === 0){
+      console.log(true)
+      console.log(loading)
+      return (
+        <Text style={{alignSelf: 'center', color: 'white'}}>
+          Your favorite list is empty 
+          {console.log("android")}
+        </Text>
+      )  
+    } 
+  };
+
+  useEffect(() => {
+    PickerOS();
+  //   setLoad(false)  
+  }, []);
+
+  
 
   return (
       <View style={styles.container}>
@@ -144,6 +166,7 @@ export default function FavoriteStocks({route, navigation}) {
                   </FlatList>
                       
                 </ScrollViewIndicator>  
+                {PickerOS()}
                 <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
             </View>
         </View>
