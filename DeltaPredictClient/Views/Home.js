@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef} from "react";
-import { StyleSheet, Text, View ,ActivityIndicator,TouchableOpacity, Dimensions, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View ,ActivityIndicator,TouchableOpacity, Dimensions, StatusBar, Alert, Pressable } from 'react-native';
 import { useInterval } from "react-use";
 import { fetch_clock,fetch_from_server } from "../client/deltaPredicrClient";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -17,7 +17,6 @@ function Home({route, navigation}){
     const [currentPrice, setAPrice] = useState([]);   
     const [loading, setLoad] = useState(true); 
     const user = route.params;
-    const [getUser, setUser] = useState(user);
     const [parsedCsvData, setParsedCsvData] = useState([]);
     const onOpenSuggestionsList = useCallback(isOpened => {}, [])
     const dropdownController = useRef(null)
@@ -231,8 +230,7 @@ function Home({route, navigation}){
       <View style={{backgroundColor: "#131722"}}>
         <View style={styles.searchSection}>
         <Icon style={styles.iconInAutocomplete} name="search-sharp" size={22} color= "#777777"/>
-            <AutocompleteDropdown 
-               
+        <AutocompleteDropdown 
                 ref={searchRef}
                 controller={controller => {dropdownController.current = controller}}
                 // initialValue={'1'}
@@ -250,7 +248,7 @@ function Home({route, navigation}){
                 inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
                 suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
                 containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-                renderItem={(item, text) => <TouchableOpacity onPress={() => {setIsRunning(false);navigation.navigate('StockScreen',{otherParam: item.title, userParam: getUser});}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
+                renderItem={(item, text) => <Text onPress={() => {setIsRunning(false), navigation.navigate('StockScreen',{otherParam: item.title, userParam: user.otherParam})}} style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text>}
                 ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
                 ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
                 inputHeight={38} // Change the input container height.

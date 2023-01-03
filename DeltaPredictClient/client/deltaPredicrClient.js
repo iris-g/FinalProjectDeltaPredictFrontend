@@ -7,6 +7,7 @@ Description: This function check if login details are correct in DB.
 **/
 
 export async function _onPressButtonLogin (email,password,navigation) {
+    try {
     const res = await fetch('http://localhost:5000/authenticate', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
@@ -15,6 +16,9 @@ export async function _onPressButtonLogin (email,password,navigation) {
     const json = await res.json()
     
     return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -24,6 +28,7 @@ Description: This function add use to DB.
 **/
 
 export async function _onPressButtonsignUp (email,password,navigation) {
+    try {
     const res = await fetch('http://localhost:5000/signnup', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
@@ -32,6 +37,9 @@ export async function _onPressButtonsignUp (email,password,navigation) {
     const json = await res.json()
     
     return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 
@@ -42,13 +50,17 @@ Description: This function POST to server list of stock sector and receive the d
 **/
 
 export  async  function fetch_from_server(type,url){
+    try{
     const response = await fetch('http://localhost:5000/' + url, {
       method: type, 
       headers: { 'Content-Type': 'application/json' }, 
   })
   const json = await response.json()
 
-   return json
+    return json
+    } catch (e) {
+        console.log(e);
+    }
   }
 
 /** 
@@ -58,8 +70,9 @@ Description: This function POST to server list of stock sector and receive the d
 **/
 
 export async function fetch_clock(){
-  const request = require('request');
-  const response = await  fetch('https://api.tradier.com/v1/markets/clock',{
+    try{
+    const request = require('request');
+    const response = await  fetch('https://api.tradier.com/v1/markets/clock',{
       method: 'get',
       qs: {
           'delayed': 'true'
@@ -74,7 +87,10 @@ export async function fetch_clock(){
       });
       const json = await response.json()
 
-      return json
+    return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -84,14 +100,18 @@ Description: This function POST to server list of stock sector and receive the d
 **/
 
 export async function fetchData(symbol){
-  const response = await fetch('http://localhost:5000/fundamental', {
+    try{
+    const response = await fetch('http://localhost:5000/fundamental', {
       method:  'POST', 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({  Symbol:symbol  }) ,
-  })
-  const json = await response.json()
+    })
+    const json = await response.json()
 
-  return json
+    return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -101,14 +121,18 @@ Description: This function POST to server list of stock sector and receive the d
 **/
 
 export async function fetcSectorData(sector){
-  const response = await fetch('http://localhost:5000/getSectorStocks', {
-      method:  'POST', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({  Sector:sector  }) 
-  })
-  const json = await response.json()
+    try{
+    const response = await fetch('http://localhost:5000/getSectorStocks', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  Sector:sector  }) 
+    })
+    const json = await response.json()
 
-  return json
+    return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -118,14 +142,18 @@ Description: This function POST to server the email of the user and receive the 
 **/
 
 export async function fetchFavoritesData(userEmail){
-  const response = await fetch('http://localhost:5000/favoritesData', {
-      method:  'POST', 
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({  email:userEmail  }) 
-  })
-  const json = await response.json()
+    try{
+    const response = await fetch('http://localhost:5000/favoritesData', {
+        method:  'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({  email:userEmail  }) 
+    })
+    const json = await response.json()
 
-  return json
+    return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -135,6 +163,7 @@ Description: This function POST to server the email of the user and receive the 
 **/
 
 export async function fetchSentimentData(Symbol){
+    try{
     const response = await fetch('http://localhost:5000/sentimentScore', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
@@ -142,7 +171,10 @@ export async function fetchSentimentData(Symbol){
     })
     const json = await response.json()
 
-   return json
+    return json
+    } catch (e) {
+        console.log(e);
+    }
   }
 
 /** 
@@ -152,6 +184,7 @@ Description: This function POST to server the symbol of the stock. receive the M
 **/
 
   export async function fetchMonteCarlo(symbol,Signal){
+    try{
     const response = await fetch('http://localhost:5000/monteCarloResults', {
         method:  'POST', 
         headers: { 'Content-Type': 'application/json' },
@@ -161,6 +194,9 @@ Description: This function POST to server the symbol of the stock. receive the M
     const json = await response.json()
     
     return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -170,6 +206,7 @@ Description: This function POST to server the symbol of the stock. receive the M
 **/
 
 export async function fetchArima(symbol,Signal){
+    try{
     console.log(Signal["signal"])
     const response = await fetch('http://localhost:5000/arimaResults', {
         method:  'POST', 
@@ -180,6 +217,9 @@ export async function fetchArima(symbol,Signal){
     const json = await response.json()
 
     return json
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -189,6 +229,7 @@ Description: This function POST to server the symbol of the stock. receive the M
 **/
 
 export async function addStockToFavoriteStockList(userEmail,symbol){
+    try{
     fetch('http://localhost:5000/addStocktoFavoriteList', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
@@ -196,6 +237,9 @@ export async function addStockToFavoriteStockList(userEmail,symbol){
     })
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 /** 
@@ -205,6 +249,7 @@ Description: This function POST to server the user email and symbol of the stock
 **/
 
 export async function deletFromFavoriteStockList(userEmail,symbol){
+    try{
     console.log(userEmail)
     fetch('http://localhost:5000/deletStocktoFavoriteList', {
         method: 'POST', 
@@ -213,8 +258,12 @@ export async function deletFromFavoriteStockList(userEmail,symbol){
     })
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+    } catch (e) {
+        console.log(e);
+    }
 }
 export async function sendResultsToMail(userEmail){
+    try{
     fetch('http://localhost:5000/mail', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
@@ -222,6 +271,9 @@ export async function sendResultsToMail(userEmail){
     })
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 
