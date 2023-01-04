@@ -10,6 +10,7 @@ Feather.loadFont()
 import {useIsFocused} from '@react-navigation/native';
 
 function Home({route, navigation}){
+
     const [activeStocks, setActive] = React.useState("");
     const [loserStocks, setLosers] = useState(""); 
     const [gainerStocks, setGainers] = useState(""); 

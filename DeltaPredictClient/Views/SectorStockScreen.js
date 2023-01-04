@@ -69,6 +69,7 @@ function SectorStockScreen({ route, navigation }) {
     
       promise.then((response) => {
         setData(response)
+        console.log(response)
         setLoad(false)
         
       })

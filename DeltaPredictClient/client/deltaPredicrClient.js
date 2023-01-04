@@ -17,7 +17,9 @@ export async function _onPressButtonLogin (email,password,navigation) {
     
     return json
     } catch (e) {
+       
         console.log(e);
+        
     }
 }
 
@@ -131,7 +133,9 @@ export async function fetcSectorData(sector){
 
     return json
     } catch (e) {
+       
         console.log(e);
+       
     }
 }
 
