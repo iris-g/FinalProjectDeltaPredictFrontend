@@ -41,6 +41,7 @@ const DrawerContent = (props) => {
 const DrawerNavigator = ({route,navigation}) => { //##
     console.log(route.params)
     return (
+        
         <Drawer.Navigator useLegacyImplementation initialRouteName="Dashboard" screenOptions={{
            
             drawerStyle: {backgroundColor: '#1e222d'},         //Change color  background  drawer

@@ -260,7 +260,7 @@ function Home({route, navigation}){
               </View>
 
           <View style={styles.viewMarketTime}>
-            <Icon name="time-outline" size={33} color="white"/>
+            <Icon name="time-outline" size={33} color="#C9D6DF"/>
             <Text style={styles.textMarketTime}>
               {market}
             </Text>
@@ -270,14 +270,14 @@ function Home({route, navigation}){
               <View style={styles.viewSubTitle}> 
                 <Text style={styles.subTitle}>  Most Active ↑↓ </Text>
                 <Text style={styles.textStocks}> { Object.values(activeStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))} 
+                  <p key={close}> <Text style={{ color: '#C9D6DF'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))} 
                 </Text>
               </View>
               
               <View style={styles.viewSubTitle}>
                 <Text style={styles.subTitle}>  Top Losers ↑↓  </Text>
                 <Text style={styles.textStocks}> { Object.values(loserStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))} 
+                  <p key={close}> <Text style={{ color: '#C9D6DF'}}>   {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))} 
                 </Text>
                 <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
               </View>
@@ -285,7 +285,7 @@ function Home({route, navigation}){
               <View style={styles.viewSubTitle}>
                 <Text style={styles.subTitle}>  Top Gainers ↑↓  </Text>
                 <Text style={styles.textStocks}>  { Object.values(gainerStocks).map(({ close, symbol }) => (
-                  <p key={close}> <Text style={{ color: 'white'}}> {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))}
+                  <p key={close}> <Text style={{ color: '#C9D6DF'}}> {symbol} : </Text> <Text style={{ color: handleColors(close,symbol) }}> {close} <Text style={{fontSize: 10, color: 'white'}}>USD</Text> </Text> </p>))}
                 </Text>
               </View>
           </View>
@@ -325,10 +325,9 @@ const styles = StyleSheet.create({
       zIndex: -1,
     },
     textMarketTime: {
-      color: 'white',
+      color: '#C9D6DF',
       marginLeft: 15,
       fontSize: 25,
-      fontWeight: 'bold',
     },
     blackScreen: {
       alignItem: "center",

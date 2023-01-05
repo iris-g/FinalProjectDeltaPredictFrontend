@@ -80,7 +80,7 @@ export default function SignUp() {
         promise.then((response) => {
             if(response.result == "true"){
                 setCheck("✔ Registration successful")
-                setColor("#DC143C")
+                setColor("#307D7E")
             }
             else if(response.result == "password"){
                 setCheck("✘ Sorry, that password already exists!")
