@@ -91,7 +91,7 @@ export default function FavoriteStocks({route, navigation}) {
       console.log(true)
       console.log(loading)
       return (
-        <Text style={{alignSelf: 'center', color: 'white'}}>
+        <Text style={{alignSelf: 'center', color: '#C9D6DF'}}>
           Your favorite list is empty 
           {console.log("android")}
         </Text>
@@ -142,7 +142,7 @@ export default function FavoriteStocks({route, navigation}) {
             
             <View style={styles.viewTable}>
               <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
-                  <Row textStyle={{color: 'white', textAlign: 'center' , fontSize: 18, fontWeight: 'bold'}} flexArr={[1, 1, 1, 1, 1, 1]} style={{height: 30}} data={header} />        
+                  <Row textStyle={{color: '#C9D6DF', textAlign: 'center' , fontSize: 18, fontWeight: 'bold'}} flexArr={[1, 1, 1, 1, 1, 1]} style={{height: 30}} data={header} />        
               </Table>
                 
               <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>

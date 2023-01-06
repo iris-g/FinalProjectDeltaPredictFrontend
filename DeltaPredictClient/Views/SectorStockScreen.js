@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef} from "react";
 import { Text, View, StyleSheet, Platform, ActivityIndicator, Dimensions, Pressable, FlatList, TouchableOpacity } from 'react-native';
 import { useInterval } from "react-use";
@@ -152,10 +151,13 @@ function SectorStockScreen({ route, navigation }) {
             </View>
 
       <View style={styles.viewTable}>
+        <View>
         <Table borderStyle={{  borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
-            <Row textStyle={{color: 'white', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={styles.tableRow} data={header} />        
+            <Row textStyle={{color: '#C9D6DF', textAlign: 'center', fontSize: 18, fontWeight: 'bold'}} flexArr={[0.4, 2, 1.2, 1.1, 1]} style={styles.tableRow} data={header} />        
         </Table>
-        
+        </View>
+   
+        <View style={{height: 500}}>
         <ScrollViewIndicator  shouldIndicatorHide={false}  scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
           <FlatList  
             data={Object.values(stockData).map(({ Ticker, Company, Price, Volume, Change }) => (
@@ -175,6 +177,7 @@ function SectorStockScreen({ route, navigation }) {
                   );}}    
                 />
         </ScrollViewIndicator>
+        </View>
         <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
       </View>
 
@@ -210,7 +213,6 @@ const styles = StyleSheet.create({
       marginLeft: 150,
       marginRight: 150,
       marginTop: 60,
-      flex: 0.8,
       zIndex: -1,
     },
     tableRow:{

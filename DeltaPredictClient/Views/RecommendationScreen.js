@@ -34,7 +34,7 @@ function Recommendation({route, navigation}){
     return(
 
       <View style={styles.container}>
-        <View style={{backgroundColor: "#131722",paddingTop: 50, paddingHorizontal: 20}}>
+        <View style={{backgroundColor: "#131722"}}>
           <Text style={{color:"white", fontSize: 18, marginVertical: 10}}>Enter Your email to recieve a meail with a recommendation</Text>
           <View style={{backgroundColor: "#131722",marginVertical: 50}}>
             <View style={{backgroundColor: "#131722", flexDirection: 'row',marginTop: 250, marginHorizontal: "40%"}}>

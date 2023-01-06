@@ -18,6 +18,7 @@ export async function _onPressButtonLogin (email,password,navigation) {
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -39,6 +40,7 @@ export async function _onPressButtonsignUp (email,password,navigation) {
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -60,6 +62,7 @@ export  async  function fetch_from_server(type,url){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
   }
 
@@ -90,6 +93,7 @@ export async function fetch_clock(){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -111,6 +115,7 @@ export async function fetchData(symbol){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -132,6 +137,7 @@ export async function fetcSectorData(sector){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -153,6 +159,7 @@ export async function fetchFavoritesData(userEmail){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -174,6 +181,7 @@ export async function fetchSentimentData(Symbol){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
   }
 
@@ -196,6 +204,7 @@ Description: This function POST to server the symbol of the stock. receive the M
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -219,6 +228,7 @@ export async function fetchArima(symbol,Signal){
     return json
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -239,6 +249,7 @@ export async function addStockToFavoriteStockList(userEmail,symbol){
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 
@@ -260,6 +271,7 @@ export async function deletFromFavoriteStockList(userEmail,symbol){
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 export async function sendResultsToMail(userEmail){
@@ -273,6 +285,7 @@ export async function sendResultsToMail(userEmail){
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
     } catch (e) {
         console.log(e);
+        return "Oops something is wrong"
     }
 }
 

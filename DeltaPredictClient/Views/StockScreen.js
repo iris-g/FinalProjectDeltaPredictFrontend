@@ -383,7 +383,7 @@ function StockScreen({ route, navigation })  {
           <View style={{backgroundColor: '#131722'}}>
             <View style={styles.blackScreen}>
                 <View style={styles.featuredDetails}>
-                  <Text style={{fontSize: 18, alignSelf: "center", color: 'white'}}>Monthly sentiment score: {sentiment}</Text>
+                  <Text style={{fontSize: 18, alignSelf: "center", color: '#C9D6DF'}}>Monthly sentiment score: {sentiment}</Text>
                   <View style={ {alignSelf: "center", flexDirection: 'row'} }>
                     <Text style={{padding: 8, color: '#4c2223', fontSize: 20, fontWeight: "bold"}}>Low</Text>
                       <StackedBarChart
@@ -418,7 +418,7 @@ function StockScreen({ route, navigation })  {
                       <Text style={{padding: 9, color: '#224c4b', fontSize: 20, fontWeight: "bold",}}>High</Text>
                   </View>
                   <Text style={{ color: '#f0f0f1', fontSize: 20, flex: 2 }}> {  
-                    <><Text>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose" ]} <Text style={{fontSize: 10, color: 'white'}}>USD</Text></Text>
+                    <><Text>{'\n'} volume:   {data["volume"]} {'\n'} Average volume:   {data["averageVolume"]} {'\n'} Market cap:    {data["marketCap"]} {'\n'} 52 weeks high:   {data["fiftyTwoWeekHigh"]} {'\n'} 52 weeks low:   {data["fiftyTwoWeekLow"]} {'\n'} Industry:   {data["industry"]} {'\n'} Prev Close   {data["previousClose" ]} <Text style={{fontSize: 10, color: '#C9D6DF'}}>USD</Text></Text>
 
                     </>}
                   </Text> 
@@ -433,7 +433,7 @@ function StockScreen({ route, navigation })  {
                 </View>
 
                 <View style={styles.graphContainer}>
-                  <Line style={{fontSize: 70,color: 'white'}} data={prices}  width={100}  height={300} options={{maintainAspectRatio: false, responsive: true,  plugins: {legend: {display: true, data: {  color: 'rgb(255, 99, 132)'}}}}}/>
+                  <Line style={{fontSize: 70,color: '#C9D6DF'}} data={prices}  width={100}  height={300} options={{maintainAspectRatio: false, responsive: true,  plugins: {legend: {display: true, data: {  color: 'rgb(255, 99, 132)'}}}}}/>
                   <View style={{ flexDirection:"row" ,alignItems:"top", margin: 15}}>
                     <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 2}} onPress={() => onDailyButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15 }} >  Daily  </Text></TouchableOpacity>
                     <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 2}} onPress={() => onWeekButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15}} >  Weekly  </Text> </TouchableOpacity>
@@ -442,9 +442,10 @@ function StockScreen({ route, navigation })  {
 
 
             </View>
-          
+            
             <View style={styles.detailedBlock}>
-              <Paragraph style={{color: '#f0f0f1'}}>{data["info"]}</Paragraph>
+              <Text style={{color: '#C9D6DF', fontSize: 20}}>Description{'\n'}</Text>
+              <Paragraph style={{color: '#C9D6DF'}}>{data["info"]}</Paragraph>
             </View>
      
               
@@ -479,16 +480,10 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     margin: 2,
   },
-  btnSignUpText:{
-    textTransform:'capitalize',
-    width: 330,
-    height: 150,
-    color:"white",
-},
   title: {
     flexDirection: "row", 
     paddingTop: 2,
-    color: "white",
+    color: "#C9D6DF",
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
@@ -514,7 +509,7 @@ const styles = StyleSheet.create({
   paragraph: {
     fontSize: 16,
     fontWeight: 'italic',
-    color: "white",
+    color: "#C9D6DF",
     textAlign: 'left',
     padding: 20
   },
