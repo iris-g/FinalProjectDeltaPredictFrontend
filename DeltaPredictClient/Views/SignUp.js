@@ -18,6 +18,7 @@ export default function SignUp() {
     const [signCheck, setCheck] = useState("");
     const [colorset, setColor] = useState("");
     const [colorInputText] = useState(['white', 'white', 'white']);
+    let flag1, flag2 = false
     const navigation = useNavigation();
     
 
@@ -50,21 +51,22 @@ export default function SignUp() {
             colorInputText[2]= "#DC143C"
         }
         else if (confirmPassword !== password){
-            setAnswer3("Passwoad and confirm password should be same.")
+            setAnswer3("Password and confirm password should be same.")
             colorInputText[2]= "#DC143C"
         }
         else {
             setAnswer3("")
             colorInputText[2]= "white"
+            flag2=true
         }
 
         if(email !== ""){
             if ( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/.test(email) === false) 
                 setAnswer1("Your email is incorrect.")
-            else setAnswer1("")
+            else{ setAnswer1(""), flag1=true}
         }
 
-        if(email !== "" && password !== "" && confirmPassword !== "" )
+        if(email !== "" && password !== "" && confirmPassword !== "" && flag1 === true && flag2===true)
             setSignCheck(email, password, navigation)
     }
     

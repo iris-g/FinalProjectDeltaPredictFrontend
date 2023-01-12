@@ -29,7 +29,7 @@ function Home({route, navigation}){
       // For Filtered search Data
     const [filteredStocks, setFilteredStocks] = useState([]);
    
-  const isFocused = useIsFocused();
+    const isFocused = useIsFocused();
  
     //get file with top 50 stocks
     var topStocks = require('../assets/top50.csv');
@@ -59,8 +59,22 @@ function Home({route, navigation}){
       //setIsRunning(!isRunning)
       console.log(isRunning)
     },  [])
+    
+    
 
+    // React.useEffect(() => {
+    //   const unsubscribe = navigation.addListener('focus', () => {
+    //     console.log('sada')
+    //     console.log(isFocused)
+    //     setClose(false)
+    //   });
+    //   const unsubscribeblur = navigation.addListener('blur', () => {
+    //     setClose(true)
+    //     console.log('yes')
+    //   });
+    // }, [navigation]);
 
+ 
     // const onChangeSearch = query => {
     //   setSearchQuery(query);
     //    //create a filtered stock list 
@@ -83,6 +97,10 @@ function Home({route, navigation}){
       setFilteredStocks(null)
     }, [])
 
+    function setSelectedItem(item){
+      setIsRunning(false)
+      navigation.navigate('StockScreen',{otherParam: item, userParam: user.otherParam})
+    }
 
     async function getMarketData() {
         try { 
@@ -222,7 +240,7 @@ function Home({route, navigation}){
     //     getGainers()
     // },   isRunning ? delay : null   // Delay in milliseconds or null to stop it
     // )
-   
+
 
 
   return (
@@ -238,7 +256,7 @@ function Home({route, navigation}){
                 // useFilter={false} // set false to prevent rerender twice
                 dataSet={parsedCsvData} //Data set for suggestion list parsedCsvData = top50.csv
                 // onChangeText={{onChangeSearch}}
-                onSelectItem={item => {item && setSelectedItem(item.id)}}
+                onSelectItem={item => {item && setSelectedItem(item.title)}}
                 debounce={600} 
                 suggestionsListMaxHeight={Dimensions.get('window').height * 0.2}
                 onClear={onClearPress}
@@ -249,7 +267,7 @@ function Home({route, navigation}){
                 inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
                 suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
                 containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-                renderItem={(item, text) => <Text onPress={() => {setIsRunning(false), navigation.navigate('StockScreen',{otherParam: item.title, userParam: user.otherParam})}} style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text>}
+                renderItem={(item, text) => <Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text>}
                 ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
                 ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
                 inputHeight={38} // Change the input container height.
