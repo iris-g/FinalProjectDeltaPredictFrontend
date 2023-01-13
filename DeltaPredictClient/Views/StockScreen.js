@@ -18,7 +18,7 @@ import {useIsFocused} from '@react-navigation/native';
 var topStocks = require('../assets/top50.csv');
 
 function StockScreen({ route, navigation })  {
-  const {otherParam, userParam} = route.params; // otherParam : "Symbol" , otherParam: "mail"
+  const {otherParam, userParam} = route.params; // otherParam : "Symbol" , userParam: "mail"
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
@@ -74,6 +74,9 @@ function StockScreen({ route, navigation })  {
     setFilteredStocks(null)
   }, [])
 
+  function setSelectedItem(item){
+    navigation.navigate('StockScreen',{otherParam: item, userParam: userParam})
+  }
   // //check if stock exchange is open and update text
   // if(usa.isTradingNow()){
   //   marketStatus="NasdaqGS Real Time Price in USD"
@@ -347,7 +350,7 @@ function StockScreen({ route, navigation })  {
                 // useFilter={false} // set false to prevent rerender twice
                 dataSet={parsedCsvData} //Data set for suggestion list parsedCsvData = top50.csv
                 // onChangeText={{onChangeSearch}}
-                onSelectItem={item => {item && setSelectedItem(item.id)}}
+                onSelectItem={item => {item && setSelectedItem(item.title)}}
                 debounce={600} 
                 suggestionsListMaxHeight={Dimensions.get('window').height * 0.2}
                 onClear={onClearPress}
@@ -358,7 +361,7 @@ function StockScreen({ route, navigation })  {
                 inputContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for input container.
                 suggestionsListContainerStyle={{alignSelf: 'center', width: '105%'}} // Style for suggestions list container.
                 containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-                renderItem={(item, text) => <TouchableOpacity onPress={() => {navigation.navigate('StockScreen',{otherParam: item.title, userParam: userParam})}}><Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text></TouchableOpacity>}
+                renderItem={(item, text) => <Text style={{ color: '#494849', padding: 15, zIndex: 1 }}>{item.title}</Text>}
                 ChevronIconComponent={<Feather name="chevron-down" size={20} color="#434243" />} // Add icon to input container.
                 ClearIconComponent={<Feather name="x" size={20} color="#434243" />} // Add icon to input container.
                 inputHeight={38} // Change the input container height.

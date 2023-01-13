@@ -39,7 +39,7 @@ const DrawerContent = (props) => {
 
  
 const DrawerNavigator = ({route,navigation}) => { //##
-    console.log(route.params)
+    
     return (
         
         <Drawer.Navigator useLegacyImplementation initialRouteName="Dashboard" screenOptions={{
