@@ -4,7 +4,7 @@ import { sendResultsToMail } from "../client/deltaPredicrClient";
 import Icon from "react-native-vector-icons/Ionicons";
 import {useIsFocused} from '@react-navigation/native';
 
-
+//this function sends a list of 5 recommended stocks to the user based on combination of ARIMA prediction Monte Carlo simulation average and sentiment score
 function Recommendation({route, navigation}){
   const [input, setInput] = React.useState({email: ''});
   const [colorInputText, setColorInputText] = useState("white");
@@ -13,12 +13,11 @@ function Recommendation({route, navigation}){
   let flag = true
     
 
-    
+  
   const handleOnchange = (text, input) => {
     setInput(text)
   };
 
-  console.log(input)
   
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -27,6 +26,7 @@ function Recommendation({route, navigation}){
     });
   }, [navigation]);
 
+  //validity input check
   const requestRec = async () => {
     if(input === ""){
       setColorInputText("#DC143C")
@@ -39,23 +39,20 @@ function Recommendation({route, navigation}){
         setColorInputText("#DC143C")
       }
       else {
+        //activate recommendation algorithm and send results via email
         try { 
+          console.log("send")
           const promise = new Promise((resolve, reject) => {
             resolve(sendResultsToMail(input))})
             promise.then((response) => {
-               alert("mail sent!")
-              console.log("send")
+              alert("email will be mail sent when the prediction will complete!")
               setColorInputText("white")
             })
         } catch (error) {} 
       }
     }   
   };
-    //   useEffect(() => {
-    //     if(input!= "")
-    //         requestRec(input)
-    //     },  [input] // Delay in milliseconds or null to stop it
-    // )
+
 
     return(
 

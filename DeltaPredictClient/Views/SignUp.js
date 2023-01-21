@@ -104,9 +104,6 @@ export default function SignUp() {
 
     /*Login with Faceboik response */ 
     const responseFacebook = (response) => {
-        //console.log(response);
-        //console.log(response.email)
-        //console.log(response.id)
         _onPressButtonsignUp(response.email, response.id, navigation )
     }
     
@@ -121,7 +118,6 @@ export default function SignUp() {
                     resizeMode="contain"
                     />
                 </Pressable>    
-            
                     
                 <View style={styles.inputTextContainer}>
                     <View>
@@ -137,9 +133,7 @@ export default function SignUp() {
                             onChangeText={(email) => setEmail(email)}>
                         </TextInput>
                     </View>
-
                     <Text style={{color: '#DC143C'}}>{answer1}</Text>
-
                     <View style={styles.inputView}>
                         <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color={colorInputText[1]}/>
                         <TextInput style={styles.TextInput}
@@ -150,10 +144,8 @@ export default function SignUp() {
                             onChangeText={(password) => setPassword(password)}>
                         </TextInput>
                     </View>
- 
                     <Text style={{color: '#DC143C'}}>{answer2}</Text>
                     <Text style={{color: '#DC143C'}}>{answer4}</Text>
-
                     <View style={styles.inputView}>
                         <Icon style={styles.iconInInputView} name="lock-closed-outline" size={20} color={colorInputText[2]}/>
                         <TextInput style={styles.TextInput}
@@ -163,19 +155,15 @@ export default function SignUp() {
                             onChangeText={(confirmPassword) => setConfirmPassword(confirmPassword)}>
                         </TextInput>
                     </View>
-
                     <Text style={{color: '#DC143C'}}>{answer3}</Text>
-                    
                     <View style={styles.btnSignUp}>
                         <Button style={styles.btnSignUpText} uppercase = {true} title ="Sign Up" color = "#01a37b"
                         onPress={() => cheackAnswer()}/>
                     </View>
                 </View>
-
                 <View style={styles.orView}>
                     <Text style={styles.orText}> ─ Or ─ </Text> 
                 </View>
-                
                 <View style={styles.loginWithSocialNetworksView}>
                     <View style={styles.loginWithGoogleView}>
                         <GoogleLogin
@@ -188,7 +176,6 @@ export default function SignUp() {
                         <button style={{backgroundColor: "#df4930",  alignItems: 'center', borderColor: "#df4930", borderRadius: 3, borderWidth: 1}} onClick={renderProps.onClick} disabled={renderProps.disabled}><Icon style ={{color: 'white'}} size={19} name="logo-google"></Icon><Text style = {{color: 'white', fontSize: 18, alignSelf: 'center'}}> ︳With Google</Text></button>)}
                         />
                     </View>
-
                     <View style={styles.loginWithFacebookView}>
                         <FacebookLogin
                             appId="5851953558159752"
@@ -204,16 +191,13 @@ export default function SignUp() {
                             />
                     </View>
                 </View>
-                
                 <View style={styles.viewAccount}>
                     <Text style={{alignSelf: "center", color: 'white',}}>Already have an account? </Text> <Pressable onPress={() => {navigation.navigate('Welcome')}}><Text style={{color: '#1569C7'}}> Sign in</Text></Pressable>
                 </View>
                 <View>
                     <Text style={{marginTop: 10, fontSize: 22, alignSelf: "center", color: colorset}}>{signCheck}</Text>   
                 </View>     
-            </View>
-            
-        
+            </View>  
         </View>
 
     );

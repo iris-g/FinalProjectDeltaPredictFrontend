@@ -28,9 +28,7 @@ function Home({route, navigation}){
     
       // For Filtered search Data
     const [filteredStocks, setFilteredStocks] = useState([]);
-   
     const isFocused = useIsFocused();
- 
     //get file with top 50 stocks
     var topStocks = require('../assets/top50.csv');
     //reac csv file with top stocks into  an array
@@ -50,8 +48,6 @@ function Home({route, navigation}){
         },
       });
     };
-   
-
     //Read top50 stock csv file once.
     useEffect(() => {
       parseFile(topStocks);
@@ -60,48 +56,17 @@ function Home({route, navigation}){
       console.log(isRunning)
     },  [])
     
-    
-
-    // React.useEffect(() => {
-    //   const unsubscribe = navigation.addListener('focus', () => {
-    //     console.log('sada')
-    //     console.log(isFocused)
-    //     setClose(false)
-    //   });
-    //   const unsubscribeblur = navigation.addListener('blur', () => {
-    //     setClose(true)
-    //     console.log('yes')
-    //   });
-    // }, [navigation]);
-
- 
-    // const onChangeSearch = query => {
-    //   setSearchQuery(query);
-    //    //create a filtered stock list 
-    //   if (query) {
-    //     const temp = query
-    //      // Setting the filtered film array according the query
-    //     const tempList = parsedCsvData.filter(item => {
-    //       if (String(item).substring(0,temp.length).search(temp) >=0)
-    //         return item
-    //   })
-    //      setFilteredStocks(tempList)
-       
-    //    } else {
-    //      // If the query is null then return blank
-    //      setFilteredStocks([]);
-    //    }
-    //  };
   
-     const onClearPress = useCallback(() => {
-      setFilteredStocks(null)
-    }, [])
+    const onClearPress = useCallback(() => {
+    setFilteredStocks(null)
+  }, [])
 
+    //navigate to stock screen when the user chooces a stocks from the serach bar
     function setSelectedItem(item){
       setIsRunning(false)
       navigation.navigate('StockScreen',{otherParam: item, userParam: user.otherParam})
     }
-
+    //fetch date and time data about market status
     async function getMarketData() {
         try { 
           const promise = new Promise((resolve, reject) => {
@@ -112,7 +77,7 @@ function Home({route, navigation}){
           })
         } catch (error) {}
     }
-
+    //get most active stock data
     async function getActive() {
         try { 
           const promise = new Promise((resolve, reject) => {
@@ -134,7 +99,7 @@ function Home({route, navigation}){
         } finally {}
         
     }
-
+    //get top loser stocks data 
     async function getLosers() {
       try { 
         const promise = new Promise((resolve, reject) => {
@@ -155,7 +120,7 @@ function Home({route, navigation}){
 
       } finally {}
     }
-
+    //get top gainers stock data
     async function getGainers() {
       try { 
         const promise = new Promise((resolve, reject) => {
@@ -175,6 +140,7 @@ function Home({route, navigation}){
       } catch (error) {
       } finally {}
     }
+    //call functions only if urrent page is focused with a delay 
     useInterval(() => {
       if(isFocused)
       {
@@ -187,27 +153,7 @@ function Home({route, navigation}){
         
     },  4000// Delay in milliseconds or null to stop it.
     )
-   
-  //   React.useEffect(() => {
-  //     const getData = setTimeout(() => {
-  //       getActive()
-  //       getMarketData()
-  //       getLosers()
-  //       getGainers()
-  //     }, 3000)
-      
-  //   return () => clearTimeout(getData)
-  // }, [isFocused])
-    // useEffect(() => {
-    //   // Do whatever you want to do when screen gets in focus
-    //   useInterval(() => {
-    //     getActive()
-    //     getMarketData()
-    //     getLosers()
-    //     getGainers()
-    // },   isRunning ? delay : null   // Delay in milliseconds or null to stop it
-    // )
-    // }, [ isFocused]);
+    //handle colors of stock data
     const handleColors = (newPrice, stockSymbol) => {
       if(currentPrice.find(a=>a.symbol === stockSymbol) === undefined ){  
         currentPrice.push({ symbol: stockSymbol, price: newPrice })
@@ -230,21 +176,7 @@ function Home({route, navigation}){
         }
       }
     };
-    
-
-    //get active stock data not more than once in 3000 ms
-    // useInterval(() => {
-    //     getActive()
-    //     getMarketData()
-    //     getLosers()
-    //     getGainers()
-    // },   isRunning ? delay : null   // Delay in milliseconds or null to stop it
-    // )
-
-
-
   return (
- 
     <View style={styles.container}>
       <View style={{backgroundColor: "#131722"}}>
         <View style={styles.searchSection}>
@@ -252,10 +184,7 @@ function Home({route, navigation}){
         <AutocompleteDropdown 
                 ref={searchRef}
                 controller={controller => {dropdownController.current = controller}}
-                // initialValue={'1'}
-                // useFilter={false} // set false to prevent rerender twice
                 dataSet={parsedCsvData} //Data set for suggestion list parsedCsvData = top50.csv
-                // onChangeText={{onChangeSearch}}
                 onSelectItem={item => {item && setSelectedItem(item.title)}}
                 debounce={600} 
                 suggestionsListMaxHeight={Dimensions.get('window').height * 0.2}
@@ -273,7 +202,6 @@ function Home({route, navigation}){
                 inputHeight={38} // Change the input container height.
                 showChevron={true} //
                 closeOnBlur={false} //
-                // showClear={false}
               />
               </View>
 

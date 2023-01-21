@@ -64,29 +64,20 @@ function StockScreen({ route, navigation })  {
     });
   };
 
-
   //read top50 stock csv file
   useEffect(() => {
     parseFile(topStocks);
     marketStatus="NasdaqGS Real Time Price in USD"
   },  [])
 
-
   const onClearPress = useCallback(() => {
     setFilteredStocks(null)
   }, [])
 
+  //set selcted item when user selects from search menu
   function setSelectedItem(item){
     navigation.navigate('StockScreen',{otherParam: item, userParam: userParam})
   }
-  // //check if stock exchange is open and update text
-  // if(usa.isTradingNow()){
-  //   marketStatus="NasdaqGS Real Time Price in USD"
-  //   // market is open right now
-  // } else {
-  //   // market is closed right now
-  //   marketStatus="Price as of last close";
-  // }
 
   //handle graph button clicks- set the correct dataset
   const onWeekButtonPress = query => {
@@ -104,7 +95,6 @@ function StockScreen({ route, navigation })  {
 
  
   //Change borderColor chart and change label color. 
-  //ChartJS.defaults.backgroundColor = 'white';
   ChartJS.defaults.borderColor = '#212430';
   ChartJS.defaults.color = '#f0f0f1';
 
@@ -182,9 +172,6 @@ function StockScreen({ route, navigation })  {
 
   }
 
-  // ***
-  //const  controller = useRef("");
-
   /*Monte Carlo calculation*/
   async function fetch_MonteCarlo(otherParam) {
     try { 
@@ -209,13 +196,9 @@ function StockScreen({ route, navigation })  {
   
   //GET DATA FOR ARIMA PREDICTION
   async function fetch_Arima_Data() {
-    console.log("???");
     try { 
-      //abortController=new AbortController()
       ref.current= new AbortController;
       const signal = ref.current.signal;
-      console.log("???");
-      console.log(signal);
 
       const promise = new Promise((resolve, reject) => {
         resolve(fetchArima(otherParam,{signal}) )
@@ -223,12 +206,10 @@ function StockScreen({ route, navigation })  {
       })
     
       promise.then((response) => {
-        //console.log(response)
         var obj=null; 
         const dailyArimaData =new Array();
       
 
-      // console.log(response)
         for(let i=0;i<Object.keys(response["daily"]["mean"]).length;i++)
         {
             obj= JSON.parse(response["daily"]["mean"][i])
@@ -246,31 +227,20 @@ function StockScreen({ route, navigation })  {
     } 
     }parsedCsvData
     
-
-  //cancel arima fetch
-  const cancelRequest= () => {ref.current.abort();console.log(ref.current.signal)}
-
-  
-
   //call function to get arima prediction and sentiment score  for the first time only
   useEffect(() => {
     setStamps(getDateArray(tomorrow,nextweek));
-    //abortController=new AbortController();
     fetch_sentiment_Data(otherParam);
-    //fetch_Arima_Data()
-   // }
   },  [])
 
-
+  //get sentiment score and perform ARIMA PREDICTION
   useEffect(() => {
-    //call function to get arima prediction  when a new search is being made
     setStamps(getDateArray(tomorrow,nextweek));
-    //if(parsedCsvData.includes(otherParam) && otherParam!= ""  )
-    {
+       //call function to get arima prediction  when a new search is being made
       fetch_sentiment_Data(otherParam);
       //abortController=new AbortController();
       fetch_Arima_Data()
-    }
+    
   }, [otherParam])
 
 
@@ -302,7 +272,6 @@ function StockScreen({ route, navigation })  {
 
 
   useInterval(() => {
-    //if(parsedCsvData.includes(otherParam) && otherParam!= "" )
       fetch_Data(otherParam)
   },  8000// Delay in milliseconds or null to stop it.
   )
@@ -310,7 +279,6 @@ function StockScreen({ route, navigation })  {
   //get stocks monthly sentiment score.
   async function fetch_sentiment_Data(text) {
     try { 
-      //console.log(text)
       const promise = new Promise((resolve, reject) => {
           resolve(fetchSentimentData(text) )
       })
@@ -330,7 +298,6 @@ function StockScreen({ route, navigation })  {
     },
   ]
 
-  //;navigation.navigate('Home')
 
   return (
 
@@ -369,7 +336,6 @@ function StockScreen({ route, navigation })  {
                 inputHeight={38} // Change the input container height.
                 showChevron={true} //
                 closeOnBlur={false} //
-                // showClear={false}
               />
           </View>
 
@@ -427,8 +393,7 @@ function StockScreen({ route, navigation })  {
 
                     </>}
                   </Text> 
-                  
-                 <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center", marginTop: 20}}>
+                  <View style={{flexDirection: "row", backgroundColor: "#131822", alignSelf: "center", marginTop: 20}}>
                     <Pressable style={{flexDirection: "row", alignSelf: "center", borderRadius: 5, borderColor: '#1e3841', borderWidth: 2}} onPress={() => addStockToFavoriteStockList(userParam, otherParam)}>
                       <Icon style={{color: "#4bc0c0", fontWeight: 'bold', backgroundColor: "#1e3841"}} name="add-circle" size={20} color="#000"/>
                       <Text style={{color: "#4bc0c0", fontWeight: 'bold',fontSize: 17, backgroundColor: "#1e3841"}}> Add To Favorite </Text>
@@ -444,16 +409,11 @@ function StockScreen({ route, navigation })  {
                     <TouchableOpacity style={{backgroundColor: '#1e3841', margin: 10, borderRadius: 5, borderWidth: 2}} onPress={() => onWeekButtonPress()}><Text style={{color:'#4bc0c0',fontSize: 15}} >  Weekly  </Text> </TouchableOpacity>
                   </View> 
                 </View>
-
-
             </View>
-            
             <View style={styles.detailedBlock}>
               <Text style={{color: '#C9D6DF', fontSize: 20}}>Description{'\n'}</Text>
               <Paragraph style={{color: '#C9D6DF'}}>{data["info"]}</Paragraph>
-            </View>
-     
-              
+            </View>    
           </View>   
     </View>
   );
