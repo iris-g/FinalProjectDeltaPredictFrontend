@@ -1,14 +1,9 @@
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 
 
-
+//in this screen the user can view additional information about the app and see detailed instructions on how to use it 
 export default function LearnMoreScreen(){
-
-
-
-
     return(
-
         <View style={styles.container}>
             <View style={styles.colorContainer}>
                 <Pressable onPress={() => {navigation.navigate('Welcome')}} style={styles.LogoImage}>

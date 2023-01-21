@@ -48,7 +48,6 @@ function SectorStockScreen({ route, navigation }) {
       });
     };
   
-
     //Read top50 stock csv file once.
     useEffect(() => {
       parseFile(topStocks);
@@ -63,7 +62,7 @@ function SectorStockScreen({ route, navigation }) {
     }
 
 
-  /*Brings stocks data*/
+  /*Brings sectors stocks data*/
   async function fetch_Data(text) {
     try { 
       
@@ -89,7 +88,7 @@ function SectorStockScreen({ route, navigation }) {
     
     )
     
-    function _onPressButton (symbol) { // On press button its transition to stock page.
+    function _onPressButton (symbol) { // On press button go to stock page.
       console.log(parsedCsvData)
       if(parsedCsvData.includes(symbol.key))
         navigation.navigate('StockScreen',{otherParam: symbol.key,}) 
@@ -106,10 +105,10 @@ function SectorStockScreen({ route, navigation }) {
   
 
   return (
-    
+
     <View style={styles.container}>
       <View style={{backgroundColor: "#131722"}}>
-           
+    
       <View style={styles.searchSection}>
       <Icon style={styles.iconInAutocomplete} name="search-sharp" size={22} color= "#777777"/>
           <AutocompleteDropdown 
