@@ -29,7 +29,7 @@ export default function FavoriteStocks({route, navigation}) {
     
     //get file with top 50 stocks
     var topStocks = require('../assets/top50.csv');
-    //reac csv file with top stocks into  an array
+    //reac csv file with top stocks into  an array.
     const parseFile = file => {
       Papa.parse(file, {
         header: false,
@@ -81,7 +81,7 @@ export default function FavoriteStocks({route, navigation}) {
 
   useInterval(() => {
     fetch_Data(user)
-    },  5000 // Delay in milliseconds or null to stop it
+    },  5000 // Delay in milliseconds or null to stop it.
   )
 
   function _onPressButton (symbol) { // On press button its transition to stock page.
@@ -146,30 +146,32 @@ export default function FavoriteStocks({route, navigation}) {
             <View style={styles.viewTable}>
               <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
                   <Row textStyle={{color: '#C9D6DF', textAlign: 'center' , fontSize: 18, fontWeight: 'bold'}} flexArr={[1, 1, 1, 1, 1, 1]} style={{height: 30}} data={header} />        
-              </Table>
-                
-              <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
-                  <FlatList
-                      data={ Object.values(stocks).map(({ currentPrice, symbol, volume, dayLow, dayHigh }) => (
-                        <p key={symbol}> 
-                            <View style={{marginLeft: "5%", width: "5%"}}><Text>{currentPrice}</Text></View> 
-                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "12.5%" }}><Text style={{ textAlign: 'center'}}>{symbol}</Text></View> 
-                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "28.5%"}}><Text style={{ textAlign: 'center'}}>{volume}</Text></View> 
-                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "46%"}}><Text style={{textAlign: 'center'}}>{dayLow}</Text></View>
-                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "63%" }}><Text style={{ textAlign: 'center'}}>{dayHigh}</Text></View>
-                            <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "80%" }}><Pressable onPress={() => deletFromFavoriteStockList(user,symbol)}><Icon style={{color: '#CB4335', flexDirection: "row"}} name="trash" size={26}/></Pressable></View>  
-                        </p>))}
-                        renderItem={(stocks) => {
-                            return (
-                                <View style={styles.listItem}>
-                                    <Pressable onPress={(item) => _onPressButton(stocks.item)}><Text style={styles.textList}>{stocks.item}</Text></Pressable>
-                                </View>
-                        );}}
-                  >  
-                  </FlatList>
-                      
-                </ScrollViewIndicator>  
+              </Table> 
+              <View style={{height: 500}}>
+                <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
                 {PickerOS()}
+                    <FlatList
+                        data={ Object.values(stocks).map(({ currentPrice, symbol, volume, dayLow, dayHigh }) => (
+                          <p key={symbol}> 
+                              <View style={{marginLeft: "5%", width: "5%"}}><Text>{currentPrice}</Text></View> 
+                              <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "12.5%" }}><Text style={{ textAlign: 'center'}}>{symbol}</Text></View> 
+                              <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "28.5%"}}><Text style={{ textAlign: 'center'}}>{volume}</Text></View> 
+                              <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "46%"}}><Text style={{textAlign: 'center'}}>{dayLow}</Text></View>
+                              <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "63%" }}><Text style={{ textAlign: 'center'}}>{dayHigh}</Text></View>
+                              <View style={{flex: 0.5, width: "30%", position: "absolute", flexDirection: "row", alignSelf: "center", marginLeft: "80%" }}><Pressable onPress={() => deletFromFavoriteStockList(user,symbol)}><Icon style={{color: '#CB4335', flexDirection: "row"}} name="trash" size={26}/></Pressable></View>  
+                          </p>))}
+                          renderItem={(stocks) => {
+                              return (
+                                  <View style={styles.listItem}>
+                                      <Pressable onPress={(item) => _onPressButton(stocks.item)}><Text style={styles.textList}>{stocks.item}</Text></Pressable>
+                                  </View>
+                          );}}
+                    >  
+                    </FlatList>
+                        
+                  </ScrollViewIndicator> 
+                </View> 
+                
                 <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
             </View>
         </View>

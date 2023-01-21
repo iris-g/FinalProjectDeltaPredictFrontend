@@ -243,7 +243,7 @@ export async function addStockToFavoriteStockList(userEmail,symbol){
     fetch('http://localhost:5000/addStocktoFavoriteList', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({Email: userEmail, Symbol: symbol})
+        body: JSON.stringify({Email:userEmail, Symbol:symbol})
     })
     .then(res => res.json())
     // .then(data => { data.result === "true" ? navigation.navigate('Dashboard', {userParam: email,}) : alert("wrong details") });
