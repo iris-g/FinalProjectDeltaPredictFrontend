@@ -19,6 +19,8 @@ var topStocks = require('../assets/top50.csv');
 
 function StockScreen({ route, navigation })  {
   const {otherParam, userParam} = route.params; // otherParam : "Symbol" , userParam: "mail"
+  console.log(typeof otherParam)
+  console.log(typeof userParam)
   const [data, setData] = useState(""); 
   const [sentiment, setSentiment] = useState(""); 
   const [loading, setLoad] = useState(true); 
