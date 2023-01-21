@@ -55,11 +55,11 @@ export default function FavoriteStocks({route, navigation}) {
   const onClearPress = useCallback(() => {
     setFilteredStocks(null)
   }, [])
-
+  //navigat to stock screen of the specific stock the user chose
   function setSelectedItem(item){
     navigation.navigate('StockScreen',{otherParam: item, userParam: user.otherParam})
   }
- 
+ //get favorite stocks financial data according to the list in DB
   async function fetch_Data(text) {
     try { 
       const promise = new Promise((resolve, reject) => {
@@ -73,12 +73,11 @@ export default function FavoriteStocks({route, navigation}) {
               }
               setData(stocksData)
               setLoad(false)
-         
             })
     } catch (error) {}  
   }
 
-
+  //limit the number of fetches to 1 in every 5000 milliseconds 
   useInterval(() => {
     fetch_Data(user)
     },  5000 // Delay in milliseconds or null to stop it.
@@ -91,8 +90,7 @@ export default function FavoriteStocks({route, navigation}) {
 
   const PickerOS = () => {
     if(loading === false && stocks.length === 0){
-      console.log(true)
-      console.log(loading)
+    
       return (
         <Text style={{alignSelf: 'center', color: '#C9D6DF'}}>
           Your favorite list is empty 
@@ -104,10 +102,7 @@ export default function FavoriteStocks({route, navigation}) {
 
   useEffect(() => {
     PickerOS();
-  //   setLoad(false)  
   }, []);
-
-  
 
   return (
       <View style={styles.container}>
@@ -118,10 +113,7 @@ export default function FavoriteStocks({route, navigation}) {
               <AutocompleteDropdown 
                   ref={searchRef}
                   controller={controller => {dropdownController.current = controller}}
-                  // initialValue={'1'}
-                  // useFilter={false} // set false to prevent rerender twice
                   dataSet={parsedCsvData} //Data set for suggestion list parsedCsvData = top50.csv
-                  // onChangeText={{onChangeSearch}}
                   onSelectItem={item => {item && setSelectedItem(item.title)}}
                   debounce={600} 
                   suggestionsListMaxHeight={Dimensions.get('window').height * 0.2}
@@ -139,7 +131,6 @@ export default function FavoriteStocks({route, navigation}) {
                   inputHeight={38} // Change the input container height.
                   showChevron={true} //
                   closeOnBlur={false} //
-                  // showClear={false}
                 />
             </View>
             
@@ -175,8 +166,7 @@ export default function FavoriteStocks({route, navigation}) {
                 <ActivityIndicator style={{backgroundColor: "#131722"}} size="large" color="#307D7E"  animating={loading} hidesWhenStopped={true} /> 
             </View>
         </View>
-     </View>
-
+        </View>
     );
 } 
 
