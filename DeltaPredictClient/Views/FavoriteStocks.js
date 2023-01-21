@@ -29,7 +29,7 @@ export default function FavoriteStocks({route, navigation}) {
     
     //get file with top 50 stocks
     var topStocks = require('../assets/top50.csv');
-    //reac csv file with top stocks into  an array
+    //reac csv file with top stocks into  an array.
     const parseFile = file => {
       Papa.parse(file, {
         header: false,
@@ -81,7 +81,7 @@ export default function FavoriteStocks({route, navigation}) {
 
   useInterval(() => {
     fetch_Data(user)
-    },  5000 // Delay in milliseconds or null to stop it
+    },  5000 // Delay in milliseconds or null to stop it.
   )
 
   function _onPressButton (symbol) { // On press button its transition to stock page.
@@ -146,7 +146,7 @@ export default function FavoriteStocks({route, navigation}) {
             <View style={styles.viewTable}>
               <Table borderStyle={{ borderWidth: 3.5, borderColor: '#1e222d'}} style={{height: 32}}>
                   <Row textStyle={{color: '#C9D6DF', textAlign: 'center' , fontSize: 18, fontWeight: 'bold'}} flexArr={[1, 1, 1, 1, 1, 1]} style={{height: 30}} data={header} />        
-              </Table>
+              </Table> 
               <View style={{height: 500}}>
                 <ScrollViewIndicator  shouldIndicatorHide={false} flexibleIndicator={false} scrollIndicatorStyle={{ backgroundColor: '#50535e'}} style={styles.flat}>
                 {PickerOS()}
