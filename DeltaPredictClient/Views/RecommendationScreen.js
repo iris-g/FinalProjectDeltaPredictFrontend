@@ -13,7 +13,7 @@ function Recommendation({route, navigation}){
   let flag = true
     
 
-    
+    //
   const handleOnchange = (text, input) => {
     setInput(text)
   };
@@ -51,11 +51,7 @@ function Recommendation({route, navigation}){
       }
     }   
   };
-    //   useEffect(() => {
-    //     if(input!= "")
-    //         requestRec(input)
-    //     },  [input] // Delay in milliseconds or null to stop it
-    // )
+
 
     return(
 
